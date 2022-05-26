@@ -5,6 +5,7 @@
 package models;
 import UI.FilledBox;
 import UI.HighlightedButton;
+import UI.ImageSet;
 import UI.MovingTile;
 import UI.TileField;
 import UI.TimerGraphics;
@@ -25,6 +26,7 @@ public class App {
     /**
      * @param args the command line arguments
      */
+    public final static String PATH = "";
     static TileField field;
     static JLabel label;
     static JFrame frame;
@@ -35,7 +37,7 @@ public class App {
     static int counter = 0;
     
     public static void main(String[] args) {
-        
+        //ImageSet set = ImageSet.neptun();
         frame = new JFrame("My Frame");
         frame.setSize(1200,1300);
         frame.setLayout(new BorderLayout());
