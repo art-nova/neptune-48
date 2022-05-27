@@ -1,14 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 package models;
-import UI.FilledBox;
+import UI.fragments.FilledBox;
 import UI.HighlightedButton;
-import UI.ImageSet;
-import UI.MovingTile;
-import UI.TileField;
-import UI.TimerGraphics;
+import UI.fragments.MovingTile;
+import Legacy.TileField;
+import UI.LevelGraphics;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -36,6 +31,16 @@ public class App {
     static ArrayList<Integer> bounds = new ArrayList<Integer>();
     static ArrayList<Integer> targets = new ArrayList<Integer>();
     static int counter = 0;
+
+    
+    
+    private static LevelGraphics levelGraphics;
+    
+    public static LevelGraphics getLevel(){
+        return levelGraphics;
+    }
+    
+
     
     public static void main(String[] args) {
         //ImageSet set = new ImageSet("neptun", 75, 50);
@@ -45,7 +50,7 @@ public class App {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //frame.add(gradients());
         frame.add(tiles());
-        frame.add(new TimerGraphics(12));
+        //frame.add(new TimerGraphics(12));
         frame.setVisible(true);
 
         

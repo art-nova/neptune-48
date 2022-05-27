@@ -1,5 +1,8 @@
 package UI;
 
+import UI.fragments.FilledBox;
+import UI.fragments.GradientBox;
+import UI.miscellaneous.Utilities;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
