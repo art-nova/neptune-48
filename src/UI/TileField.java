@@ -1,16 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package UI;
 
 import java.awt.Point;
 
 /**
  *
- * @author temak
+ * @author Artemii Kolomiichuk
  */
 //board
+@Deprecated
 public class TileField {
     public int rows, collumns;
     public MovingTile[] tiles;

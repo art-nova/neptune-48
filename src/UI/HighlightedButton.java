@@ -1,22 +1,27 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package UI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 /**
- *
- * @author temak
+ * Highlighted button.
+ * @author Artemii Kolomiichuk
  */
 public class HighlightedButton extends JLayeredPane{
     
     public FilledBox body;
     public GradientBox gradient;
     
+    /**
+     * Creates a new button.
+     * @param width width of the button.
+     * @param height height of the button.
+     * @param backColor background color of the button.
+     * @param highlightColor highlight gradient color.
+     * @param filling component on the button.
+     */
     public HighlightedButton(int width, int height, Color backColor, Color highlightColor, Component filling){
         body = new FilledBox(backColor);
         body.setBounds(0, 0, width, height);
@@ -32,8 +37,6 @@ public class HighlightedButton extends JLayeredPane{
         
         gradient.setBounds(0,0,width,height);
         gradient.setBackground(new Color(255,255,255,0));
-        
-        
         
         body.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent e) {

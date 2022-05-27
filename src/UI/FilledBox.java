@@ -1,17 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package UI;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
- *
- * @author temak
+ * Solid colored box.
+ * @author Artemii Kolomiichuk
  */
 public class FilledBox extends JPanel{
+    /**
+     * Creates a new box.
+     * @param color color of the box.
+     */
     public FilledBox (Color color){
         super();
         setBackground(color);

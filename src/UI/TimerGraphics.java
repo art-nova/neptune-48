@@ -34,7 +34,7 @@ public class TimerGraphics extends JPanel implements ActionListener{
     
     private void resetTimerText(){
         time--;
-        if(time <= 0){
+        if(time < 0){
             onTimeUp();
             timer.stop();
             timerText.setText("");

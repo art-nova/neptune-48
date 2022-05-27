@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package UI;
 
 import java.awt.*;
@@ -10,19 +6,26 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 /**
- *
- * @author temak
+ * Movable gradient colored box.
+ * @author Artemii Kolomiichuk
  */
 public class MoveableGradientBox extends GradientBox implements ActionListener{
     Timer timer = new Timer(21, this);
     double moveSize = 3;
     public Point targetPoint;
-    JFrame frame;
     
-    public MoveableGradientBox(int width, int height, Color firstColor, Color secondColor,directions direction, Point targetPoint, JFrame frame){
+    /**
+     * Creates a new  movable gradient colored box.
+     * @param width width of the box.
+     * @param height height of the box.
+     * @param firstColor first color of the gradient.
+     * @param secondColor second color of the gradient.
+     * @param direction direction of the gradient.
+     * @param targetPoint target point for movement.
+     */
+    public MoveableGradientBox(int width, int height, Color firstColor, Color secondColor,directions direction, Point targetPoint){
         super(width, height, firstColor, secondColor, direction);
         this.targetPoint = targetPoint;
-        this.frame = frame;
     }
     
     public void setTimer(){

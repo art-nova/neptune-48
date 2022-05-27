@@ -17,14 +17,15 @@ import java.util.*;
 
 
 import javax.imageio.ImageIO;
+
 /**
- *
- * @author temak
+ * Main class of the game.
+ * @author Artemii Kolomiichuk
  */
 public class App {
 
     /**
-     * @param args the command line arguments
+     * Path to the programm folder.
      */
     public final static String PATH = "";
     static TileField field;
@@ -37,32 +38,11 @@ public class App {
     static int counter = 0;
     
     public static void main(String[] args) {
-        //ImageSet set = ImageSet.neptun();
+        //ImageSet set = new ImageSet("neptun", 75, 50);
         frame = new JFrame("My Frame");
         frame.setSize(1200,1300);
         frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        /*
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.red);
-        panel.setBounds(4,15,4000,4000);
-        
-        label = new JLabel("aadfffgh");
-        label.setBounds(120,6,200,200);
-        //label.setForeground(new Color(130,23,235));
-        label.setFont(new Font("Rubik", Font.PLAIN, (int)(Math.round(Math.sqrt(frame.getSize().width * frame.getSize().height))/20)));
-        
-        frame.add(label);
-        frame.setBackground(Color.red);
-        
-       gradient = new GradientBox(300, 200, new Color(82,5,123, 255), new Color(188,11,241,0), 90);
-       gradient.setBounds(100, 100, 500, 800);
-       gradient.setBackground(new Color(0,0,0,0));
-       frame.add(gradient);
-        frame.add(panel);
-        /*
-        
-        */
         //frame.add(gradients());
         frame.add(tiles());
         frame.add(new TimerGraphics(12));
@@ -71,15 +51,14 @@ public class App {
         
         frame.addComponentListener(new ComponentAdapter() 
         {  
-                public void componentResized(ComponentEvent evt) {
-                    Component c = (Component)evt.getSource();
-                    //repaintFrame();
-                }
+            public void componentResized(ComponentEvent evt) {
+                //Component c = (Component)evt.getSource();
+                //repaintFrame();
+            }
         });
     }
+
     static void moveTiles(){
-        
-        
         if(counter%2 == 0){
             field.moveToRightRigid();
         }
@@ -96,9 +75,6 @@ public class App {
     static JLayeredPane tiles(){
         JLayeredPane pane = new JLayeredPane();
         field = new TileField(6, 6, 75, 5, 200, 200);
-        
-        
-        
         //panel.setLayout();
         pane.setBounds(0,0,1200,1200);
         bounds = new ArrayList<Integer>(Arrays.asList( 280,200,360,200,360,280,600,280,280,360,520,360,200,440,200,520,520,520,360,600,440,600,600,600));
@@ -194,13 +170,4 @@ public class App {
         //pane.setBackground(new Color(0,0,0,0));
         return pane;
     }
-    
-    
-    
-    
-    static void repaintFrame(){
-        label.setFont(new Font("Rubik", Font.PLAIN, (int)(Math.round(Math.sqrt(frame.getSize().width * frame.getSize().height))/20)));
-        gradient.setSize(frame.getSize().width / 4, frame.getSize().height/2);
-    }
-    
 }

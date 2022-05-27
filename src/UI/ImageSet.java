@@ -38,25 +38,45 @@ public class ImageSet {
     public ImageIcon garbageTile;
     public ImageIcon subtractTime;
     public ImageIcon randomScramble;
-    
+    //tiles
     public ImageIcon[] tile;
     
-    public static ImageSet neptun(int tileSize){
-        ImageSet set = new ImageSet();
+    public ImageSet(String folder, int tileSize, int iconSize){
         try {
-            set.enemy = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/neptun/enemy.png")).getScaledInstance(000,000, 1));
-            set.pause = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/neptun/pause.png")).getScaledInstance(000,000, 1));
-            //...
-            set.tile = new ImageIcon[]{
-                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/neptun/tile00.png")).getScaledInstance(tileSize,tileSize, 1)),
-                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/neptun/tile01.png")).getScaledInstance(tileSize,tileSize, 1)),
-                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/neptun/tile02.png")).getScaledInstance(tileSize,tileSize, 1)),
-                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/neptun/tile03.png")).getScaledInstance(tileSize,tileSize, 1)),
-                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/neptun/tile04.png")).getScaledInstance(tileSize,tileSize, 1)),
-                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/neptun/tile05.png")).getScaledInstance(tileSize,tileSize, 1))
+            enemy = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/enemy.png")).getScaledInstance(iconSize, iconSize, 1));
+            pause = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/pause.png")).getScaledInstance(iconSize, iconSize, 1));
+            safeAttack = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/safeAttack.png")).getScaledInstance(iconSize, iconSize, 1));
+            crit = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/crit.png")).getScaledInstance(iconSize, iconSize, 1));
+            swap = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/swap.png")).getScaledInstance(iconSize, iconSize, 1));
+            upgrade = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/upgrade.png")).getScaledInstance(iconSize, iconSize, 1));
+            dispose = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/dispose.png")).getScaledInstance(iconSize, iconSize, 1));
+            merge = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/merge.png")).getScaledInstance(iconSize, iconSize, 1));
+            scramble = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/scramble.png")).getScaledInstance(iconSize, iconSize, 1));
+            massiveAttack = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/massiveAttack.png")).getScaledInstance(iconSize, iconSize, 1));
+            bonusTime = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/bonusTime.png")).getScaledInstance(iconSize, iconSize, 1));
+            bonusDamage = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/bonusDamage.png")).getScaledInstance(iconSize, iconSize, 1));
+            betterBaseLevel = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/betterBaseLevel.png")).getScaledInstance(iconSize, iconSize, 1));
+            resistance = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/resistance.png")).getScaledInstance(iconSize, iconSize, 1));
+            downgrade = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/downgrade.png")).getScaledInstance(iconSize, iconSize, 1));
+            randomSwap = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/randomSwap.png")).getScaledInstance(iconSize, iconSize, 1));
+            randomDispose = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/randomDispose.png")).getScaledInstance(iconSize, iconSize, 1));
+            freeze = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/freeze.png")).getScaledInstance(iconSize, iconSize, 1));
+            garbageTile = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/garbageTile.png")).getScaledInstance(iconSize, iconSize, 1));
+            subtractTime = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/subtractTime.png")).getScaledInstance(iconSize, iconSize, 1));
+            randomScramble = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/randomScramble.png")).getScaledInstance(iconSize, iconSize, 1));
+            info = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/info.png")).getScaledInstance(iconSize, iconSize, 1));
+
+            tile = new ImageIcon[]{
+                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/tile00.png")).getScaledInstance(tileSize, tileSize, 1)),
+                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/tile01.png")).getScaledInstance(tileSize, tileSize, 1)),
+                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/tile02.png")).getScaledInstance(tileSize, tileSize, 1)),
+                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/tile03.png")).getScaledInstance(tileSize, tileSize, 1)),
+                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/tile04.png")).getScaledInstance(tileSize, tileSize, 1)),
+                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/tile05.png")).getScaledInstance(tileSize, tileSize, 1)),
+                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/tile06.png")).getScaledInstance(tileSize, tileSize, 1)),
+                new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/tile07.png")).getScaledInstance(tileSize, tileSize, 1))
                 //...
             };
-        } catch(Exception e){System.err.println("ImageSet neptun couldn't be loaded");}
-        return set;
+        } catch(Exception e){System.err.println("ImageSet '" + folder + "' couldn't be loaded");}
     }
 }

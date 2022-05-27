@@ -1,16 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package UI;
+
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 
 /**
- *
- * @author temak
+ * Gradient colored box.
+ * @author Artemii Kolomiichuk
  */
 public class GradientBox extends JPanel{
 
@@ -22,6 +17,9 @@ public class GradientBox extends JPanel{
     int angle;
     directions direction;
     
+    /**
+     * Gradient direction.
+     */
     public enum directions{
         LEFT_TO_RIGHT,
         RIGHT_TO_LEFT,
@@ -29,12 +27,22 @@ public class GradientBox extends JPanel{
         BOTTTOM_TO_TOP
     }
     
+    /**
+     * Creates a new box.
+     * @param x x coordinate of the box.
+     * @param y y coordinate of the box.
+     * @param width width of the box.
+     * @param height height of the box.
+     * @param firstColor first color of the gradient.
+     * @param secondColor second color of the gradient.
+     * @param angle angle of the box's rotation.
+     * @param direction direction of the gradient.
+     */
     public GradientBox(int width, int height, Color firstColor, Color secondColor, directions direction){
         this.width = width;
         this.height = height;
         this.firstColor = firstColor;
         this.secondColor = secondColor;
-        this.angle = angle;
         this.direction = direction;
     }
     
