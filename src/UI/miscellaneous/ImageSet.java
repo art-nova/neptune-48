@@ -13,13 +13,13 @@ import models.App;
 public class ImageSet {
     public ImageIcon[] enemy;
     public ImageIcon timer;
-    public ImageIcon health;
+    //public ImageIcon health;
     public ImageIcon attack;
     
     
     public ImageIcon pause;
     public ImageIcon info;
-    
+    public ImageIcon buttonCover;
     //bonuses
         //active
     public ImageIcon safeAttack;
@@ -49,10 +49,10 @@ public class ImageSet {
     
     public ImageSet(String folder, LevelGraphics level){
         int tileSize = level.sizes.tileSize;
-        int iconSize = level.sizes.buttonSize;
+        int buttonSize = level.sizes.buttonSize;
 
-        int healthWidth = level.sizes.healthWidth;
-        int healthHeight = level.sizes.healthHeight;
+        //int healthWidth = level.sizes.healthWidth;
+        //int healthHeight = level.sizes.healthHeight;
 
         int timerWidth = level.sizes.timerWidth;
         int timerHeight = level.sizes.timerHeight;
@@ -64,35 +64,41 @@ public class ImageSet {
         int attackHeight = level.sizes.attackHeight;
         
         try {
+            enemy = new ImageIcon[2];
+            enemy[0] = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/enemy00.png")).getScaledInstance(enemyWidth, enemyHeight, 1));
+            /*
             enemy = new ImageIcon[]{
                 new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/enemy00.png")).getScaledInstance(enemyWidth, enemyHeight, 1)),
                 new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/enemy01.png")).getScaledInstance(enemyWidth, enemyHeight, 1))
                 //...
             };
-            health = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/health.png")).getScaledInstance(healthWidth, healthHeight, 1));
+*/
+            //health = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/health.png")).getScaledInstance(healthWidth, healthHeight, 1));
+            buttonCover = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/buttonCover.png")).getScaledInstance(buttonSize, buttonSize, 1));
             timer = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/timer.png")).getScaledInstance(timerWidth, timerHeight, 1));
+            swap = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/swap.png")).getScaledInstance(buttonSize, buttonSize, 1));
             attack = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/attack.png")).getScaledInstance(attackWidth, attackHeight, 1));
-            pause = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/pause.png")).getScaledInstance(iconSize, iconSize, 1));
-            info = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/info.png")).getScaledInstance(iconSize, iconSize, 1));
-            safeAttack = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/safeAttack.png")).getScaledInstance(iconSize, iconSize, 1));
-            crit = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/crit.png")).getScaledInstance(iconSize, iconSize, 1));
-            swap = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/swap.png")).getScaledInstance(iconSize, iconSize, 1));
-            upgrade = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/upgrade.png")).getScaledInstance(iconSize, iconSize, 1));
-            dispose = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/dispose.png")).getScaledInstance(iconSize, iconSize, 1));
-            merge = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/merge.png")).getScaledInstance(iconSize, iconSize, 1));
-            scramble = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/scramble.png")).getScaledInstance(iconSize, iconSize, 1));
-            massiveAttack = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/massiveAttack.png")).getScaledInstance(iconSize, iconSize, 1));
-            bonusTime = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/bonusTime.png")).getScaledInstance(iconSize, iconSize, 1));
-            bonusDamage = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/bonusDamage.png")).getScaledInstance(iconSize, iconSize, 1));
-            betterBaseLevel = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/betterBaseLevel.png")).getScaledInstance(iconSize, iconSize, 1));
-            resistance = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/resistance.png")).getScaledInstance(iconSize, iconSize, 1));
-            downgrade = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/downgrade.png")).getScaledInstance(iconSize, iconSize, 1));
-            randomSwap = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/randomSwap.png")).getScaledInstance(iconSize, iconSize, 1));
-            randomDispose = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/randomDispose.png")).getScaledInstance(iconSize, iconSize, 1));
-            freeze = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/freeze.png")).getScaledInstance(iconSize, iconSize, 1));
-            garbageTile = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/garbageTile.png")).getScaledInstance(iconSize, iconSize, 1));
-            subtractTime = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/subtractTime.png")).getScaledInstance(iconSize, iconSize, 1));
-            randomScramble = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/randomScramble.png")).getScaledInstance(iconSize, iconSize, 1));
+            pause = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/pause.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            info = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/info.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            safeAttack = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/safeAttack.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            crit = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/crit.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            
+            upgrade = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/upgrade.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            dispose = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/dispose.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            merge = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/merge.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            scramble = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/scramble.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            massiveAttack = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/massiveAttack.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            bonusTime = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/bonusTime.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            bonusDamage = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/bonusDamage.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            betterBaseLevel = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/betterBaseLevel.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            resistance = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/resistance.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            downgrade = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/downgrade.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            randomSwap = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/randomSwap.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            randomDispose = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/randomDispose.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            freeze = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/freeze.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            garbageTile = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/garbageTile.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            subtractTime = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/subtractTime.png")).getScaledInstance(buttonSize, buttonSize, 1));
+            randomScramble = new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/randomScramble.png")).getScaledInstance(buttonSize, buttonSize, 1));
             
             tile = new ImageIcon[]{
                 new ImageIcon(ImageIO.read(new File(App.PATH  + "/images/" + folder + "/tile00.png")).getScaledInstance(tileSize, tileSize, 1)),

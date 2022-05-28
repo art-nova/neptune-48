@@ -18,11 +18,19 @@ public class LevelGraphics extends JPanel{
     public SizeSet sizes;
     public ColorSet colors;
     public ImageSet images;
+    public int time = 100;
     
     public LevelGraphics(){
-        sizes = sizes.defaultSizeSet();
+        super();
+        sizes = new SizeSet().defaultSizeSet();
+        colors = new ColorSet().neptun();
+        images = new ImageSet("neptun", this);
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        setSize(sizes.windowWidth,sizes.windowHeight);
+        setBounds(0,0,sizes.windowWidth,sizes.windowHeight);
+        setBackground(colors.background);
+    }
+    
+    public void addGraphics(){
         add(new LeftBar());
         add(new CenterPanel());
         add(new RightBar());

@@ -4,6 +4,7 @@ import UI.HighlightedButton;
 import UI.fragments.MovingTile;
 import Legacy.TileField;
 import UI.LevelGraphics;
+import UI.UIManager;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -22,7 +23,7 @@ public class App {
     /**
      * Path to the programm folder.
      */
-    public final static String PATH = "";
+    public final static String PATH = "C:/Users/temak/Desktop/ResizableInterface";
     static TileField field;
     static JLabel label;
     static JFrame frame;
@@ -44,23 +45,10 @@ public class App {
     
     public static void main(String[] args) {
         //ImageSet set = new ImageSet("neptun", 75, 50);
-        frame = new JFrame("My Frame");
-        frame.setSize(1200,1300);
-        frame.setLayout(new BorderLayout());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.add(gradients());
-        frame.add(tiles());
-        //frame.add(new TimerGraphics(12));
-        frame.setVisible(true);
-
-        
-        frame.addComponentListener(new ComponentAdapter() 
-        {  
-            public void componentResized(ComponentEvent evt) {
-                //Component c = (Component)evt.getSource();
-                //repaintFrame();
-            }
-        });
+        levelGraphics = new LevelGraphics();
+        levelGraphics.addGraphics();
+        UIManager.init();
+        UIManager.loadLevel();
     }
 
     static void moveTiles(){

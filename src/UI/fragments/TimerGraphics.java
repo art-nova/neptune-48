@@ -1,11 +1,17 @@
 package UI.fragments;
 
+import UI.LevelGraphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import java.awt.Font;
+import models.App;
+
 import java.awt.Color;
+import java.awt.Dimension;
+import javax.swing.JLayeredPane;
 
 /**
  * Countdown timer
@@ -32,12 +38,23 @@ public class TimerGraphics extends JPanel implements ActionListener{
     }
     
     private void init(int time){
+        time++;
+        LevelGraphics level = App.getLevel();
+        JLayeredPane pane = new JLayeredPane();
+        pane.setPreferredSize(new Dimension(level.sizes.timerWidth, level.sizes.timerHeight));
         this.time = time;
-        setBounds(0, 0, 500, 500);
+        JLabel image = new JLabel(App.getLevel().images.timer);
+        image.setBounds(0,-10,level.sizes.timerWidth, level.sizes.timerHeight + 10);
         timer.start();
         timerText = new JLabel("");
+        timerText.setFont(new Font("Rubik", Font.BOLD, 38));
         timerText.setForeground(base);
-        add(timerText);
+        timerText.setBounds(23,-5,level.sizes.timerWidth, level.sizes.timerHeight);
+        pane.add(timerText, 0);
+        pane.add(image, 100);
+        add(pane);
+        setBackground(level.colors.background);
+        resetTimerText();
     }
     
     private void resetTimerText(){
@@ -50,7 +67,9 @@ public class TimerGraphics extends JPanel implements ActionListener{
         else{
             String seconds = Integer.toString(time%60);
             if(seconds.length() < 2){
-                timerText.setForeground(alert);
+                if(time/60 < 1){
+                    timerText.setForeground(alert);
+                }                
                 seconds = 0 + seconds;
             } 
             timerText.setText(time/60 + ":" + seconds);
