@@ -1,5 +1,5 @@
 import game.GamePanel;
-import utils.LevelGraphicsManager;
+import utils.GamePanelGraphics;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,15 +12,7 @@ public class GameplayDemo {
         frame.setTitle("Gameplay Demo");
         try {
             frame.add(new GamePanel(5, 5, new HashSet<>(), new HashSet<>(),
-                    new LevelGraphicsManager(
-                            "C:/Users/temak/Desktop/neptune-48-game-logic/assets/images/tiles_testing",
-                            "lorem ipsum",
-                            "lorem ipsum",
-                            "lorem ipsum",
-                            "lorem ipsum",
-                            Color.red,
-                            50, 50
-                    )));
+                    new GamePanelGraphics("resources/images/neptun")));
         } catch (Exception e) {System.err.println(e.getMessage());}
         frame.setVisible(true);
         frame.pack();

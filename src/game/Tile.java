@@ -1,6 +1,6 @@
 package game;
 
-import utils.LevelGraphicsManager;
+import utils.GamePanelGraphics;
 import java.awt.*;
 
 /**
@@ -62,7 +62,7 @@ public class Tile implements IRenderable{
         }
         else if (state == GENERATING && animationFramesLeft <= 0) {
             visible = true;
-            pulse(-LevelGraphicsManager.TILE_SIZE/2, LevelGraphicsManager.TILE_PULSE_OFFSET);
+            pulse(-GamePanelGraphics.TILE_SIZE/2, GamePanelGraphics.TILE_PULSE_OFFSET);
         }
         if (state != STATIC && animationFramesLeft <= 0) flush();
     }
@@ -73,7 +73,7 @@ public class Tile implements IRenderable{
             int screenY = (int)y;
 
             if (state == PULSATING) {
-                int size = (LevelGraphicsManager.TILE_SIZE + (int)(visualOffset * 2));
+                int size = (GamePanelGraphics.TILE_SIZE + (int)(visualOffset * 2));
                 int offset = (int)visualOffset;
                 g2d.drawImage(gp.graphicsManager.getTexture("tile"+level), screenX - offset, screenY - offset, size, size, null);
             }
@@ -111,7 +111,7 @@ public class Tile implements IRenderable{
     public void pulse(int startOffset, int peakOffset) {
         startAnimationCycle();
         visualOffset = startOffset;
-        speedVisualOffset = (float)(Math.abs(startOffset - peakOffset) + Math.abs(peakOffset))/LevelGraphicsManager.ANIMATION_CYCLE;
+        speedVisualOffset = (float)(Math.abs(startOffset - peakOffset) + Math.abs(peakOffset))/ GamePanelGraphics.ANIMATION_CYCLE;
         targetVisualOffset = peakOffset;
         state = PULSATING;
     }
@@ -122,7 +122,7 @@ public class Tile implements IRenderable{
     public void upgrade() {
         if (level < 11) {
             level++;
-            pulse(0, LevelGraphicsManager.TILE_PULSE_OFFSET);
+            pulse(0, GamePanelGraphics.TILE_PULSE_OFFSET);
         }
     }
 
@@ -132,7 +132,7 @@ public class Tile implements IRenderable{
     public void downgrade() {
         if (level > 1) {
             level--;
-            pulse(0, -LevelGraphicsManager.TILE_PULSE_OFFSET);
+            pulse(0, -GamePanelGraphics.TILE_PULSE_OFFSET);
         }
     }
 
@@ -159,7 +159,7 @@ public class Tile implements IRenderable{
     }
 
     private void startAnimationCycle() {
-        animationFramesLeft = LevelGraphicsManager.ANIMATION_CYCLE;
+        animationFramesLeft = GamePanelGraphics.ANIMATION_CYCLE;
         board.state = Board.ANIMATING;
     }
 

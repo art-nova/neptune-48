@@ -23,7 +23,7 @@ public class App {
     /**
      * Path to the programm folder.
      */
-    public final static String PATH = "C:/Users/temak/Desktop/2048";
+//    public final static String PATH = "C:/Users/temak/Desktop/2048";
     static TileField field;
     static JLabel label;
     static JFrame frame;

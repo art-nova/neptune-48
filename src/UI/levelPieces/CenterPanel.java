@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.HashSet;
 
 import models.App;
-import utils.LevelGraphicsManager;
+import utils.GamePanelGraphics;
 
 /**
  *
@@ -34,15 +34,7 @@ public class CenterPanel extends JLayeredPane{
         try
 	{
 	    add(new GamePanel(5, 5, new HashSet<>(), new HashSet<>(),
-	            new LevelGraphicsManager(
-	                    "C:/Users/temak/Desktop/neptune-48-game-logic/assets/images/tiles_testing",
-	                    "lorem ipsum",
-	                    "lorem ipsum",
-	                    "lorem ipsum",
-	                    "lorem ipsum",
-	                    Color.red,
-	                    50, 50
-	            )));
+                new GamePanelGraphics("resources/images/neptun")));
 	}
 	catch (IOException e){}
         add(new Attack());

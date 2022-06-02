@@ -1,6 +1,6 @@
 package game;
 
-import utils.LevelGraphicsManager;
+import utils.GamePanelGraphics;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -18,7 +18,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public int state = PLAYING;
     public Board board;
-    public LevelGraphicsManager graphicsManager;
+    public GamePanelGraphics graphicsManager;
     public KeyHandler keyHandler;
     public boolean debug = false;
 
@@ -29,7 +29,7 @@ public class GamePanel extends JPanel implements Runnable {
      *
      * @param graphicsManager graphics manager, which contains all necessary settings
      */
-    public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs, LevelGraphicsManager graphicsManager) throws IOException {
+    public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs, GamePanelGraphics graphicsManager) throws IOException {
         this.graphicsManager = graphicsManager;
         this.board = new Board(boardRows, boardCols, 1, this);
         this.keyHandler = new KeyHandler(UIManager.getFrame());
@@ -39,10 +39,10 @@ public class GamePanel extends JPanel implements Runnable {
         board.generateRandomTile();
         board.generateRandomTile();
         board.generateRandomTile();
-        int preferredWidth = LevelGraphicsManager.TILE_SIZE * boardCols + LevelGraphicsManager.TILE_OFFSET * (boardCols + 1);
-        int preferredHeight = LevelGraphicsManager.TILE_SIZE * boardRows + LevelGraphicsManager.TILE_OFFSET * (boardRows + 1);
+        int preferredWidth = GamePanelGraphics.TILE_SIZE * boardCols + GamePanelGraphics.TILE_OFFSET * (boardCols + 1);
+        int preferredHeight = GamePanelGraphics.TILE_SIZE * boardRows + GamePanelGraphics.TILE_OFFSET * (boardRows + 1);
         this.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
-        graphicsManager.load(boardRows, boardCols, bonusNameIDs, obstacleNameIDs);
+        graphicsManager.load(boardRows, boardCols);
         gameThread.start();
     }
 

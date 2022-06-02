@@ -1,6 +1,6 @@
 package game;
 
-import utils.LevelGraphicsManager;
+import utils.GamePanelGraphics;
 import utils.WeightedRandom;
 
 import java.awt.*;
@@ -49,7 +49,7 @@ public class Board implements IRenderable {
     private int moveDirection;
 
     private final GamePanel gp;
-    private final LevelGraphicsManager graphicsManager;
+    private final GamePanelGraphics graphicsManager;
     private final WeightedRandom random = new WeightedRandom();
     private final Tile[][] board;
     private final List<Tile> transientTiles = new LinkedList<>(); // Tiles that are no longer logically present and are to be deleted after finishing current animation cycle.
@@ -175,8 +175,8 @@ public class Board implements IRenderable {
     }
 
     Point pointByCell(BoardCell cell) {
-        return new Point(x + cell.col * LevelGraphicsManager.TILE_SIZE + (cell.col + 1) * LevelGraphicsManager.TILE_OFFSET,
-                y + cell.row * LevelGraphicsManager.TILE_SIZE + (cell.row + 1) * LevelGraphicsManager.TILE_OFFSET);
+        return new Point(x + cell.col * GamePanelGraphics.TILE_SIZE + (cell.col + 1) * GamePanelGraphics.TILE_OFFSET,
+                y + cell.row * GamePanelGraphics.TILE_SIZE + (cell.row + 1) * GamePanelGraphics.TILE_OFFSET);
     }
 
     private void shiftUp() {

@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
  *
  * @author Artem Novak
  */
-public class LevelGraphicsManager extends ImageManager {
+public class GamePanelGraphics extends ImageManager {
 
     // Constants needed for elements to draw themselves (scale is applied in runtime)
     // Board
@@ -27,29 +27,17 @@ public class LevelGraphicsManager extends ImageManager {
     public static final int ENTITY_WIDTH = TILE_SIZE*6;
     public static final int ENTITY_HEIGHT = (int)(TILE_SIZE*4.5f);
 
-    // Healthbar
-    public static final int HEALTHBAR_WIDTH = ENTITY_WIDTH;
-    public static final int HEALTHBAR_HEIGHT = TILE_SIZE/2;
-
-    // Timer
-    public static final int TIMER_X_OFFSET = TILE_OFFSET;
-    public static final int TIMER_SIZE = TILE_SIZE;
-
     // General
-    public static final int PANEL_ELEMENTS_OFFSET = TILE_SIZE/5;
-    public static final int CORNER_ROUNDING = TILE_SIZE/10;
+    public static final int ENTITY_BOARD_DISTANCE = TILE_SIZE/5;
     // How many frames a single animation takes (1 second == 60 frames)
     public static final int ANIMATION_CYCLE = 10;
 
-    public final Font uiFont;
+    public final Font gameTextFont;
 
-    private final String tileFolderPath;
-    private final String entityPath;
-    private final String bgPath;
+    private final String baseFolderPath;
     private final HashMap<String, Color> palette = new HashMap<>();
     {
         palette.put("textColor", Color.white);
-        palette.put("uiBG", new Color(0, 15, 3));
         palette.put("highlight", Color.white);
         palette.put("boardBG", new Color(0, 18, 5));
         palette.put("boardCellBG", new Color(48, 94, 63));
@@ -68,27 +56,12 @@ public class LevelGraphicsManager extends ImageManager {
     }
     /**
      * Initializes (but not loads!) the graphics manager.
-     * Notes:
-     * "Entity" is the entity interacted with during core gameplay, enemy or ally depending on the mode.
      *
-     * @param tileFolderPath path to folder with level's tile pack (must contain images "tile0.png", ..., "tile11.png", "immovableOverlay.png")
-     * @param bonusFolderPath path to folder with level's bonus pack (must contain ".png" files for all bonuses that have to be loaded)
-     * @param obstacleFolderPath path to folder with level's obstacle pack (must contain ".png" files for all obstacles that have to be loaded)
-     * @param bgPath path to level background image
-     * @param entityPath path to top entity image
-     * @param entityHealthColor color of the health indicator of entity at the top
-     * @param maxBonusSize maximum absolute bonus size in pixels (for optimization)
-     * @param maxObstacleSize maximum absolute bonus size in pixels (for optimization)
+     * @param baseFolderPath path to the folder with all graphics for the level's game panel
      */
-    public LevelGraphicsManager(String tileFolderPath, String bonusFolderPath, String obstacleFolderPath,
-                                String bgPath, String entityPath,
-                                Color entityHealthColor, int maxBonusSize, int maxObstacleSize) {
-        this.uiFont = new Font("Arial", Font.BOLD, TILE_SIZE/6);
-        this.tileFolderPath = tileFolderPath;
-        this.bgPath = bgPath;
-        this.entityPath = entityPath;
-
-        palette.put("entityHealthColor", entityHealthColor);
+    public GamePanelGraphics(String baseFolderPath) {
+        this.gameTextFont = new Font("Arial", Font.BOLD, TILE_SIZE/6);
+        this.baseFolderPath = baseFolderPath;
     }
 
     /**
@@ -105,17 +78,12 @@ public class LevelGraphicsManager extends ImageManager {
     /**
      * Loads the actual textures using supplied non-graphical data.
      *
-     * @param bonusNameIDs available bonuses' NameIDs
-     * @param obstacleNameIDs available obstacles' NameIDs
      * @param boardRows rows of the board
      * @param boardCols columns of the board
      */
-    public void load(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs) throws IOException {
+    public void load(int boardRows, int boardCols) throws IOException {
         loadBoard(boardRows, boardCols);
-//        loadBG();
-//        loadEntity();
-//        loadBonuses();
-//        loadObstacles();
+        loadEntity();
     }
 
     private void loadBoard(int boardRows, int boardCols) throws IOException{
@@ -123,6 +91,7 @@ public class LevelGraphicsManager extends ImageManager {
         int offset = TILE_OFFSET;
         int imageSize = tileSize*9/10;
         int imageOffset = tileSize/20;
+        String tileFolderPath = baseFolderPath+"/tiles";
 
         // Loading tiles
         for (int i = 0; i <= 11; i++) {
@@ -131,9 +100,9 @@ public class LevelGraphicsManager extends ImageManager {
             Graphics2D g2d = (Graphics2D) tile.getGraphics();
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setColor(getColor("tileBG"+i));
-            g2d.fillRoundRect(0, 0, tileSize, tileSize, CORNER_ROUNDING, CORNER_ROUNDING);
+            g2d.fillRect(0, 0, tileSize, tileSize);
             g2d.drawImage(image, imageOffset, imageOffset, null);
-            g2d.setFont(uiFont);
+            g2d.setFont(gameTextFont);
             g2d.setColor(Color.black);
             int textX = ((tileSize - g2d.getFontMetrics().stringWidth("LVL"+i))/2);
             g2d.drawString("LVL"+i, textX, tileSize - (int)(g2d.getFontMetrics().getDescent()*1.5));
@@ -149,11 +118,11 @@ public class LevelGraphicsManager extends ImageManager {
         Graphics2D g2d = (Graphics2D) board.getGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(palette.get("boardBG"));
-        g2d.fillRoundRect(0, 0, boardWidth, boardHeight, CORNER_ROUNDING, CORNER_ROUNDING);
+        g2d.fillRect(0, 0, boardWidth, boardHeight);
         g2d.setColor(palette.get("boardCellBG"));
         for (int i = 0; i < boardRows; i++) {
             for (int j = 0; j < boardCols; j++) {
-                g2d.fillRoundRect(offset + j * (tileSize + offset), offset + i * (tileSize + offset), tileSize, tileSize, CORNER_ROUNDING, CORNER_ROUNDING);
+                g2d.fillRect(offset + j * (tileSize + offset), offset + i * (tileSize + offset), tileSize, tileSize);
             }
         }
         g2d.dispose();
@@ -161,19 +130,7 @@ public class LevelGraphicsManager extends ImageManager {
     }
 
     private void loadEntity() throws IOException {
-        textures.put("entity", getScaledImage(getImage(entityPath), (ENTITY_WIDTH), (ENTITY_HEIGHT)));
-    }
-
-    private void loadBG() throws IOException {
-        textures.put("bg", getImage(bgPath));
-    }
-
-    private void loadBonuses() {
-        // TODO
-    }
-
-    private void loadObstacles() {
-        // TODO
+        //textures.put("entity", getScaledImage(getImage(baseFolderPath+"/entity.png"), (ENTITY_WIDTH), (ENTITY_HEIGHT)));
     }
 
 }
