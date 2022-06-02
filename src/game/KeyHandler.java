@@ -3,6 +3,8 @@ package game;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.JFrame;
+
 /**
  * Class that implements methods for registering pressed keys by certain NameIDs.
  */
@@ -14,8 +16,8 @@ public class KeyHandler {
      *
      * @param gp GamePanel that the key listener is attached to.
      */
-    public KeyHandler(GamePanel gp) {
-        gp.addKeyListener(new KeyListener() {
+    public KeyHandler(JFrame frame) {
+        frame.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
 

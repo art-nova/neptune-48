@@ -11,9 +11,9 @@ public class GameplayDemo {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Gameplay Demo");
         try {
-            frame.add(new GamePanel(4, 5, new HashSet<>(), new HashSet<>(),
+            frame.add(new GamePanel(5, 5, new HashSet<>(), new HashSet<>(),
                     new LevelGraphicsManager(
-                            "/images/tiles_testing",
+                            "C:/Users/temak/Desktop/neptune-48-game-logic/assets/images/tiles_testing",
                             "lorem ipsum",
                             "lorem ipsum",
                             "lorem ipsum",
