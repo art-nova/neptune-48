@@ -14,7 +14,7 @@ public class KeyHandler {
     /**
      * Constructs a key handler.
      *
-     * @param gp GamePanel that the key listener is attached to.
+     * @param frame JFrame that the key listener is attached to.
      */
     public KeyHandler(JFrame frame) {
         frame.addKeyListener(new KeyListener() {

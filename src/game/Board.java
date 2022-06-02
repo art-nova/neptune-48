@@ -1,7 +1,7 @@
 package game;
 
-import utils.GamePanelGraphics;
-import utils.WeightedRandom;
+import game.utils.GamePanelGraphics;
+import game.utils.WeightedRandom;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -42,6 +42,7 @@ public class Board implements IRenderable {
 
     public int state = PLAYING;
     public int baseTileLevel;
+    public boolean full = false;
 
     // Directions
     private static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3;
@@ -141,6 +142,7 @@ public class Board implements IRenderable {
      * Reacts appropriately if the tile is unable to be generated (board full).
      */
     public void generateRandomTile() {
+        full = false;
         ArrayList<BoardCell> freeBoardCells = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -154,7 +156,8 @@ public class Board implements IRenderable {
             newTileWeights.put(baseTileLevel+1, 1);
             generateTile(finalPoint, random.<Integer>weightedChoice(newTileWeights));
         }
-        else {
+        if (freeBoardCells.size() == 1) {
+            full = true;
             if (checkForLoseCondition()) gp.loseLevel();
         }
     }

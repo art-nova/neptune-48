@@ -1,19 +1,19 @@
-package utils;
+package game.utils;
 
 import java.util.Map;
 import java.util.Random;
 
 /**
- * Клас, що реалізує випадковий вибір об'єктів за відносною частотою на базі класу Random.
+ * Class that implements random weighted choice from a collection of objects ()
  *
  * @author Artem Novak
  */
 public class WeightedRandom extends Random {
     /**
-     * Випадково обирає об'єкт із мапи за його відносною частотою ("вагою").
+     * Chooses a random key from the map, probability is based on map values (weights).
      *
-     * @param weightMap мапа об'єктів до їх відносних частот.
-     * @return випадково обраний на основі відносних частот об'єкт, або null, якщо нема об'єктів із непорожніми частотами.
+     * @param weightMap map of objects to their generation weights
+     * @return object chosen randomly based on weights, or null if no such object could be chosen
      */
     public <T> T weightedChoice (Map<T, Integer> weightMap) {
         for (T key : weightMap.keySet()) {

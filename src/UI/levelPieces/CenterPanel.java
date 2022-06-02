@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.HashSet;
 
 import models.App;
-import utils.GamePanelGraphics;
+import game.utils.GamePanelGraphics;
 
 /**
  *
@@ -33,7 +33,7 @@ public class CenterPanel extends JLayeredPane{
         //add(new Board());
         try
 	{
-	    add(new GamePanel(5, 5, new HashSet<>(), new HashSet<>(),
+	    add(new GamePanel(4, 4, new HashSet<>(), new HashSet<>(),
                 new GamePanelGraphics("resources/images/neptun")));
 	}
 	catch (IOException e){}

@@ -1,4 +1,4 @@
-package utils;
+package game.utils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -25,26 +25,6 @@ public abstract class ImageManager {
         if (!textures.containsKey(nameID)) throw new IllegalArgumentException("Unknown texture " + nameID);
         return textures.get(nameID);
     }
-
-    // LEGACY VERSION OF THE SCALING ALGORITHM
-//    /**
-//     * Loads a picture by filepath and scales it.
-//     *
-//     * @param filepath path in format "/images/.../image.png"
-//     * @param width width of the scaled instance
-//     * @param height height of the scaled instance
-//     * @return scaled instance of the loaded image or null
-//     * @throws IOException if image reading encounters issues
-//     */
-//    protected BufferedImage loadScaledImage(String filepath, int width, int height) throws IOException {
-//        BufferedImage image = getImage(filepath);
-//        BufferedImage scaledImage = new BufferedImage(width, height, image.getType());
-//        Graphics2D g2d = (Graphics2D) scaledImage.getGraphics();
-//        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-//        g2d.drawImage(image, 0, 0, width, height, null);
-//        g2d.dispose();
-//        return scaledImage;
-//    }
 
     /**
      * Scales BufferedImage, providing higher-quality downscaling.

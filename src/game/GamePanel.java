@@ -1,6 +1,6 @@
 package game;
 
-import utils.GamePanelGraphics;
+import game.utils.GamePanelGraphics;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;

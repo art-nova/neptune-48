@@ -1,8 +1,7 @@
 import game.GamePanel;
-import utils.GamePanelGraphics;
+import game.utils.GamePanelGraphics;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.HashSet;
 
 public class GameplayDemo {

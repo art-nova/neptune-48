@@ -22,6 +22,8 @@ public class UIManager {
         frame.setSize(level.sizes.windowWidth,level.sizes.windowHeight);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        frame.setFocusable(true);
+        frame.setLocationRelativeTo(null);
     }
 
     private static void clearFrame(){

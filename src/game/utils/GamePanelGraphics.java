@@ -1,11 +1,10 @@
-package utils;
+package game.utils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -19,8 +18,8 @@ public class GamePanelGraphics extends ImageManager {
 
     // Constants needed for elements to draw themselves (scale is applied in runtime)
     // Board
-    public static final int TILE_SIZE = 100;
-    public static final int TILE_OFFSET = TILE_SIZE/10;
+    public static final int TILE_SIZE = 115;
+    public static final int TILE_OFFSET = 8;
     public static final int TILE_PULSE_OFFSET = TILE_OFFSET/2;
 
     // Entity (one being attacked / repaired)
