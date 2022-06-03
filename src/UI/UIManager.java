@@ -18,7 +18,7 @@ public class UIManager {
 
     public static void showParallax(){
         frame.setSize(1000,700);
-        Parallax parallax = new Parallax();
+        Parallax parallax = new Parallax(1000, 700);
         frame.add(parallax);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
