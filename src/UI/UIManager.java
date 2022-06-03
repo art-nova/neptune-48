@@ -15,6 +15,14 @@ public class UIManager {
     public static void initFrame() {
 	frame = new JFrame("title");
     }
+
+    public static void showParallax(){
+        frame.setSize(1000,700);
+        Parallax parallax = new Parallax();
+        frame.add(parallax);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
     
     public static void init(){
         level = App.getLevel();

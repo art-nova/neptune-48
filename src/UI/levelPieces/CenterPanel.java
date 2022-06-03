@@ -32,11 +32,11 @@ public class CenterPanel extends JLayeredPane{
         add(Box.createRigidArea(new Dimension(level.sizes.boardSize, level.sizes.centerPanelOffset)));
         //add(new Board());
         try
-	{
-	    add(new GamePanel(4, 4, new HashSet<>(), new HashSet<>(),
-                new GamePanelGraphics("resources/images/neptun")));
-	}
-	catch (IOException e){}
+        {
+            add(new GamePanel(4, 4, new HashSet<>(), new HashSet<>(),
+                    new GamePanelGraphics("resources/images/neptun")));
+        }
+        catch (IOException e){}
         add(new Attack());
     }
         

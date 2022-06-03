@@ -4,7 +4,6 @@ import UI.LevelGraphics;
 import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import models.App;
 
 /**
  * Set of images for level
