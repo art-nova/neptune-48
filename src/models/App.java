@@ -23,7 +23,7 @@ public class App {
     /**
      * Path to the programm folder.
      */
-    public final static String PATH = "C:/Users/temak/Desktop/ResizableInterface";
+//    public final static String PATH = "C:/Users/temak/Desktop/2048";
     static TileField field;
     static JLabel label;
     static JFrame frame;
@@ -45,6 +45,7 @@ public class App {
     
     public static void main(String[] args) {
         //ImageSet set = new ImageSet("neptun", 75, 50);
+	UIManager.initFrame();
         levelGraphics = new LevelGraphics();
         levelGraphics.addGraphics();
         UIManager.init();

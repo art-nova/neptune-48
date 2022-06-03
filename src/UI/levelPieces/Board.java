@@ -4,7 +4,6 @@ import javax.swing.JLayeredPane;
 
 import UI.fragments.FilledBox;
 import UI.miscellaneous.SizeSet;
-import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JPanel;
 import models.App;

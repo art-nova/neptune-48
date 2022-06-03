@@ -3,10 +3,15 @@ package UI.levelPieces;
 import javax.swing.JLayeredPane;
 
 import UI.LevelGraphics;
+import game.GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.util.HashSet;
+
 import models.App;
+import game.utils.GamePanelGraphics;
 
 /**
  *
@@ -25,7 +30,13 @@ public class CenterPanel extends JLayeredPane{
         add(Box.createRigidArea(new Dimension(level.sizes.boardSize, level.sizes.centerPanelOffset)));
         add(new Enemy(0));
         add(Box.createRigidArea(new Dimension(level.sizes.boardSize, level.sizes.centerPanelOffset)));
-        add(new Board());
+        //add(new Board());
+        try
+	{
+	    add(new GamePanel(4, 4, new HashSet<>(), new HashSet<>(),
+                new GamePanelGraphics("resources/images/neptun")));
+	}
+	catch (IOException e){}
         add(new Attack());
     }
         

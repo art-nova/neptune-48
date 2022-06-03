@@ -1,9 +1,11 @@
 package UI.fragments;
 
+import javax.swing.JLayeredPane;
+
 /**
  *
  * @author Artemii Kolomiichuk
  */
-public class Button {
-    //cover ...
+public class Button  extends  JLayeredPane{
+    
 }

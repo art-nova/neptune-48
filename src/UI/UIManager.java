@@ -12,12 +12,18 @@ public class UIManager {
     private static JFrame frame;
     private static LevelGraphics level;
     
+    public static void initFrame() {
+	frame = new JFrame("title");
+    }
+    
     public static void init(){
         level = App.getLevel();
-        frame = new JFrame("title");
+        
         frame.setSize(level.sizes.windowWidth,level.sizes.windowHeight);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        frame.setFocusable(true);
+        frame.setLocationRelativeTo(null);
     }
 
     private static void clearFrame(){
@@ -28,5 +34,9 @@ public class UIManager {
     public static void loadLevel(){
         clearFrame();
         frame.add(level);
+    }
+    
+    public static JFrame getFrame() {
+	return frame;
     }
 }
