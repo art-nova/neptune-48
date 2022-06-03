@@ -50,6 +50,8 @@ public class Parallax extends JPanel{
                 layers.get(0).setLocationByPercent(perX, perY);
                 layers.get(2).setLocationByPercent(perX, perY);
                 layers.get(1).setLocationByPercent(perX, perY);
+                revalidate();
+                repaint();
             }
         };
         

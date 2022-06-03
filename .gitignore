@@ -22,6 +22,8 @@
 # IDE Files
 .idea
 *.iml
+.classpath
+.project
 out
 
 # Testing Code
