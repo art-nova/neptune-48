@@ -49,7 +49,7 @@ public class Tile implements IRenderable{
             x += speedX;
             y += speedY;
             animationFramesLeft--;
-            if (state == MERGING && animationFramesLeft <= 0) upgrade();
+            if (state == MERGING && animationFramesLeft <= 0) pulse(0, GamePanelGraphics.TILE_PULSE_OFFSET);;
         }
         else if (state == PULSATING) {
             board.state = Board.ANIMATING;
@@ -61,6 +61,7 @@ public class Tile implements IRenderable{
             }
         }
         else if (state == GENERATING && animationFramesLeft <= 0) {
+            board.state = Board.ANIMATING;
             visible = true;
             pulse(-GamePanelGraphics.TILE_SIZE/2, GamePanelGraphics.TILE_PULSE_OFFSET);
         }
@@ -77,6 +78,9 @@ public class Tile implements IRenderable{
                 int offset = (int)visualOffset;
                 g2d.drawImage(gp.graphicsManager.getTexture("tile"+level), screenX - offset, screenY - offset, size, size, null);
             }
+            else if (state == MERGING) {
+                g2d.drawImage(gp.graphicsManager.getTexture(("tile"+(level-1))), screenX, screenY, null);
+            }
             else {
                 g2d.drawImage(gp.graphicsManager.getTexture(("tile"+level)), screenX, screenY, null);
                 if (locked) g2d.drawImage(gp.graphicsManager.getTexture(("lockedOverlay")), screenX, screenY, null);
@@ -88,13 +92,14 @@ public class Tile implements IRenderable{
      * Moves the tile to the state expected at the end of current animation cycle and switches animation state to STATIC.
      */
     public void flush() {
-        speedVisualOffset = 0;
-        targetVisualOffset = 0;
-        visualOffset = 0;
         x = targetX;
         y = targetY;
         speedX = 0;
         speedY = 0;
+        speedVisualOffset = 0;
+        targetVisualOffset = 0;
+        visualOffset = 0;
+        if (state == GENERATING) visible = true;
         animationFramesLeft = 0;
         state = STATIC;
     }
@@ -156,6 +161,7 @@ public class Tile implements IRenderable{
     public void makeMergeBase() {
         startAnimationCycle();
         state = MERGING;
+        level++;
     }
 
     private void startAnimationCycle() {

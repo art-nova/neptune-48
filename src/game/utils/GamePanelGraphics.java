@@ -29,28 +29,30 @@ public class GamePanelGraphics extends ImageManager {
     // General
     public static final int ENTITY_BOARD_DISTANCE = TILE_SIZE/5;
     // How many frames a single animation takes (1 second == 60 frames)
-    public static final int ANIMATION_CYCLE = 10;
+    public static final int ANIMATION_CYCLE = 7;
 
     public final Font gameTextFont;
+
+    public float scale = 1f; // NOT FULLY IMPLEMENTED YET
 
     private final String baseFolderPath;
     private final HashMap<String, Color> palette = new HashMap<>();
     {
         palette.put("textColor", Color.white);
-        palette.put("highlight", Color.white);
+        palette.put("highlight", new Color(255, 255, 255, 212));
         palette.put("boardBG", new Color(0, 18, 5));
         palette.put("boardCellBG", new Color(48, 94, 63));
         palette.put("tileBG0", new Color(28, 13, 0));
         palette.put("tileBG1", new Color(125, 125, 125));
-        palette.put("tileBG2", new Color(227, 227, 227));
-        palette.put("tileBG3", new Color(136, 217, 121));
-        palette.put("tileBG4", new Color(86, 214, 54));
-        palette.put("tileBG5", new Color(230, 212, 122));
-        palette.put("tileBG6", new Color(237, 202, 28));
-        palette.put("tileBG7", new Color(124, 150, 235));
-        palette.put("tileBG8", new Color(34, 84, 245));
-        palette.put("tileBG9", new Color(172, 108, 224));
-        palette.put("tileBG10", new Color(128, 27, 209));
+        palette.put("tileBG2", new Color(136, 217, 121));
+        palette.put("tileBG3", new Color(86, 214, 54));
+        palette.put("tileBG4", new Color(230, 212, 122));
+        palette.put("tileBG5", new Color(237, 202, 28));
+        palette.put("tileBG6", new Color(124, 150, 235));
+        palette.put("tileBG7", new Color(34, 84, 245));
+        palette.put("tileBG8", new Color(172, 108, 224));
+        palette.put("tileBG9", new Color(128, 27, 209));
+        palette.put("tileBG10", new Color(242, 100, 75));
         palette.put("tileBG11", new Color(224, 11, 61));
     }
     /**
