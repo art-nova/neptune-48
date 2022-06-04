@@ -173,7 +173,7 @@ public class Board implements IRenderable {
                 }
             }
         }
-        else if (state == ANIMATING) {
+        if (state == ANIMATING || state == STATIC) {
             state = STATIC; // Gets set to ANIMATING by updating tiles if any of them are being animated
             for (Tile[] row : board) {
                 for (Tile tile : row) if (tile != null) tile.update();

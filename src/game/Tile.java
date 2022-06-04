@@ -38,6 +38,7 @@ public class Tile implements IRenderable{
         this.level = level;
         this.gp = gp;
         this.board = gp.board;
+        board.state = Board.ANIMATING;
     }
 
     /**
@@ -60,10 +61,12 @@ public class Tile implements IRenderable{
                 targetVisualOffset = 0;
             }
         }
-        else if (state == GENERATING && animationFramesLeft <= 0) {
+        else if (state == GENERATING) {
             board.state = Board.ANIMATING;
-            visible = true;
-            pulse(-GamePanelGraphics.TILE_SIZE/2, GamePanelGraphics.TILE_PULSE_OFFSET);
+            if (animationFramesLeft <= 0) {
+                visible = true;
+                pulse(-GamePanelGraphics.TILE_SIZE / 2, GamePanelGraphics.TILE_PULSE_OFFSET);
+            }
         }
         if (state != STATIC && animationFramesLeft <= 0) flush();
     }

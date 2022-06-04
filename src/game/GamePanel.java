@@ -43,30 +43,11 @@ public class GamePanel extends JPanel implements Runnable {
         this.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
-//        board.generateRandomTile();
-//        board.generateRandomTile();
-        board.generateTile(new BoardCell(0, 0), 1);
-        board.generateTile(new BoardCell(1, 0), 2);
-        board.generateTile(new BoardCell(2, 0), 3);
-        board.generateTile(new BoardCell(3, 0), 4);
-        board.generateTile(new BoardCell(0, 1), 5);
-        board.generateTile(new BoardCell(1, 1), 6);
-        board.generateTile(new BoardCell(2, 1), 7);
-        board.generateTile(new BoardCell(3, 1), 8);
-        board.generateTile(new BoardCell(0, 2), 1);
-        board.generateTile(new BoardCell(1, 2), 2);
-        board.generateTile(new BoardCell(2, 2), 3);
-        board.generateTile(new BoardCell(3, 2), 4);
-        board.generateTile(new BoardCell(0, 3), 5);
-        board.generateTile(new BoardCell(1, 3), 6);
-        board.generateTile(new BoardCell(2, 3), 7);
         this.setPreferredSize(new Dimension(board.preferredWidth, board.preferredHeight));
+        board.generateRandomTile();
+        board.generateRandomTile();
         graphicsManager.load(boardRows, boardCols);
         gameThread.start();
-        board.initSelection(x -> {
-            Tile tile = board.tileByBoardCell(x);
-            return tile != null && tile.level == 1;
-        }, 1);
     }
 
     @Override
