@@ -1,5 +1,6 @@
 package models;
 import UI.LevelGraphics;
+import UI.MainMenu;
 import UI.UIManager;
 
 /**
@@ -15,10 +16,13 @@ public class App {
     }
     
     public static void main(String[] args) {
+        MainMenu m  = new MainMenu();
+        /*
         UIManager.initFrame();
-        UIManager.showParallax();
-        /* 
-	    UIManager.initFrame();
+        
+        //UIManager.showParallax();
+        
+	    
         levelGraphics = new LevelGraphics();
         levelGraphics.addGraphics();
         UIManager.init();

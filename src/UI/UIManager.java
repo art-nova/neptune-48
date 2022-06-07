@@ -1,6 +1,8 @@
 package UI;
 
-import javax.swing.JFrame;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
 import models.App;
 
 /**
@@ -15,14 +17,6 @@ public class UIManager {
     public static void initFrame() {
 	frame = new JFrame("title");
     }
-
-    public static void showParallax(){
-        frame.setSize(1000,700);
-        Parallax parallax = new Parallax(1000, 700);
-        frame.add(parallax);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-    }
     
     public static void init(){
         level = App.getLevel();
@@ -32,6 +26,15 @@ public class UIManager {
         frame.setVisible(true);
         frame.setFocusable(true);
         frame.setLocationRelativeTo(null);
+
+        frame.addComponentListener(new ComponentAdapter() 
+        {  
+                public void componentResized(ComponentEvent evt) {
+                    Component c = (Component)evt.getSource();
+                    System.out.println("Resized to " + c.getSize());
+                }
+        });
+        
     }
 
     private static void clearFrame(){
