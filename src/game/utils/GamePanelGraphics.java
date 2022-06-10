@@ -96,7 +96,7 @@ public class GamePanelGraphics extends ImageManager {
 
         // Loading tiles
         for (int i = 0; i <= 11; i++) {
-            BufferedImage image = getScaledImage(ImageIO.read(new File(tileFolderPath+"/tile"+i+".png")), imageSize, imageSize);
+            BufferedImage image = getScaledImage(getImage(tileFolderPath+"/tile"+i+".png"), imageSize, imageSize);
             BufferedImage tile = new BufferedImage(tileSize, tileSize, image.getType());
             Graphics2D g2d = (Graphics2D) tile.getGraphics();
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -110,7 +110,7 @@ public class GamePanelGraphics extends ImageManager {
             g2d.dispose();
             textures.put("tile"+i, tile);
         }
-        textures.put("lockedOverlay", getScaledImage(ImageIO.read(new File(tileFolderPath+"/lockedOverlay.png")), tileSize, tileSize));
+        textures.put("lockedOverlay", getScaledImage(getImage(tileFolderPath+"/lockedOverlay.png"), tileSize, tileSize));
 
         // Loading the actual board
         int boardWidth = tileSize * boardCols + offset * (boardCols + 1);

@@ -3,6 +3,7 @@ package game.utils;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -56,9 +57,7 @@ public abstract class ImageManager {
     }
 
     public BufferedImage getImage(String filepath) throws IOException {
-        InputStream resource = getClass().getResourceAsStream(filepath);
-        if (resource == null) throw new IOException("Failed to find image resource at " + filepath);
-        BufferedImage image = ImageIO.read(resource);
+        BufferedImage image = ImageIO.read(new File(filepath));
         if (image == null) throw new IOException("Failed to load image from " + filepath);
         return image;
     }
