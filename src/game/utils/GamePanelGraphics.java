@@ -23,8 +23,8 @@ public class GamePanelGraphics extends ImageManager {
     public static final int TILE_PULSE_OFFSET = TILE_OFFSET/2;
 
     // Entity (one being attacked / repaired)
-    public static final int ENTITY_WIDTH = TILE_SIZE*6;
-    public static final int ENTITY_HEIGHT = (int)(TILE_SIZE*4.5f);
+    public static final int ENTITY_WIDTH = TILE_SIZE*5 + TILE_OFFSET*6;
+    public static final int ENTITY_HEIGHT = TILE_SIZE*2;
 
     // General
     public static final int ENTITY_BOARD_DISTANCE = TILE_SIZE/5;
@@ -81,10 +81,11 @@ public class GamePanelGraphics extends ImageManager {
      *
      * @param boardRows rows of the board
      * @param boardCols columns of the board
+     * @param entityIndex index of the entity texture for this level
      */
-    public void load(int boardRows, int boardCols) throws IOException {
+    public void load(int boardRows, int boardCols, int entityIndex) throws IOException {
         loadBoard(boardRows, boardCols);
-        loadEntity();
+        loadEntity(entityIndex);
     }
 
     private void loadBoard(int boardRows, int boardCols) throws IOException{
@@ -130,8 +131,8 @@ public class GamePanelGraphics extends ImageManager {
         textures.put("boardBG", board);
     }
 
-    private void loadEntity() throws IOException {
-        //textures.put("entity", getScaledImage(getImage(baseFolderPath+"/entity.png"), (ENTITY_WIDTH), (ENTITY_HEIGHT)));
+    private void loadEntity(int entityIndex) throws IOException {
+        textures.put("entity", getScaledImage(getImage(baseFolderPath+"/entities/entity" + entityIndex + ".png"), ENTITY_WIDTH, ENTITY_HEIGHT));
     }
 
 }

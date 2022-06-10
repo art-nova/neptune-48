@@ -21,6 +21,7 @@ public class GamePanel extends JPanel implements Runnable {
     // Time left in seconds
     public int timeLeft;
     public final Board board;
+    public final Entity entity;
     public final GamePanelGraphics graphics;
     public final KeyHandler keyHandler = new KeyHandler();
     public final MouseHandler mouseHandler = new MouseHandler();
@@ -36,19 +37,23 @@ public class GamePanel extends JPanel implements Runnable {
      * @param bonusNameIDs NameIDs of selected bonuses
      * @param obstacleNameIDs NameIDs of level's obstacles
      * @param graphics non-loaded graphics manager object
+     * @param entityMaxHealth max health of the entity
+     * @param entityIndex index of the entity to be loaded (in the entity texture folder)
      * @param time time in seconds after which level is considered failed
      */
-    public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs, GamePanelGraphics graphics, int time) throws IOException {
+    public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs, GamePanelGraphics graphics,
+                     int entityMaxHealth, int entityIndex, int time) throws IOException {
         this.graphics = graphics;
         this.board = new Board(boardRows, boardCols, 1, this);
+        this.entity = new Entity(0, 0, entityMaxHealth, this);
         UIManager.getFrame().addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
-        this.setPreferredSize(new Dimension(board.preferredWidth, board.preferredHeight));
+        this.setPreferredSize(new Dimension(GamePanelGraphics.ENTITY_WIDTH, board.preferredHeight + GamePanelGraphics.ENTITY_BOARD_DISTANCE + GamePanelGraphics.ENTITY_HEIGHT));
         this.timeLeft = time;
 
-        graphics.load(boardRows, boardCols);
+        graphics.load(boardRows, boardCols, entityIndex);
         board.generateRandomTile();
         board.generateRandomTile();
         gameThread.start();
@@ -92,12 +97,15 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void update() {
         board.update();
+        entity.update();
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        board.render((Graphics2D)g);
+        Graphics2D g2d = (Graphics2D)g;
+        board.render(g2d);
+        entity.render(g2d);
         g.dispose();
     }
 
