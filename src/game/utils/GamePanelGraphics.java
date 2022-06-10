@@ -18,8 +18,8 @@ public class GamePanelGraphics extends ImageManager {
 
     // Constants needed for elements to draw themselves (scale is applied in runtime)
     // Board
-    public static final int TILE_SIZE = 115;
-    public static final int TILE_OFFSET = 8;
+    public static final int TILE_SIZE = 94;
+    public static final int TILE_OFFSET = 5;
     public static final int TILE_PULSE_OFFSET = TILE_OFFSET/2;
 
     // Entity (one being attacked / repaired)

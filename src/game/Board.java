@@ -37,14 +37,13 @@ public class Board extends GameObject {
     private final SelectionHandler selectionHandler;
     private final int rows;
     private final int cols;
-    private int x, y;
     private int tileCount;
 
     private int moveDirection;
     private boolean turnReactionScheduled;
 
-    public Board(int rows, int cols, int baseTileLevel, GamePanel gp) throws IllegalArgumentException {
-        super(0, 0, gp);
+    public Board(int x, int y, int rows, int cols, int baseTileLevel, GamePanel gp) throws IllegalArgumentException {
+        super(x, y, gp);
         if (rows < 2) throw new IllegalArgumentException("Cannot have less than 2 rows");
         if (cols < 2) throw new IllegalArgumentException("Cannot have less than 2 columns");
         if (baseTileLevel < 1 || baseTileLevel > 11)
@@ -75,7 +74,7 @@ public class Board extends GameObject {
          * Prepares a new SelectionHandler instance (predicate and maxSelection have to be set later).
          */
         private SelectionHandler() {
-            super(Board.this.x, Board.this.y, Board.this.gp);
+            super((int)Board.this.x, (int)Board.this.y, Board.this.gp);
             highlight = new BufferedImage(GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET, GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = (Graphics2D) highlight.getGraphics();
             Area highlightArea = new Area(new Rectangle(GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET, GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET));
@@ -186,7 +185,7 @@ public class Board extends GameObject {
     }
 
     public void render(Graphics2D g2d) {
-        g2d.drawImage(gp.graphics.getTexture("boardBG"), x, y, null);
+        g2d.drawImage(gp.graphics.getTexture("boardBG"), (int)x, (int)y, null);
         if (state != ANIMATING || moveDirection == UP) {
             for (Tile[] row : board) {
                 for (Tile tile : row) if (tile != null) tile.render(g2d);
@@ -299,8 +298,8 @@ public class Board extends GameObject {
      * @return base-scale point relative to the GamePanel
      */
     public Point pointByCell(BoardCell cell) {
-        return new Point(x + cell.col * GamePanelGraphics.TILE_SIZE + (cell.col + 1) * GamePanelGraphics.TILE_OFFSET,
-                y + cell.row * GamePanelGraphics.TILE_SIZE + (cell.row + 1) * GamePanelGraphics.TILE_OFFSET);
+        return new Point((int)x + cell.col * GamePanelGraphics.TILE_SIZE + (cell.col + 1) * GamePanelGraphics.TILE_OFFSET,
+                (int)y + cell.row * GamePanelGraphics.TILE_SIZE + (cell.row + 1) * GamePanelGraphics.TILE_OFFSET);
     }
 
     /**

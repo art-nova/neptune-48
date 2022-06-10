@@ -44,13 +44,14 @@ public class GamePanel extends JPanel implements Runnable {
     public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs, GamePanelGraphics graphics,
                      int entityMaxHealth, int entityIndex, int time) throws IOException {
         this.graphics = graphics;
-        this.board = new Board(boardRows, boardCols, 1, this);
         this.entity = new Entity(0, 0, entityMaxHealth, this);
+        this.board = new Board(0, GamePanelGraphics.ENTITY_HEIGHT + GamePanelGraphics.ENTITY_BOARD_DISTANCE, boardRows, boardCols, 1, this);
         UIManager.getFrame().addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
         this.setPreferredSize(new Dimension(GamePanelGraphics.ENTITY_WIDTH, board.preferredHeight + GamePanelGraphics.ENTITY_BOARD_DISTANCE + GamePanelGraphics.ENTITY_HEIGHT));
+        board.setX((GamePanelGraphics.ENTITY_WIDTH - board.preferredWidth)/2f);
         this.timeLeft = time;
 
         graphics.load(boardRows, boardCols, entityIndex);
