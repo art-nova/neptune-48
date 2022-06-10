@@ -34,7 +34,7 @@ public class CenterPanel extends JLayeredPane{
         try
 	{
 	    add(new GamePanel(4, 4, new HashSet<>(), new HashSet<>(),
-                new GamePanelGraphics("resources/images/neptun")));
+                new GamePanelGraphics("resources/images/neptun"), 120));
 	}
 	catch (IOException e){}
         add(new Attack());

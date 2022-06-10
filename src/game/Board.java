@@ -3,8 +3,6 @@ package game;
 import game.utils.GamePanelGraphics;
 import game.utils.WeightedRandom;
 
-import javax.swing.*;
-import javax.swing.plaf.synth.SynthUI;
 import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
@@ -19,7 +17,7 @@ import java.util.function.Predicate;
  *
  * @author Artem Novak
  */
-public class Board implements IRenderable {
+public class Board extends GameObject {
 
     // Board states
     public static final int STATIC = 0, SELECTING = 1, ANIMATING = 2;
@@ -34,8 +32,6 @@ public class Board implements IRenderable {
     // Directions
     private static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3;
 
-    private final GamePanel gp;
-    private final GamePanelGraphics graphicsManager;
     private final WeightedRandom random = new WeightedRandom();
     private final List<Tile> transientTiles = new LinkedList<>(); // Tiles that are no longer logically present and are to be deleted after finishing current animation cycle.
     private final SelectionHandler selectionHandler;
@@ -48,12 +44,12 @@ public class Board implements IRenderable {
     private boolean turnReactionScheduled;
 
     public Board(int rows, int cols, int baseTileLevel, GamePanel gp) throws IllegalArgumentException {
+        super(0, 0, gp);
         if (rows < 2) throw new IllegalArgumentException("Cannot have less than 2 rows");
         if (cols < 2) throw new IllegalArgumentException("Cannot have less than 2 columns");
         if (baseTileLevel < 1 || baseTileLevel > 11)
             throw new IllegalArgumentException("Illegal base tile level: " + baseTileLevel);
         this.gp = gp;
-        this.graphicsManager = gp.graphicsManager;
         this.rows = rows;
         this.cols = cols;
         this.baseTileLevel = baseTileLevel;
@@ -68,7 +64,7 @@ public class Board implements IRenderable {
      *
      * @author Artem Novak
      */
-    private class SelectionHandler implements IRenderable {
+    private class SelectionHandler extends GameObject {
         public List<BoardCell> selected = new ArrayList<>();
         private Predicate<BoardCell> predicate;
         private int maxSelection;
@@ -79,11 +75,12 @@ public class Board implements IRenderable {
          * Prepares a new SelectionHandler instance (predicate and maxSelection have to be set later).
          */
         private SelectionHandler() {
+            super(Board.this.x, Board.this.y, Board.this.gp);
             highlight = new BufferedImage(GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET, GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = (Graphics2D) highlight.getGraphics();
             Area highlightArea = new Area(new Rectangle(GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET, GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET));
             highlightArea.subtract(new Area(new Rectangle( GamePanelGraphics.TILE_OFFSET/2,  + GamePanelGraphics.TILE_OFFSET/2, GamePanelGraphics.TILE_SIZE, GamePanelGraphics.TILE_SIZE)));
-            g2d.setColor(graphicsManager.getColor("highlight"));
+            g2d.setColor(gp.graphics.getColor("highlight"));
             g2d.fill(highlightArea);
             g2d.dispose();
         }
@@ -93,7 +90,7 @@ public class Board implements IRenderable {
          */
         public void resetOverlay() {
             overlay = new BufferedImage(preferredWidth, preferredHeight, BufferedImage.TYPE_INT_ARGB);
-            Area overlayArea = new Area(new Rectangle(x, y, preferredWidth, preferredHeight));
+            Area overlayArea = new Area(new Rectangle((int)x, (int)y, preferredWidth, preferredHeight));
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
                     BoardCell cell = new BoardCell(i, j);
@@ -134,10 +131,9 @@ public class Board implements IRenderable {
          *
          * @param g2d Graphics2D instance for rendering
          */
-        @Override
         public void render(Graphics2D g2d) {
             if (predicate == null) throw new GameLogicException("Rendering a selector without a selection predicate");
-            g2d.drawImage(overlay, x, y, null);
+            g2d.drawImage(overlay, (int)x, (int)y, null);
             for (BoardCell cell : selected) highlightCell(cell, g2d);
             if (gp.mouseHandler.mouseOn) {
                 BoardCell cell = cellByMouseLocation();
@@ -150,8 +146,8 @@ public class Board implements IRenderable {
         private BoardCell cellByMouseLocation() {
             Point mouseScreenLocation = MouseInfo.getPointerInfo().getLocation();
             Point gpScreenLocation = gp.getLocationOnScreen();
-            Point mouseGameLocation = new Point((int)((mouseScreenLocation.x - gpScreenLocation.x)/graphicsManager.scale),
-                    (int)((mouseScreenLocation.y - gpScreenLocation.y)/graphicsManager.scale));
+            Point mouseGameLocation = new Point((int)((mouseScreenLocation.x - gpScreenLocation.x)/gp.graphics.scale),
+                    (int)((mouseScreenLocation.y - gpScreenLocation.y)/gp.graphics.scale));
             return cellByPoint(mouseGameLocation);
 
         }
@@ -190,7 +186,7 @@ public class Board implements IRenderable {
     }
 
     public void render(Graphics2D g2d) {
-        g2d.drawImage(graphicsManager.getTexture("boardBG"), x, y, null);
+        g2d.drawImage(gp.graphics.getTexture("boardBG"), x, y, null);
         if (state != ANIMATING || moveDirection == UP) {
             for (Tile[] row : board) {
                 for (Tile tile : row) if (tile != null) tile.render(g2d);
