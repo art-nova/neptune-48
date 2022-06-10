@@ -25,7 +25,7 @@ public abstract class Bonus implements GameModifier {
 
     @Override
     public boolean isApplicable() {
-        return applicable && gp.board.state == Board.PLAYING;
+        return applicable && gp.board.state == Board.STATIC;
     }
 
     @Override
