@@ -18,14 +18,15 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int PLAYING = 0, PAUSED = 1, ENDING = 2, ENDED = 3;
 
     public int state = PLAYING;
-    public Board board;
-    public GamePanelGraphics graphicsManager;
+    // Time left in seconds
+    public int timeLeft;
+    public final Board board;
+    public final GamePanelGraphics graphicsManager;
     public final KeyHandler keyHandler = new KeyHandler();
     public final MouseHandler mouseHandler = new MouseHandler();
-    public boolean debug = false;
 
-    private final Thread gameThread = new Thread(this);
     private static final int FPS = 60;
+    private final Thread gameThread = new Thread(this);
 
     /**
      * Constructs a game panel with given graphics manager object.
@@ -35,8 +36,9 @@ public class GamePanel extends JPanel implements Runnable {
      * @param bonusNameIDs NameIDs of selected bonuses
      * @param obstacleNameIDs NameIDs of level's obstacles
      * @param graphicsManager non-loaded graphics manager object
+     * @param time time in seconds after which level is considered failed
      */
-    public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs, GamePanelGraphics graphicsManager) throws IOException {
+    public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs, GamePanelGraphics graphicsManager, int time) throws IOException {
         this.graphicsManager = graphicsManager;
         this.board = new Board(boardRows, boardCols, 1, this);
         UIManager.getFrame().addKeyListener(keyHandler);
@@ -44,9 +46,11 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.setFocusable(true);
         this.setPreferredSize(new Dimension(board.preferredWidth, board.preferredHeight));
-        board.generateRandomTile();
-        board.generateRandomTile();
+        this.timeLeft = time;
+
         graphicsManager.load(boardRows, boardCols);
+        board.generateRandomTile();
+        board.generateRandomTile();
         gameThread.start();
     }
 
@@ -57,32 +61,28 @@ public class GamePanel extends JPanel implements Runnable {
         long lastTime = System.nanoTime();
         long currentTime;
 
-        // Debug
-        long debugTimer = 0;
-        int frameCount = 0;
+        long secondsTimer = 0;
 
         while (state != ENDED) {
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime)/frameInterval;
-            debugTimer += currentTime - lastTime; // DEBUG
+            secondsTimer += currentTime - lastTime;
             lastTime = currentTime;
 
             if ((state == PLAYING || state == ENDING) && delta >= 1) {
                 for (int i = 0; i < (int)delta; i++) {
                     update();
+
+                    if (secondsTimer >= 1000000000) {
+                        secondsTimer = 0;
+                        timeLeft--;
+                        if (timeLeft <= 0) loseLevel();
+                    }
                 }
                 repaint();
-                frameCount++; // DEBUG
                 delta -= (int)delta;
 
                 if (state == ENDING && board.state == Board.STATIC) state = ENDED;
-            }
-
-            // DEBUG
-            if (debugTimer >= 1000000000) {
-                if (debug) System.out.println("FPS: " + frameCount);
-                frameCount = 0;
-                debugTimer = 0;
             }
         }
     }
