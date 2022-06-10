@@ -21,7 +21,7 @@ public class GamePanel extends JPanel implements Runnable {
     // Time left in seconds
     public int timeLeft;
     public final Board board;
-    public final GamePanelGraphics graphicsManager;
+    public final GamePanelGraphics graphics;
     public final KeyHandler keyHandler = new KeyHandler();
     public final MouseHandler mouseHandler = new MouseHandler();
 
@@ -35,11 +35,11 @@ public class GamePanel extends JPanel implements Runnable {
      * @param boardCols number of board columns
      * @param bonusNameIDs NameIDs of selected bonuses
      * @param obstacleNameIDs NameIDs of level's obstacles
-     * @param graphicsManager non-loaded graphics manager object
+     * @param graphics non-loaded graphics manager object
      * @param time time in seconds after which level is considered failed
      */
-    public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs, GamePanelGraphics graphicsManager, int time) throws IOException {
-        this.graphicsManager = graphicsManager;
+    public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs, GamePanelGraphics graphics, int time) throws IOException {
+        this.graphics = graphics;
         this.board = new Board(boardRows, boardCols, 1, this);
         UIManager.getFrame().addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
@@ -48,7 +48,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setPreferredSize(new Dimension(board.preferredWidth, board.preferredHeight));
         this.timeLeft = time;
 
-        graphicsManager.load(boardRows, boardCols);
+        graphics.load(boardRows, boardCols);
         board.generateRandomTile();
         board.generateRandomTile();
         gameThread.start();

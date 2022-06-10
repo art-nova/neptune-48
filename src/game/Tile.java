@@ -8,7 +8,7 @@ import java.awt.*;
  *
  * @author Artem Novak
  */
-public class Tile implements IRenderable{
+public class Tile extends GameObject {
     // Possible animation states.
     public static final int STATIC = 0, MOVING = 1, MERGING = 2, PULSATING = 3, GENERATING = 4;
 
@@ -17,7 +17,6 @@ public class Tile implements IRenderable{
     public boolean locked = false;
     public boolean visible = false;
 
-    private float x, y;
     private float speedX, speedY;
     private int targetX, targetY;
 
@@ -31,8 +30,7 @@ public class Tile implements IRenderable{
     private final Board board;
 
     public Tile(int x, int y, int level, GamePanel gp) {
-        this.x = x;
-        this.y = y;
+        super(x, y, gp);
         this.targetX = x;
         this.targetY = y;
         this.level = level;
@@ -79,14 +77,14 @@ public class Tile implements IRenderable{
             if (state == PULSATING) {
                 int size = (GamePanelGraphics.TILE_SIZE + (int)(visualOffset * 2));
                 int offset = (int)visualOffset;
-                g2d.drawImage(gp.graphicsManager.getTexture("tile"+level), screenX - offset, screenY - offset, size, size, null);
+                g2d.drawImage(gp.graphics.getTexture("tile"+level), screenX - offset, screenY - offset, size, size, null);
             }
             else if (state == MERGING) {
-                g2d.drawImage(gp.graphicsManager.getTexture(("tile"+(level-1))), screenX, screenY, null);
+                g2d.drawImage(gp.graphics.getTexture(("tile"+(level-1))), screenX, screenY, null);
             }
             else {
-                g2d.drawImage(gp.graphicsManager.getTexture(("tile"+level)), screenX, screenY, null);
-                if (locked) g2d.drawImage(gp.graphicsManager.getTexture(("lockedOverlay")), screenX, screenY, null);
+                g2d.drawImage(gp.graphics.getTexture(("tile"+level)), screenX, screenY, null);
+                if (locked) g2d.drawImage(gp.graphics.getTexture(("lockedOverlay")), screenX, screenY, null);
             }
         }
     }
