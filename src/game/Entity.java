@@ -1,6 +1,9 @@
 package game;
 
+import game.events.EntityListener;
+
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Class that stores information about the entity above the board.
@@ -10,6 +13,7 @@ import java.awt.*;
 public class Entity extends GameObject {
     private final int maxHealth;
     private int health;
+    private final ArrayList<EntityListener> listeners = new ArrayList<>();
 
     /**
      * Creates a new Entity.
@@ -41,8 +45,18 @@ public class Entity extends GameObject {
      * @param delta change in health
      */
     public void changeHealth(int delta) {
+        int oldHealth = health;
         health += delta;
         if (health >= maxHealth) health = maxHealth;
         else if (health <= 0) health = 0;
+        for (EntityListener listener : listeners) listener.onHealthChanged(oldHealth, health);
+    }
+
+    public void addEntityListener(EntityListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeEntityListener(EntityListener listener) {
+        listeners.remove(listener);
     }
 }

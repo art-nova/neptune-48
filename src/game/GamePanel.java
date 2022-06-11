@@ -1,10 +1,15 @@
 package game;
 
 import game.bonuses.BonusManager;
+import game.events.AttackEvent;
+import game.events.AttackListener;
+import game.events.GameOverListener;
+import game.events.TimeListener;
 import game.utils.GamePanelGraphics;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Set;
 import UI.UIManager;
 
@@ -28,6 +33,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     private static final int FPS = 60;
     private final Thread gameThread = new Thread(this);
+    private final ArrayList<TimeListener> timeListeners = new ArrayList<>();
+    private final ArrayList<AttackListener> attackListeners = new ArrayList<>();
+    private final ArrayList<GameOverListener> gameOverListeners = new ArrayList<>();
 
     /**
      * Constructs a game panel with given graphics manager object.
@@ -74,16 +82,16 @@ public class GamePanel extends JPanel implements Runnable {
             delta += (currentTime - lastTime)/frameInterval;
             secondsTimer += currentTime - lastTime;
             lastTime = currentTime;
+            if (secondsTimer >= 1000000000 && state == PLAYING) {
+                secondsTimer = 0;
+                timeLeft--;
+                for (TimeListener listener : timeListeners) listener.onTimeChanged(timeLeft + 1, timeLeft);
+                if (timeLeft <= 0) loseLevel();
+            }
 
             if ((state == PLAYING || state == ENDING) && delta >= 1) {
                 for (int i = 0; i < (int)delta; i++) {
                     update();
-
-                    if (secondsTimer >= 1000000000) {
-                        secondsTimer = 0;
-                        timeLeft--;
-                        if (timeLeft <= 0) loseLevel();
-                    }
                 }
                 repaint();
                 delta -= (int)delta;
@@ -110,14 +118,58 @@ public class GamePanel extends JPanel implements Runnable {
         g.dispose();
     }
 
-    public void loseLevel() {
-        System.out.println("You lost");
-        state = ENDING;
-        // TODO
+    public int getTimeLeft() {
+        return timeLeft;
     }
 
-    public void reactToTurn() {
-        // TODO
+    public void setTimeLeft(int timeLeft) {
+        int oldTimeLeft = this.timeLeft;
+        this.timeLeft = Math.max(timeLeft, 0);
+        for (TimeListener listener : timeListeners) listener.onTimeChanged(oldTimeLeft, this.timeLeft);
+    }
+
+    /**
+     * Triggers attack listeners and performs the attack on a logical level.
+     *
+     * @param e attack event (can be modified by attack listeners)
+     */
+    public void processAttack(AttackEvent e) {
+        for (AttackListener listener : attackListeners) listener.onAttack(e);
+        entity.changeHealth(-e.getDamage());
+    }
+
+    public void loseLevel() {
+        state = ENDING;
+        for (GameOverListener listener : gameOverListeners) listener.onLose();
+    }
+
+    public void winLevel() {
+        state = ENDING;
+        for (GameOverListener listener : gameOverListeners) listener.onWin(timeLeft);
+    }
+
+    public void addTimeListener(TimeListener listener) {
+        timeListeners.add(listener);
+    }
+
+    public void removeTimeListener(TimeListener listener) {
+        timeListeners.remove(listener);
+    }
+
+    public void addAttackListener(AttackListener listener) {
+        attackListeners.add(listener);
+    }
+
+    public void removeAttackListener(AttackListener listener) {
+        attackListeners.remove(listener);
+    }
+
+    public void addGameOverListener(GameOverListener listener) {
+        gameOverListeners.add(listener);
+    }
+
+    public void removeGameOverListener(GameOverListener listener) {
+        gameOverListeners.remove(listener);
     }
 
 }

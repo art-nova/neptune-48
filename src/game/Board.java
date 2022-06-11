@@ -1,5 +1,7 @@
 package game;
 
+import game.events.AttackEvent;
+import game.events.TurnListener;
 import game.utils.GamePanelGraphics;
 import game.utils.WeightedRandom;
 
@@ -35,12 +37,13 @@ public class Board extends GameObject {
     private final WeightedRandom random = new WeightedRandom();
     private final List<Tile> transientTiles = new LinkedList<>(); // Tiles that are no longer logically present and are to be deleted after finishing current animation cycle.
     private final SelectionHandler selectionHandler;
+    private final ArrayList<TurnListener> listeners = new ArrayList<>();
     private final int rows;
     private final int cols;
     private int tileCount;
-
     private int moveDirection;
     private boolean turnReactionScheduled;
+    private final ArrayList<AttackEvent> pendingAttacks = new ArrayList<>();
 
     public Board(int x, int y, int rows, int cols, int baseTileLevel, GamePanel gp) throws IllegalArgumentException {
         super(x, y, gp);
@@ -164,7 +167,7 @@ public class Board extends GameObject {
                 if (turnReactionScheduled) {
                     turnReactionScheduled = false;
                     generateRandomTile();
-                    gp.reactToTurn();
+                    for (TurnListener listener : listeners) listener.onTurn();
                 }
             }
         }
@@ -177,6 +180,16 @@ public class Board extends GameObject {
                 tile.update();
             }
             transientTiles.removeIf(x -> x.state == Tile.STATIC);
+            if (state == STATIC && pendingAttacks.size() > 0) {
+                for (AttackEvent attack : pendingAttacks) {
+                    gp.processAttack(attack);
+                    if (attack.getConsumesTurn()) {
+                        generateRandomTile();
+                        for (TurnListener listener : listeners) listener.onTurn();
+                    }
+                }
+                pendingAttacks.removeIf(x -> true);
+            }
         }
         else if (state == SELECTING) {
             selectionHandler.update();
@@ -252,6 +265,34 @@ public class Board extends GameObject {
         catch (IndexOutOfBoundsException ignore) {
             return null;
         }
+    }
+
+    /**
+     * Starts attack animation.
+     *
+     * @param originCell cell in which the attacking tile is located
+     */
+    public void startAttack(BoardCell originCell) {
+        if (tileByBoardCell(originCell) == null) throw new GameLogicException("Trying to attack from empty cell");
+        pendingAttacks.add(new AttackEvent(originCell, tileByBoardCell(originCell), 5));
+    }
+
+    /**
+     * Adds a turn listener.
+     *
+     * @param listener turn listener
+     */
+    public void addTurnListener(TurnListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Removes a turn listener.
+     *
+     * @param listener turn listener
+     */
+    public void removeTurnListener(TurnListener listener) {
+        listeners.remove(listener);
     }
 
     /**
