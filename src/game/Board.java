@@ -169,14 +169,7 @@ public class Board extends GameObject {
 
     public void update() {
         if (state == IDLE) {
-            if (keyHandler.getLastPressKey() != null) {
-                handlePlayingKeyInput();
-                if (turnReactionScheduled) {
-                    turnReactionScheduled = false;
-                    generateRandomTile();
-                    for (TurnListener listener : turnListeners) listener.onTurn();
-                }
-            }
+            checkForTurnInput();
             updateTiles();
         }
         else if (state == ANIMATING) {
@@ -191,6 +184,7 @@ public class Board extends GameObject {
                 }
                 pendingAttacks.removeIf(x -> true);
             }
+            checkForTurnInput();
             updateTiles(); // May change board state to IDLE.
         }
         else if (state == SELECTING) {
@@ -414,6 +408,17 @@ public class Board extends GameObject {
         return null;
     }
 
+    private void checkForTurnInput() {
+        if (keyHandler.getLastPressKey() != null) {
+            handlePlayingKeyInput();
+            if (turnReactionScheduled) {
+                turnReactionScheduled = false;
+                generateRandomTile();
+                for (TurnListener listener : turnListeners) listener.onTurn();
+            }
+        }
+    }
+
     private void handlePlayingKeyInput() {
         switch (keyHandler.getLastPressKey()) {
             case "up" -> {
@@ -436,7 +441,8 @@ public class Board extends GameObject {
                 keyHandler.clearLastPress();
                 moveDirection = RIGHT;
             }
-        }}
+        }
+    }
 
     private void shiftUp() {
         for (int j = 0; j < cols; j++) {
@@ -512,6 +518,7 @@ public class Board extends GameObject {
             board[cellStatic.row][cellStatic.col] = tileDynamic;
             board[cellDynamic.row][cellDynamic.col] = null;
             turnReactionScheduled = true;
+            flush();
             return true;
         }
         if (tileStatic != null) {
@@ -523,6 +530,7 @@ public class Board extends GameObject {
                 board[cellDynamic.row][cellDynamic.col] = null;
                 tileCount--;
                 turnReactionScheduled = true;
+                flush();
                 return true;
             }
             // Move limited by other tile case
@@ -537,6 +545,7 @@ public class Board extends GameObject {
                     board[cellStatic.row][cellStatic.col] = tileDynamic;
                     board[cellDynamic.row][cellDynamic.col] = null;
                     turnReactionScheduled = true;
+                    flush();
                     return true;
                 }
             }
@@ -562,15 +571,18 @@ public class Board extends GameObject {
     }
 
     /**
-     * Finishes all tile animations and deletes transient tiles.
+     * Finishes all tile animations and deletes transient tiles if animating.
      */
     private void flush() {
-        for (Tile[] row : board) {
-            for (Tile tile : row) {
-                if (tile != null) tile.flush();
+        if (state == ANIMATING) {
+            for (Tile[] row : board) {
+                for (Tile tile : row) {
+                    if (tile != null) tile.flush();
+                }
             }
+            transientTiles.removeIf(x -> true);
+            setState(IDLE);
         }
-        transientTiles.removeIf(x -> true);
     }
 
     /**
