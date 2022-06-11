@@ -10,9 +10,8 @@ import java.awt.*;
  */
 public class Tile extends GameObject {
     // Possible animation states.
-    public static final int STATIC = 0, MOVING = 1, MERGING = 2, PULSATING = 3, GENERATING = 4;
+    public static final int IDLE = 0, MOVING = 1, MERGING = 2, PULSATING = 3, GENERATING = 4;
 
-    private final Board board;
     private final GamePanelGraphics graphics;
 
     private int state = GENERATING;
@@ -31,13 +30,10 @@ public class Tile extends GameObject {
 
     public Tile(int x, int y, int level, GamePanel gp) {
         super(x, y, gp);
-        this.board = gp.getBoard();
         this.graphics = gp.getGameGraphics();
         this.targetX = x;
         this.targetY = y;
         this.level = level;
-        this.gp = gp;
-        board.setState(Board.ANIMATING);
     }
 
     /**
@@ -45,14 +41,12 @@ public class Tile extends GameObject {
      */
     public void update() {
         if (state == MOVING || state == MERGING) {
-            board.setState(Board.ANIMATING);
             x += speedX;
             y += speedY;
             animationFramesLeft--;
             if (state == MERGING && animationFramesLeft <= 0) pulse(0, GamePanelGraphics.TILE_PULSE_OFFSET);;
         }
         else if (state == PULSATING) {
-            board.setState(Board.ANIMATING);
             if (targetVisualOffset > visualOffset) visualOffset += speedVisualOffset;
             else visualOffset -= speedVisualOffset;
             animationFramesLeft--;
@@ -61,13 +55,12 @@ public class Tile extends GameObject {
             }
         }
         else if (state == GENERATING) {
-            board.setState(Board.ANIMATING);
             if (animationFramesLeft <= 0) {
                 visible = true;
                 pulse(-GamePanelGraphics.TILE_SIZE / 2, GamePanelGraphics.TILE_PULSE_OFFSET);
             }
         }
-        if (state != STATIC && animationFramesLeft <= 0) flush();
+        if (state != IDLE && animationFramesLeft <= 0) flush();
     }
 
     public void render(Graphics2D g2d) {
@@ -103,7 +96,7 @@ public class Tile extends GameObject {
         visualOffset = 0;
         if (state == GENERATING) visible = true;
         animationFramesLeft = 0;
-        state = STATIC;
+        state = IDLE;
     }
 
     public int getState() {
@@ -197,7 +190,6 @@ public class Tile extends GameObject {
 
     private void startAnimationCycle() {
         animationFramesLeft = GamePanelGraphics.ANIMATION_CYCLE;
-        board.setState(Board.ANIMATING);
     }
 
 }

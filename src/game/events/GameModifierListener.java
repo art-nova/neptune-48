@@ -4,6 +4,7 @@ package game.events;
  * Interface that allows to register changes to a certain game modifier.
  *
  * @author Artem Novak
+ * @deprecated
  */
 public interface GameModifierListener {
     /**

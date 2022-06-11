@@ -1,6 +1,7 @@
 package game;
 
 import game.events.AttackEvent;
+import game.events.StateListener;
 import game.events.TurnListener;
 import game.utils.GamePanelGraphics;
 import game.utils.WeightedRandom;
@@ -22,7 +23,7 @@ import java.util.function.Predicate;
 public class Board extends GameObject {
 
     // Board states
-    public static final int STATIC = 0, SELECTING = 1, ANIMATING = 2;
+    public static final int IDLE = 0, ANIMATING = 1, SELECTING = 2;
 
     // Directions
     private static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3;
@@ -30,7 +31,8 @@ public class Board extends GameObject {
     private final WeightedRandom random = new WeightedRandom();
     private final List<Tile> transientTiles = new LinkedList<>(); // Tiles that are no longer logically present and are to be deleted after finishing current animation cycle.
     private final SelectionHandler selectionHandler;
-    private final ArrayList<TurnListener> listeners = new ArrayList<>();
+    private final ArrayList<TurnListener> turnListeners = new ArrayList<>();
+    private final ArrayList<StateListener> stateListeners = new ArrayList<>();
     private final ArrayList<AttackEvent> pendingAttacks = new ArrayList<>();
     private final int rows;
     private final int cols;
@@ -40,7 +42,7 @@ public class Board extends GameObject {
     private final KeyHandler keyHandler;
     private final MouseHandler mouseHandler;
 
-    private int state = STATIC;
+    private int state = IDLE;
     private int baseTileLevel;
     private final Tile[][] board;
     private int tileCount;
@@ -166,35 +168,30 @@ public class Board extends GameObject {
     }
 
     public void update() {
-        if (state == STATIC) {
+        if (state == IDLE) {
             if (keyHandler.getLastPressKey() != null) {
                 handlePlayingKeyInput();
                 if (turnReactionScheduled) {
                     turnReactionScheduled = false;
                     generateRandomTile();
-                    for (TurnListener listener : listeners) listener.onTurn();
+                    for (TurnListener listener : turnListeners) listener.onTurn();
                 }
             }
+            updateTiles();
         }
-        if (state == ANIMATING || state == STATIC) {
-            state = STATIC; // Gets set to ANIMATING by updating tiles if any of them are being animated
-            for (Tile[] row : board) {
-                for (Tile tile : row) if (tile != null) tile.update();
-            }
-            for (Tile tile : transientTiles) {
-                tile.update();
-            }
-            transientTiles.removeIf(x -> x.getState() == Tile.STATIC);
-            if (state == STATIC && pendingAttacks.size() > 0) {
+        else if (state == ANIMATING) {
+            if (pendingAttacks.size() > 0) {
+                // TODO attack animation processing
                 for (AttackEvent attack : pendingAttacks) {
                     gp.processAttack(attack);
                     if (attack.getConsumesTurn()) {
                         generateRandomTile();
-                        for (TurnListener listener : listeners) listener.onTurn();
+                        for (TurnListener listener : turnListeners) listener.onTurn();
                     }
                 }
                 pendingAttacks.removeIf(x -> true);
             }
+            updateTiles(); // May change board state to IDLE.
         }
         else if (state == SELECTING) {
             selectionHandler.update();
@@ -258,7 +255,8 @@ public class Board extends GameObject {
     public void generateTile(BoardCell cell, int level) throws GameLogicException {
         if (tileCount == rows * cols) throw new GameLogicException("Attempt to generate a tile on a full board");
         Point point = pointByCell(cell);
-        board[cell.row][cell.col] = new Tile(point.x, point.y, level, gp);
+        Tile tile = new Tile(point.x, point.y, level, gp);
+        board[cell.row][cell.col] = tile;
         tileCount++;
         if (tileCount == rows * cols && checkForLoseCondition()) gp.loseLevel();
     }
@@ -294,13 +292,13 @@ public class Board extends GameObject {
         selectionHandler.maxSelection = maxSelection;
         selectionHandler.resetOverlay();
         flush();
-        state = SELECTING;
+        setState(SELECTING);
     }
 
     public void exitSelection() {
         selectionHandler.selected = new ArrayList<>();
         selectionHandler.predicate = null;
-        state = STATIC;
+        setState(IDLE);
     }
 
     public List<BoardCell> getSelectedCells() {
@@ -343,7 +341,9 @@ public class Board extends GameObject {
 
     public void setState(int state) {
         if (state < 0 || state > 2) throw new IllegalArgumentException("Board does not support state " + state);
+        int oldState = this.state;
         this.state = state;
+        for (StateListener listener : stateListeners) listener.onStateChanged(oldState, state);
     }
 
     public int getBaseTileLevel() {
@@ -365,7 +365,7 @@ public class Board extends GameObject {
      * @param listener turn listener
      */
     public void addTurnListener(TurnListener listener) {
-        listeners.add(listener);
+        turnListeners.add(listener);
     }
 
     /**
@@ -374,7 +374,15 @@ public class Board extends GameObject {
      * @param listener turn listener
      */
     public void removeTurnListener(TurnListener listener) {
-        listeners.remove(listener);
+        turnListeners.remove(listener);
+    }
+
+    public void addStateListener(StateListener listener) {
+        stateListeners.add(listener);
+    }
+
+    public void removeStateListener(StateListener listener) {
+        stateListeners.remove(listener);
     }
 
     /**
@@ -534,6 +542,23 @@ public class Board extends GameObject {
             }
         }
         return false;
+    }
+
+    private void updateTiles() {
+        boolean animating = false;
+        for (Tile[] row : board) {
+            for (Tile tile : row) if (tile != null) {
+                tile.update();
+                animating = animating || tile.getState() != Tile.IDLE;
+            }
+        }
+        for (Tile tile : transientTiles) {
+            tile.update();
+            animating = animating || tile.getState() != Tile.IDLE;
+        }
+        transientTiles.removeIf(x -> x.getState() == Tile.IDLE);
+        if (state == IDLE && animating) setState(ANIMATING);
+        else if (state == ANIMATING && !animating) setState(IDLE);
     }
 
     /**

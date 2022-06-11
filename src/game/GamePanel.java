@@ -1,10 +1,7 @@
 package game;
 
 import game.bonuses.BonusManager;
-import game.events.AttackEvent;
-import game.events.AttackListener;
-import game.events.GameOverListener;
-import game.events.TimeListener;
+import game.events.*;
 import game.utils.GamePanelGraphics;
 import javax.swing.*;
 import java.awt.*;
@@ -34,6 +31,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final ArrayList<TimeListener> timeListeners = new ArrayList<>();
     private final ArrayList<AttackListener> attackListeners = new ArrayList<>();
     private final ArrayList<GameOverListener> gameOverListeners = new ArrayList<>();
+    private final ArrayList<StateListener> stateListeners = new ArrayList<>();
 
     private int state = PLAYING;
     // Time left in seconds
@@ -98,7 +96,7 @@ public class GamePanel extends JPanel implements Runnable {
                 repaint();
                 delta -= (int)delta;
 
-                if (state == ENDING && board.getState() == Board.STATIC) state = ENDED;
+                if (state == ENDING && board.getState() == Board.IDLE) state = ENDED;
             }
         }
     }
@@ -166,7 +164,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setState(int state) {
         if (state < 0 || state > 3) throw new IllegalArgumentException("GamePanel does not support state " + state);
+        int oldState = this.state;
         this.state = state;
+        for (StateListener listener : stateListeners) listener.onStateChanged(oldState, state);
     }
 
     public int getTimeLeft() {
@@ -207,6 +207,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void removeGameOverListener(GameOverListener listener) {
         gameOverListeners.remove(listener);
+    }
+
+    public void addStateListener(StateListener listener) {
+        stateListeners.add(listener);
+    }
+
+    public void removeStateListener(StateListener listener) {
+        stateListeners.remove(listener);
     }
 
 }
