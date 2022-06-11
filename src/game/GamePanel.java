@@ -22,20 +22,22 @@ public class GamePanel extends JPanel implements Runnable {
     // Game state
     public static final int PLAYING = 0, PAUSED = 1, ENDING = 2, ENDED = 3;
 
-    public int state = PLAYING;
-    // Time left in seconds
-    public int timeLeft;
-    public final Board board;
-    public final Entity entity;
-    public final GamePanelGraphics graphics;
-    public final KeyHandler keyHandler = new KeyHandler();
-    public final MouseHandler mouseHandler = new MouseHandler();
-
+    // How many logical updates and visual repaints are done per second
     private static final int FPS = 60;
+
+    private final GamePanelGraphics graphics;
+    private final KeyHandler keyHandler = new KeyHandler();
+    private final MouseHandler mouseHandler = new MouseHandler();
     private final Thread gameThread = new Thread(this);
+    private final Board board;
+    private final Entity entity;
     private final ArrayList<TimeListener> timeListeners = new ArrayList<>();
     private final ArrayList<AttackListener> attackListeners = new ArrayList<>();
     private final ArrayList<GameOverListener> gameOverListeners = new ArrayList<>();
+
+    private int state = PLAYING;
+    // Time left in seconds
+    private int timeLeft;
 
     /**
      * Constructs a game panel with given graphics manager object.
@@ -58,8 +60,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
-        this.setPreferredSize(new Dimension(GamePanelGraphics.ENTITY_WIDTH, board.preferredHeight + GamePanelGraphics.ENTITY_BOARD_DISTANCE + GamePanelGraphics.ENTITY_HEIGHT));
-        board.setX((GamePanelGraphics.ENTITY_WIDTH - board.preferredWidth)/2f);
+        this.setPreferredSize(new Dimension(GamePanelGraphics.ENTITY_WIDTH, board.getPreferredHeight() + GamePanelGraphics.ENTITY_BOARD_DISTANCE + GamePanelGraphics.ENTITY_HEIGHT));
+        board.setX((GamePanelGraphics.ENTITY_WIDTH - board.getPreferredWidth())/2f);
         this.timeLeft = time;
 
         graphics.load(boardRows, boardCols, entityIndex);
@@ -96,7 +98,7 @@ public class GamePanel extends JPanel implements Runnable {
                 repaint();
                 delta -= (int)delta;
 
-                if (state == ENDING && board.state == Board.STATIC) state = ENDED;
+                if (state == ENDING && board.getState() == Board.STATIC) state = ENDED;
             }
         }
     }
@@ -118,16 +120,6 @@ public class GamePanel extends JPanel implements Runnable {
         g.dispose();
     }
 
-    public int getTimeLeft() {
-        return timeLeft;
-    }
-
-    public void setTimeLeft(int timeLeft) {
-        int oldTimeLeft = this.timeLeft;
-        this.timeLeft = Math.max(timeLeft, 0);
-        for (TimeListener listener : timeListeners) listener.onTimeChanged(oldTimeLeft, this.timeLeft);
-    }
-
     /**
      * Triggers attack listeners and performs the attack on a logical level.
      *
@@ -146,6 +138,51 @@ public class GamePanel extends JPanel implements Runnable {
     public void winLevel() {
         state = ENDING;
         for (GameOverListener listener : gameOverListeners) listener.onWin(timeLeft);
+    }
+
+    public GamePanelGraphics getGameGraphics() {
+        return graphics;
+    }
+
+    public KeyHandler getKeyHandler() {
+        return keyHandler;
+    }
+
+    public MouseHandler getMouseHandler() {
+        return mouseHandler;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        if (state < 0 || state > 3) throw new IllegalArgumentException("GamePanel does not support state " + state);
+        this.state = state;
+    }
+
+    public int getTimeLeft() {
+        return timeLeft;
+    }
+
+    /**
+     * Offsets remaining time in seconds by given number. The number is added.
+     * If the result of the offset is less than 0, sets remaining time to 0 instead.
+     *
+     * @param delta time change in seconds
+     */
+    public void offsetTimeLeft(int delta) {
+        int oldTimeLeft = this.timeLeft;
+        this.timeLeft = Math.max(timeLeft + delta, 0);
+        for (TimeListener listener : timeListeners) listener.onTimeChanged(oldTimeLeft, this.timeLeft);
     }
 
     public void addTimeListener(TimeListener listener) {

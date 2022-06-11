@@ -1,6 +1,7 @@
 package game;
 
 import game.events.EntityListener;
+import game.utils.GamePanelGraphics;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class Entity extends GameObject {
     private final int maxHealth;
     private int health;
     private final ArrayList<EntityListener> listeners = new ArrayList<>();
+    private final GamePanelGraphics graphics;
 
     /**
      * Creates a new Entity.
@@ -25,6 +27,7 @@ public class Entity extends GameObject {
      */
     public Entity(int x, int y, int maxHealth, GamePanel gp) {
         super(x, y, gp);
+        this.graphics = gp.getGameGraphics();
         this.maxHealth = maxHealth;
         this.health = maxHealth;
     }
@@ -36,7 +39,7 @@ public class Entity extends GameObject {
 
     @Override
     public void render(Graphics2D g2d) {
-        g2d.drawImage(gp.graphics.getTexture("entity"), (int)x, (int)y, null);
+        g2d.drawImage(graphics.getTexture("entity"), (int)x, (int)y, null);
     }
 
     /**

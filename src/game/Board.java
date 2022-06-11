@@ -24,13 +24,6 @@ public class Board extends GameObject {
     // Board states
     public static final int STATIC = 0, SELECTING = 1, ANIMATING = 2;
 
-    public final int preferredWidth;
-    public final int preferredHeight;
-
-    public int state = STATIC;
-    public int baseTileLevel;
-    public final Tile[][] board;
-
     // Directions
     private static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3;
 
@@ -38,12 +31,21 @@ public class Board extends GameObject {
     private final List<Tile> transientTiles = new LinkedList<>(); // Tiles that are no longer logically present and are to be deleted after finishing current animation cycle.
     private final SelectionHandler selectionHandler;
     private final ArrayList<TurnListener> listeners = new ArrayList<>();
+    private final ArrayList<AttackEvent> pendingAttacks = new ArrayList<>();
     private final int rows;
     private final int cols;
+    private final int preferredWidth;
+    private final int preferredHeight;
+    private final GamePanelGraphics graphics;
+    private final KeyHandler keyHandler;
+    private final MouseHandler mouseHandler;
+
+    private int state = STATIC;
+    private int baseTileLevel;
+    private final Tile[][] board;
     private int tileCount;
     private int moveDirection;
     private boolean turnReactionScheduled;
-    private final ArrayList<AttackEvent> pendingAttacks = new ArrayList<>();
 
     public Board(int x, int y, int rows, int cols, int baseTileLevel, GamePanel gp) throws IllegalArgumentException {
         super(x, y, gp);
@@ -52,6 +54,9 @@ public class Board extends GameObject {
         if (baseTileLevel < 1 || baseTileLevel > 11)
             throw new IllegalArgumentException("Illegal base tile level: " + baseTileLevel);
         this.gp = gp;
+        this.graphics = gp.getGameGraphics();
+        this.keyHandler = gp.getKeyHandler();
+        this.mouseHandler = gp.getMouseHandler();
         this.rows = rows;
         this.cols = cols;
         this.baseTileLevel = baseTileLevel;
@@ -82,7 +87,7 @@ public class Board extends GameObject {
             Graphics2D g2d = (Graphics2D) highlight.getGraphics();
             Area highlightArea = new Area(new Rectangle(GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET, GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET));
             highlightArea.subtract(new Area(new Rectangle( GamePanelGraphics.TILE_OFFSET/2,  + GamePanelGraphics.TILE_OFFSET/2, GamePanelGraphics.TILE_SIZE, GamePanelGraphics.TILE_SIZE)));
-            g2d.setColor(gp.graphics.getColor("highlight"));
+            g2d.setColor(graphics.getColor("highlight"));
             g2d.fill(highlightArea);
             g2d.dispose();
         }
@@ -114,8 +119,8 @@ public class Board extends GameObject {
          */
         public void update() {
             if (predicate == null) throw new GameLogicException("Updating a selector without a selection predicate");
-            if (gp.mouseHandler.mouseOn && gp.mouseHandler.mousePressed) {
-                gp.mouseHandler.mousePressed = false;
+            if (mouseHandler.isMouseOn() && mouseHandler.isMousePressed()) {
+                mouseHandler.resetMousePressed();
                 BoardCell cell = cellByMouseLocation();
                 if (cell != null && predicate.test(cell)) {
                     if (selected.contains(cell)) {
@@ -137,7 +142,7 @@ public class Board extends GameObject {
             if (predicate == null) throw new GameLogicException("Rendering a selector without a selection predicate");
             g2d.drawImage(overlay, (int)x, (int)y, null);
             for (BoardCell cell : selected) highlightCell(cell, g2d);
-            if (gp.mouseHandler.mouseOn) {
+            if (mouseHandler.isMouseOn()) {
                 BoardCell cell = cellByMouseLocation();
                 if (cell != null && predicate.test(cell)) {
                     highlightCell(cell, g2d);
@@ -148,8 +153,8 @@ public class Board extends GameObject {
         private BoardCell cellByMouseLocation() {
             Point mouseScreenLocation = MouseInfo.getPointerInfo().getLocation();
             Point gpScreenLocation = gp.getLocationOnScreen();
-            Point mouseGameLocation = new Point((int)((mouseScreenLocation.x - gpScreenLocation.x)/gp.graphics.scale),
-                    (int)((mouseScreenLocation.y - gpScreenLocation.y)/gp.graphics.scale));
+            Point mouseGameLocation = new Point((int)((mouseScreenLocation.x - gpScreenLocation.x)/graphics.scale),
+                    (int)((mouseScreenLocation.y - gpScreenLocation.y)/graphics.scale));
             return cellByPoint(mouseGameLocation);
 
         }
@@ -162,7 +167,7 @@ public class Board extends GameObject {
 
     public void update() {
         if (state == STATIC) {
-            if (gp.keyHandler.lastPressKey != null) {
+            if (keyHandler.getLastPressKey() != null) {
                 handlePlayingKeyInput();
                 if (turnReactionScheduled) {
                     turnReactionScheduled = false;
@@ -179,7 +184,7 @@ public class Board extends GameObject {
             for (Tile tile : transientTiles) {
                 tile.update();
             }
-            transientTiles.removeIf(x -> x.state == Tile.STATIC);
+            transientTiles.removeIf(x -> x.getState() == Tile.STATIC);
             if (state == STATIC && pendingAttacks.size() > 0) {
                 for (AttackEvent attack : pendingAttacks) {
                     gp.processAttack(attack);
@@ -193,12 +198,12 @@ public class Board extends GameObject {
         }
         else if (state == SELECTING) {
             selectionHandler.update();
-            if (gp.keyHandler.lastPressKey != null && gp.keyHandler.lastPressKey.equals("escape")) exitSelection();
+            if (keyHandler.getLastPressKey() != null && keyHandler.getLastPressKey().equals("escape")) exitSelection();
         }
     }
 
     public void render(Graphics2D g2d) {
-        g2d.drawImage(gp.graphics.getTexture("boardBG"), (int)x, (int)y, null);
+        g2d.drawImage(graphics.getTexture("boardBG"), (int)x, (int)y, null);
         if (state != ANIMATING || moveDirection == UP) {
             for (Tile[] row : board) {
                 for (Tile tile : row) if (tile != null) tile.render(g2d);
@@ -278,24 +283,6 @@ public class Board extends GameObject {
     }
 
     /**
-     * Adds a turn listener.
-     *
-     * @param listener turn listener
-     */
-    public void addTurnListener(TurnListener listener) {
-        listeners.add(listener);
-    }
-
-    /**
-     * Removes a turn listener.
-     *
-     * @param listener turn listener
-     */
-    public void removeTurnListener(TurnListener listener) {
-        listeners.remove(listener);
-    }
-
-    /**
      * Initiates cell selection.
      *
      * @param predicate predicate which is used to define selectable cells.
@@ -332,6 +319,64 @@ public class Board extends GameObject {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        for (Tile[] row : board) {
+            for (Tile tile : row) str.append(tile == null ? "-" : tile.getLevel()).append(" ");
+            str.append("\n");
+        }
+        return str.toString();
+    }
+
+    public int getPreferredWidth() {
+        return preferredWidth;
+    }
+
+    public int getPreferredHeight() {
+        return preferredHeight;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        if (state < 0 || state > 2) throw new IllegalArgumentException("Board does not support state " + state);
+        this.state = state;
+    }
+
+    public int getBaseTileLevel() {
+        return baseTileLevel;
+    }
+
+    public void setBaseTileLevel(int baseTileLevel) {
+        if (baseTileLevel < 1 || baseTileLevel > 10) throw new GameLogicException("Trying to set illogical or impossible base tile level " + baseTileLevel);
+        this.baseTileLevel = baseTileLevel;
+    }
+
+    public Tile[][] getBoard() {
+        return board;
+    }
+
+    /**
+     * Adds a turn listener.
+     *
+     * @param listener turn listener
+     */
+    public void addTurnListener(TurnListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Removes a turn listener.
+     *
+     * @param listener turn listener
+     */
+    public void removeTurnListener(TurnListener listener) {
+        listeners.remove(listener);
+    }
+
     /**
      * Finds origin point of a given board cell.
      *
@@ -362,25 +407,25 @@ public class Board extends GameObject {
     }
 
     private void handlePlayingKeyInput() {
-        switch (gp.keyHandler.lastPressKey) {
+        switch (keyHandler.getLastPressKey()) {
             case "up" -> {
                 shiftUp();
-                gp.keyHandler.clearLastPress();
+                keyHandler.clearLastPress();
                 moveDirection = UP;
             }
             case "down" -> {
                 shiftDown();
-                gp.keyHandler.clearLastPress();
+                keyHandler.clearLastPress();
                 moveDirection = DOWN;
             }
             case "left" -> {
                 shiftLeft();
-                gp.keyHandler.clearLastPress();
+                keyHandler.clearLastPress();
                 moveDirection = LEFT;
             }
             case "right" -> {
                 shiftRight();
-                gp.keyHandler.clearLastPress();
+                keyHandler.clearLastPress();
                 moveDirection = RIGHT;
             }
         }}
@@ -390,7 +435,7 @@ public class Board extends GameObject {
             BoardCell cellEdge = new BoardCell(0, j);
             for (int i = 1; i < rows; i++) {
                 BoardCell cellDynamic = new BoardCell(i, j);
-                if (board[i][j] != null && !board[i][j].locked) {
+                if (board[i][j] != null && !board[i][j].isLocked()) {
                     for (int z = i - 1; z >= 0; z--) {
                         if (cellAction(new BoardCell(z, j), cellDynamic, cellEdge, -1, 0)) break;
                     }
@@ -404,7 +449,7 @@ public class Board extends GameObject {
             BoardCell cellEdge = new BoardCell(rows - 1, j);
             for (int i = rows - 2; i >= 0; i--) {
                 BoardCell cellDynamic = new BoardCell(i, j);
-                if (board[i][j] != null && !board[i][j].locked) {
+                if (board[i][j] != null && !board[i][j].isLocked()) {
                     for (int z = i + 1; z < rows; z++) {
                         if (cellAction(new BoardCell(z, j), cellDynamic, cellEdge, 1, 0)) break;
                     }
@@ -418,7 +463,7 @@ public class Board extends GameObject {
             BoardCell cellEdge = new BoardCell(i, 0);
             for (int j = 1; j < cols; j++) {
                 BoardCell cellDynamic = new BoardCell(i, j);
-                if (board[i][j] != null && !board[i][j].locked) {
+                if (board[i][j] != null && !board[i][j].isLocked()) {
                     for (int z = j - 1; z >= 0; z--) {
                         if (cellAction(new BoardCell(i, z), cellDynamic, cellEdge, 0, -1)) break;
                     }
@@ -432,7 +477,7 @@ public class Board extends GameObject {
             BoardCell cellEdge = new BoardCell(i, cols - 1);
             for (int j = cols - 2; j >= 0; j--) {
                 BoardCell cellDynamic = new BoardCell(i, j);
-                if (board[i][j] != null && !board[i][j].locked) {
+                if (board[i][j] != null && !board[i][j].isLocked()) {
                     for (int z = j + 1; z < cols; z++) {
                         if (cellAction(new BoardCell(i, z), cellDynamic, cellEdge, 0, 1)) break;
                     }
@@ -463,7 +508,7 @@ public class Board extends GameObject {
         }
         if (tileStatic != null) {
             // Merge case
-            if (tileStatic.state != Tile.MERGING && !tileStatic.locked && tileStatic.level == tileDynamic.level) {
+            if (tileStatic.getState() != Tile.MERGING && !tileStatic.isLocked() && tileStatic.getLevel() == tileDynamic.getLevel()) {
                 tileDynamic.moveTowards(pointByCell(cellStatic));
                 tileStatic.makeMergeBase();
                 transientTiles.add(tileDynamic);
@@ -511,21 +556,11 @@ public class Board extends GameObject {
     private boolean checkForLoseCondition() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if ((j < cols - 1 && board[i][j].level == board[i][j + 1].level && !board[i][j].locked && !board[i][j + 1].locked) ||
-                        (i < rows - 1 && board[i][j].level == board[i + 1][j].level && !board[i][j].locked && !board[i + 1][j].locked)) return false;
+                if ((j < cols - 1 && board[i][j].getLevel() == board[i][j + 1].getLevel() && !board[i][j].isLocked() && !board[i][j + 1].isLocked()) ||
+                        (i < rows - 1 && board[i][j].getLevel() == board[i + 1][j].getLevel() && !board[i][j].isLocked() && !board[i + 1][j].isLocked())) return false;
             }
         }
         return true;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder str = new StringBuilder();
-        for (Tile[] row : board) {
-            for (Tile tile : row) str.append(tile == null ? "-" : tile.level).append(" ");
-            str.append("\n");
-        }
-        return str.toString();
     }
 
 }

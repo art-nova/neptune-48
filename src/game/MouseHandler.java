@@ -9,8 +9,8 @@ import java.awt.event.MouseEvent;
  * @author Artem Novak
  */
 public class MouseHandler extends MouseAdapter {
-    public boolean mouseOn;
-    public boolean mousePressed;
+    private boolean mouseOn;
+    private boolean mousePressed;
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -37,5 +37,20 @@ public class MouseHandler extends MouseAdapter {
     @Override
     public void mouseExited(MouseEvent e) {
         mouseOn = false;
+    }
+
+    public boolean isMouseOn() {
+        return mouseOn;
+    }
+
+    public boolean isMousePressed() {
+        return mousePressed;
+    }
+
+    /**
+     * Tells the handler that last mouse press has been resolved and does not need processing anymore.
+     */
+    public void resetMousePressed() {
+        this.mousePressed = false;
     }
 }

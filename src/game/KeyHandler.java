@@ -12,7 +12,7 @@ import javax.swing.JFrame;
  * @author Artem Novak
  */
 public class KeyHandler extends KeyAdapter {
-    public String lastPressKey = null;
+    private String lastPressKey = null;
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -32,6 +32,10 @@ public class KeyHandler extends KeyAdapter {
         else if (key == KeyEvent.VK_ESCAPE) {
             lastPressKey = "escape";
         }
+    }
+
+    public String getLastPressKey() {
+        return lastPressKey;
     }
 
     public void clearLastPress() {
