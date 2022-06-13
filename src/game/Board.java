@@ -178,20 +178,9 @@ public class Board extends GameObject {
     public void update() {
         if (state == IDLE) {
             checkForTurnInput();
-            updateTiles();
+            updateTiles(); // May change board state to ANIMATING.
         }
         else if (state == ANIMATING) {
-            if (pendingAttacks.size() > 0) {
-                // TODO attack animation processing
-                for (AttackEvent attack : pendingAttacks) {
-                    gp.processAttack(attack);
-                    if (attack.getConsumesTurn()) {
-                        generateRandomTile();
-                        for (TurnListener listener : turnListeners) listener.onTurn();
-                    }
-                }
-                pendingAttacks.removeIf(x -> true);
-            }
             checkForTurnInput();
             updateTiles(); // May change board state to IDLE.
         }
@@ -269,16 +258,6 @@ public class Board extends GameObject {
         catch (IndexOutOfBoundsException ignore) {
             return null;
         }
-    }
-
-    /**
-     * Starts attack animation.
-     *
-     * @param originCell cell in which the attacking tile is located
-     */
-    public void startAttack(BoardCell originCell) {
-        if (tileByBoardCell(originCell) == null) throw new GameLogicException("Trying to attack from empty cell");
-        pendingAttacks.add(new AttackEvent(originCell, tileByBoardCell(originCell), 5));
     }
 
     /**
@@ -415,6 +394,23 @@ public class Board extends GameObject {
     }
 
     /**
+     * Moves tile inside the given cell to a given point.
+     * This animation is purely visual and tile is logically deleted from the board.
+     *
+     * @param cell cell whose contents to move
+     * @param target target point
+     * @throws GameLogicException if cell is empty
+     */
+    public void moveCellContentTransient(BoardCell cell, Point target) throws GameLogicException {
+        Tile tile = tileByBoardCell(cell);
+        if (tile == null) throw new GameLogicException("Trying to move contents of an empty cell");
+        board[cell.row][cell.col] = null;
+        tile.moveTowards(target);
+        transientTiles.add(tile);
+        tileCount--;
+    }
+
+    /**
      * Finds the board cell corresponding to given point
      *
      * @param point base-scale point relative to the GamePanel
@@ -548,11 +544,8 @@ public class Board extends GameObject {
         if (tileStatic != null) {
             // Merge case
             if (tileStatic.getState() != Tile.MERGING && !tileStatic.isLocked() && tileStatic.getLevel() == tileDynamic.getLevel()) {
-                tileDynamic.moveTowards(pointByCell(cellStatic));
                 tileStatic.makeMergeBase();
-                transientTiles.add(tileDynamic);
-                board[cellDynamic.row][cellDynamic.col] = null;
-                tileCount--;
+                moveCellContentTransient(cellDynamic, pointByCell(cellStatic));
                 turnReactionScheduled = true;
                 flush();
                 return true;
@@ -615,13 +608,16 @@ public class Board extends GameObject {
      * @return true if the player has no turns and false if they still do
      */
     private boolean checkForLoseCondition() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if ((j < cols - 1 && board[i][j].getLevel() == board[i][j + 1].getLevel() && !board[i][j].isLocked() && !board[i][j + 1].isLocked()) ||
-                        (i < rows - 1 && board[i][j].getLevel() == board[i + 1][j].getLevel() && !board[i][j].isLocked() && !board[i + 1][j].isLocked())) return false;
+        if (tileCount == rows * cols) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if ((j < cols - 1 && board[i][j].getLevel() == board[i][j + 1].getLevel() && !board[i][j].isLocked() && !board[i][j + 1].isLocked()) ||
+                            (i < rows - 1 && board[i][j].getLevel() == board[i + 1][j].getLevel() && !board[i][j].isLocked() && !board[i + 1][j].isLocked())) return false;
+                }
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
 }

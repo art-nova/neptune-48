@@ -28,10 +28,11 @@ public class GamePanel extends JPanel implements Runnable {
     private final Thread gameThread = new Thread(this);
     private final Board board;
     private final Entity entity;
+    private final Attack attack;
     private final ArrayList<TimeListener> timeListeners = new ArrayList<>();
-    private final ArrayList<AttackListener> attackListeners = new ArrayList<>();
     private final ArrayList<GameOverListener> gameOverListeners = new ArrayList<>();
     private final ArrayList<StateListener> stateListeners = new ArrayList<>();
+    private final int baseTileDamage;
 
     private int state = PLAYING;
     // Time left in seconds
@@ -48,12 +49,14 @@ public class GamePanel extends JPanel implements Runnable {
      * @param entityMaxHealth max health of the entity
      * @param entityIndex index of the entity to be loaded (in the entity texture folder)
      * @param time time in seconds after which level is considered failed
+     * @param baseTileDamage damage dealt by level 1 tile
      */
     public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs, GamePanelGraphics graphics,
-                     int entityMaxHealth, int entityIndex, int time) throws IOException {
+                     int entityMaxHealth, int entityIndex, int time, int baseTileDamage) throws IOException {
         this.graphics = graphics;
         this.entity = new Entity(0, 0, entityMaxHealth, this);
         this.board = new Board(0, GamePanelGraphics.ENTITY_HEIGHT + GamePanelGraphics.ENTITY_BOARD_DISTANCE, boardRows, boardCols, 1, this);
+        this.attack = new Attack(this);
         UIManager.getFrame().addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
@@ -61,6 +64,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setPreferredSize(new Dimension(GamePanelGraphics.ENTITY_WIDTH, board.getPreferredHeight() + GamePanelGraphics.ENTITY_BOARD_DISTANCE + GamePanelGraphics.ENTITY_HEIGHT));
         board.setX((GamePanelGraphics.ENTITY_WIDTH - board.getPreferredWidth())/2f);
         this.timeLeft = time;
+        this.baseTileDamage = baseTileDamage;
 
         graphics.load(boardRows, boardCols, entityIndex);
         board.generateRandomTile();
@@ -105,27 +109,18 @@ public class GamePanel extends JPanel implements Runnable {
      * Updates all components of the panel.
      */
     public void update() {
-        board.update();
         entity.update();
+        board.update();
+        attack.update();
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D)g;
-        board.render(g2d);
         entity.render(g2d);
+        board.render(g2d);
         g.dispose();
-    }
-
-    /**
-     * Triggers attack listeners and performs the attack on a logical level.
-     *
-     * @param e attack event (can be modified by attack listeners)
-     */
-    public void processAttack(AttackEvent e) {
-        for (AttackListener listener : attackListeners) listener.onAttack(e);
-        entity.changeHealth(-e.getDamage());
     }
 
     public void loseLevel() {
@@ -187,20 +182,16 @@ public class GamePanel extends JPanel implements Runnable {
         for (TimeListener listener : timeListeners) listener.onTimeChanged(oldTimeLeft, this.timeLeft);
     }
 
+    public int getBaseTileDamage() {
+        return baseTileDamage;
+    }
+
     public void addTimeListener(TimeListener listener) {
         timeListeners.add(listener);
     }
 
     public void removeTimeListener(TimeListener listener) {
         timeListeners.remove(listener);
-    }
-
-    public void addAttackListener(AttackListener listener) {
-        attackListeners.add(listener);
-    }
-
-    public void removeAttackListener(AttackListener listener) {
-        attackListeners.remove(listener);
     }
 
     public void addGameOverListener(GameOverListener listener) {

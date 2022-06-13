@@ -29,9 +29,21 @@ public class KeyHandler extends KeyAdapter {
         else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
             lastPressKey = "right";
         }
+        else if (key == KeyEvent.VK_SPACE) {
+            lastPressKey = "space";
+        }
         else if (key == KeyEvent.VK_ESCAPE) {
             lastPressKey = "escape";
         }
+    }
+
+    /**
+     * Determines whether there is an unprocessed pressed key.
+     *
+     * @return true if there is an unprocessed key
+     */
+    public boolean isKeyPressed() {
+        return lastPressKey != null;
     }
 
     public String getLastPressKey() {
