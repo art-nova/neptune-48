@@ -10,10 +10,11 @@ import game.Tile;
  */
 public class AttackEvent {
     private int damagePercent = 100;
+    private int damageNegation;
     private final BoardCell originCell;
     private final Tile tile;
     private final int baseTileDamage;
-    private boolean consumesTurn = true;
+    private boolean turnConsuming = true;
 
     /**
      * Creates a new attack event.
@@ -43,10 +44,32 @@ public class AttackEvent {
      */
     public void offsetDamagePercent(int percentageOffset) {
         damagePercent += percentageOffset;
+        if (damagePercent < 0) damagePercent = 0;
     }
 
-    public int getDamage() {
-        return Math.round(baseTileDamage * damagePercent / 100f);
+    /**
+     * Returns the percentage of damage that gets ignored, on a scale from 0% to 100%.
+     *
+     * @return damage negation percentage
+     */
+    public int getDamageNegation() {
+        return damageNegation;
+    }
+
+    /**
+     * Changes current damage negation (from the attack target).
+     * Damage negation only works on a scale from 0% to 100%, 0% not affecting damage calculation and 100% resulting in damage 0.
+     *
+     * @param damageNegationOffset offset in percents
+     */
+    public void offsetDamageNegation(int damageNegationOffset) {
+        damageNegation += damageNegationOffset;
+        if (damageNegation > 100) damageNegation = 100;
+        if (damageNegation < 0) damageNegation = 0;
+    }
+
+    public long getDamage() {
+        return tile.getLevel() == 11 ? Long.MAX_VALUE : Math.round((Math.pow(baseTileDamage, tile.getLevel()) * damagePercent / 100f) * (100 - damageNegation) / 100f);
     }
 
     /**
@@ -66,14 +89,14 @@ public class AttackEvent {
     /**
      * @return whether this attack will trigger a turn reaction
      */
-    public boolean getConsumesTurn() {
-        return consumesTurn;
+    public boolean isTurnConsuming() {
+        return turnConsuming;
     }
 
     /**
-     * @param consumesTurn whether this attack will trigger a turn reaction
+     * @param turnConsuming whether this attack will trigger a turn reaction
      */
-    public void setConsumesTurn(boolean consumesTurn) {
-        this.consumesTurn = consumesTurn;
+    public void setTurnConsuming(boolean turnConsuming) {
+        this.turnConsuming = turnConsuming;
     }
 }
