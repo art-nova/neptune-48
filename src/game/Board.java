@@ -132,7 +132,7 @@ public class Board extends GameObject {
                     else {
                         selected.add(cell);
                         if (selected.size() == maxSelection) {
-                            for (CellSelectionListener listener : cellSelectionListeners) listener.onSelectionCompleted(selected);
+                            for (CellSelectionListener listener : new ArrayList<>(cellSelectionListeners)) listener.onSelectionCompleted(selected);
                             selectionHandler.selected = new ArrayList<>();
                             selectionHandler.predicate = null;
                             setState(IDLE);
@@ -284,7 +284,7 @@ public class Board extends GameObject {
             selectionHandler.selected = new ArrayList<>();
             selectionHandler.predicate = null;
             setState(IDLE);
-            for (CellSelectionListener listener : cellSelectionListeners) listener.onSelectionAborted();
+            for (CellSelectionListener listener : new ArrayList<>(cellSelectionListeners)) listener.onSelectionAborted();
         }
     }
 
@@ -331,7 +331,7 @@ public class Board extends GameObject {
         if (state != this.state) {
             int oldState = this.state;
             this.state = state;
-            for (StateListener listener : stateListeners) listener.onStateChanged(oldState, state);
+            for (StateListener listener : new ArrayList<>(stateListeners)) listener.onStateChanged(oldState, state);
         }
     }
 
@@ -434,7 +434,7 @@ public class Board extends GameObject {
             if (turnReactionScheduled) {
                 turnReactionScheduled = false;
                 generateRandomTile();
-                for (TurnListener listener : turnListeners) listener.onTurn();
+                for (TurnListener listener : new ArrayList<>(turnListeners)) listener.onTurn();
             }
         }
     }

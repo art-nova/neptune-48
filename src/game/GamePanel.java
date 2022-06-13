@@ -89,7 +89,7 @@ public class GamePanel extends JPanel implements Runnable {
             if (secondsTimer >= 1000000000 && state == PLAYING) {
                 secondsTimer = 0;
                 timeLeft--;
-                for (TimeListener listener : timeListeners) listener.onTimeChanged(timeLeft + 1, timeLeft);
+                for (TimeListener listener : new ArrayList<>(timeListeners)) listener.onTimeChanged(timeLeft + 1, timeLeft);
                 if (timeLeft <= 0) loseLevel();
             }
 
@@ -125,12 +125,12 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void loseLevel() {
         state = ENDING;
-        for (GameOverListener listener : gameOverListeners) listener.onLose();
+        for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onLose();
     }
 
     public void winLevel() {
         state = ENDING;
-        for (GameOverListener listener : gameOverListeners) listener.onWin(timeLeft);
+        for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onWin(timeLeft);
     }
 
     public GamePanelGraphics getGameGraphics() {
@@ -162,7 +162,7 @@ public class GamePanel extends JPanel implements Runnable {
         if (state != this.state) {
             int oldState = this.state;
             this.state = state;
-            for (StateListener listener : stateListeners) listener.onStateChanged(oldState, state);
+            for (StateListener listener : new ArrayList<>(stateListeners)) listener.onStateChanged(oldState, state);
         }
     }
 
@@ -179,7 +179,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void offsetTimeLeft(int delta) {
         int oldTimeLeft = this.timeLeft;
         this.timeLeft = Math.max(timeLeft + delta, 0);
-        for (TimeListener listener : timeListeners) listener.onTimeChanged(oldTimeLeft, this.timeLeft);
+        for (TimeListener listener : new ArrayList<>(timeListeners)) listener.onTimeChanged(oldTimeLeft, this.timeLeft);
     }
 
     public int getBaseTileDamage() {
