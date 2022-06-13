@@ -12,8 +12,8 @@ import java.util.ArrayList;
  * @author Artem Novak
  */
 public class Entity extends GameObject {
-    private final int maxHealth;
-    private int health;
+    private final long maxHealth;
+    private long health;
     private final ArrayList<EntityListener> listeners = new ArrayList<>();
     private final GamePanelGraphics graphics;
 
@@ -25,7 +25,7 @@ public class Entity extends GameObject {
      * @param maxHealth max health
      * @param gp root GamePanel
      */
-    public Entity(int x, int y, int maxHealth, GamePanel gp) {
+    public Entity(int x, int y, long maxHealth, GamePanel gp) {
         super(x, y, gp);
         this.graphics = gp.getGameGraphics();
         this.maxHealth = maxHealth;
@@ -47,8 +47,8 @@ public class Entity extends GameObject {
      *
      * @param delta change in health
      */
-    public void changeHealth(int delta) {
-        int oldHealth = health;
+    public void changeHealth(long delta) {
+        long oldHealth = health;
         health += delta;
         if (health >= maxHealth) health = maxHealth;
         else if (health <= 0) health = 0;

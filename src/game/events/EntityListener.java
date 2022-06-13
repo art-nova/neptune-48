@@ -12,5 +12,5 @@ public interface EntityListener {
      * @param oldHealth old health
      * @param newHealth new health
      */
-    void onHealthChanged(int oldHealth, int newHealth);
+    void onHealthChanged(long oldHealth, long newHealth);
 }
