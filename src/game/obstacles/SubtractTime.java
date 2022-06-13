@@ -13,12 +13,7 @@ public class SubtractTime extends Obstacle {
     }
 
     @Override
-    public void apply() {
+    public void startApplication() {
         //TODO
-    }
-
-    @Override
-    public boolean isActive() {
-        return false;
     }
 }

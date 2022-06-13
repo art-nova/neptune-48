@@ -8,10 +8,8 @@ import game.GamePanel;
  *
  * @author Artem Novak
  */
-public abstract class Obstacle implements GameModifier {
+public abstract class Obstacle extends GameModifier {
     protected GamePanel gp;
-    protected boolean applicable;
-    protected boolean active;
 
     /**
      * Constructs an abstract obstacle.
@@ -19,12 +17,7 @@ public abstract class Obstacle implements GameModifier {
      * @param gp GamePanel to interact with
      */
     public Obstacle(GamePanel gp) {
-        this.gp = gp;
-    }
-
-    @Override
-    public boolean isApplicable() {
-        return applicable;
+        super(gp);
     }
 
     @Override

@@ -18,12 +18,8 @@ public class BonusTime extends Bonus {
     }
 
     @Override
-    public void apply() {
+    public void startApplication() {
         //TODO
     }
 
-    @Override
-    public boolean isActive() {
-        return false;
-    }
 }

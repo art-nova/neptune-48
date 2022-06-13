@@ -9,10 +9,7 @@ import game.GamePanel;
  *
  * @author Artem Novak
  */
-public abstract class Bonus implements GameModifier {
-    protected GamePanel gp;
-    protected boolean applicable;
-    protected boolean active;
+public abstract class Bonus extends GameModifier {
 
     /**
      * Constructs an abstract bonus.
@@ -20,12 +17,7 @@ public abstract class Bonus implements GameModifier {
      * @param gp GamePanel to interact with
      */
     public Bonus(GamePanel gp) {
-        this.gp = gp;
-    }
-
-    @Override
-    public boolean isApplicable() {
-        return applicable && gp.getBoard().getState() == Board.IDLE;
+        super(gp);
     }
 
     @Override
