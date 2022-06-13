@@ -29,7 +29,7 @@ public class GamePanelGraphics extends ImageManager {
     // General
     public static final int ENTITY_BOARD_DISTANCE = TILE_SIZE/5;
     // How many frames a single animation takes (1 second == 60 frames)
-    public static final int ANIMATION_CYCLE = 7;
+    public static final int ANIMATION_CYCLE = 10;
 
     public final Font gameTextFont;
 
@@ -39,7 +39,7 @@ public class GamePanelGraphics extends ImageManager {
     private final HashMap<String, Color> palette = new HashMap<>();
     {
         palette.put("textColor", Color.white);
-        palette.put("highlight", new Color(255, 255, 255, 212));
+        palette.put("highlight", new Color(255, 255, 255, 64));
         palette.put("boardBG", new Color(0, 18, 5));
         palette.put("boardCellBG", new Color(48, 94, 63));
         palette.put("tileBG0", new Color(28, 13, 0));

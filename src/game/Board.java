@@ -1,6 +1,7 @@
 package game;
 
 import game.events.AttackEvent;
+import game.events.CellSelectionListener;
 import game.events.StateListener;
 import game.events.TurnListener;
 import game.utils.GamePanelGraphics;
@@ -31,9 +32,10 @@ public class Board extends GameObject {
     private final WeightedRandom random = new WeightedRandom();
     private final List<Tile> transientTiles = new LinkedList<>(); // Tiles that are no longer logically present and are to be deleted after finishing current animation cycle.
     private final SelectionHandler selectionHandler;
-    private final ArrayList<TurnListener> turnListeners = new ArrayList<>();
-    private final ArrayList<StateListener> stateListeners = new ArrayList<>();
-    private final ArrayList<AttackEvent> pendingAttacks = new ArrayList<>();
+    private final List<TurnListener> turnListeners = new ArrayList<>();
+    private final List<StateListener> stateListeners = new ArrayList<>();
+    private final List<CellSelectionListener> cellSelectionListeners = new ArrayList<>();
+    private final List<AttackEvent> pendingAttacks = new ArrayList<>();
     private final int rows;
     private final int cols;
     private final int preferredWidth;
@@ -73,7 +75,7 @@ public class Board extends GameObject {
      *
      * @author Artem Novak
      */
-    private class SelectionHandler extends GameObject {
+    private class SelectionHandler {
         public List<BoardCell> selected = new ArrayList<>();
         private Predicate<BoardCell> predicate;
         private int maxSelection;
@@ -84,13 +86,10 @@ public class Board extends GameObject {
          * Prepares a new SelectionHandler instance (predicate and maxSelection have to be set later).
          */
         private SelectionHandler() {
-            super((int)Board.this.x, (int)Board.this.y, Board.this.gp);
-            highlight = new BufferedImage(GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET, GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET, BufferedImage.TYPE_INT_ARGB);
+            highlight = new BufferedImage(GamePanelGraphics.TILE_SIZE, GamePanelGraphics.TILE_SIZE, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = (Graphics2D) highlight.getGraphics();
-            Area highlightArea = new Area(new Rectangle(GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET, GamePanelGraphics.TILE_SIZE + GamePanelGraphics.TILE_OFFSET));
-            highlightArea.subtract(new Area(new Rectangle( GamePanelGraphics.TILE_OFFSET/2,  + GamePanelGraphics.TILE_OFFSET/2, GamePanelGraphics.TILE_SIZE, GamePanelGraphics.TILE_SIZE)));
             g2d.setColor(graphics.getColor("highlight"));
-            g2d.fill(highlightArea);
+            g2d.fillRect(0, 0, GamePanelGraphics.TILE_SIZE, GamePanelGraphics.TILE_SIZE);
             g2d.dispose();
         }
 
@@ -99,12 +98,14 @@ public class Board extends GameObject {
          */
         public void resetOverlay() {
             overlay = new BufferedImage(preferredWidth, preferredHeight, BufferedImage.TYPE_INT_ARGB);
-            Area overlayArea = new Area(new Rectangle((int)x, (int)y, preferredWidth, preferredHeight));
+            Area overlayArea = new Area(new Rectangle(0, 0, preferredWidth, preferredHeight));
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
                     BoardCell cell = new BoardCell(i, j);
                     if (predicate.test(cell)) {
                         Point point = pointByCell(cell);
+                        point.x -= Board.this.x;
+                        point.y -= Board.this.y;
                         overlayArea.subtract(new Area(new Rectangle(point.x, point.y, GamePanelGraphics.TILE_SIZE, GamePanelGraphics.TILE_SIZE)));
                     }
                 }
@@ -128,11 +129,18 @@ public class Board extends GameObject {
                     if (selected.contains(cell)) {
                         selected.remove(cell);
                     }
-                    else if (selected.size() < maxSelection) {
+                    else {
                         selected.add(cell);
+                        if (selected.size() == maxSelection) {
+                            for (CellSelectionListener listener : cellSelectionListeners) listener.onSelectionCompleted(selected);
+                            selectionHandler.selected = new ArrayList<>();
+                            selectionHandler.predicate = null;
+                            setState(IDLE);
+                        }
                     }
                 }
             }
+            if (keyHandler.getLastPressKey() != null && keyHandler.getLastPressKey().equals("escape")) abortSelection();
         }
 
         /**
@@ -142,7 +150,7 @@ public class Board extends GameObject {
          */
         public void render(Graphics2D g2d) {
             if (predicate == null) throw new GameLogicException("Rendering a selector without a selection predicate");
-            g2d.drawImage(overlay, (int)x, (int)y, null);
+            g2d.drawImage(overlay, (int)Board.this.x, (int)Board.this.y, null);
             for (BoardCell cell : selected) highlightCell(cell, g2d);
             if (mouseHandler.isMouseOn()) {
                 BoardCell cell = cellByMouseLocation();
@@ -163,7 +171,7 @@ public class Board extends GameObject {
 
         private void highlightCell(BoardCell cell, Graphics2D g2d) {
             Point cellPoint = pointByCell(cell);
-            g2d.drawImage(highlight, cellPoint.x - GamePanelGraphics.TILE_OFFSET/2, cellPoint.y - GamePanelGraphics.TILE_OFFSET/2, null);
+            g2d.drawImage(highlight, cellPoint.x, cellPoint.y, null);
         }
     }
 
@@ -189,7 +197,6 @@ public class Board extends GameObject {
         }
         else if (state == SELECTING) {
             selectionHandler.update();
-            if (keyHandler.getLastPressKey() != null && keyHandler.getLastPressKey().equals("escape")) exitSelection();
         }
     }
 
@@ -275,13 +282,14 @@ public class Board extends GameObject {
     }
 
     /**
-     * Initiates cell selection.
+     * Initiates cell selection (aborts currently running selection if there is one).
      *
      * @param predicate predicate which is used to define selectable cells.
      * @param maxSelection max possible number of selected cells
      */
     public void initSelection(Predicate<BoardCell> predicate, int maxSelection) {
         if (maxSelection > rows*cols) throw new GameLogicException("Specified max number of selectable cells is larger than overall number of cells");
+        abortSelection();
         selectionHandler.predicate = predicate;
         selectionHandler.maxSelection = maxSelection;
         selectionHandler.resetOverlay();
@@ -289,10 +297,16 @@ public class Board extends GameObject {
         setState(SELECTING);
     }
 
-    public void exitSelection() {
-        selectionHandler.selected = new ArrayList<>();
-        selectionHandler.predicate = null;
-        setState(IDLE);
+    /**
+     * If a selection is ongoing, forcefully ends it and triggers listeners.
+     */
+    public void abortSelection() {
+        if (state == SELECTING) {
+            selectionHandler.selected = new ArrayList<>();
+            selectionHandler.predicate = null;
+            setState(IDLE);
+            for (CellSelectionListener listener : cellSelectionListeners) listener.onSelectionAborted();
+        }
     }
 
     public List<BoardCell> getSelectedCells() {
@@ -379,6 +393,14 @@ public class Board extends GameObject {
 
     public void removeStateListener(StateListener listener) {
         stateListeners.remove(listener);
+    }
+
+    public void addCellSelectionListener(CellSelectionListener listener) {
+        cellSelectionListeners.add(listener);
+    }
+
+    public void removeCellSelectionListener(CellSelectionListener listener) {
+        cellSelectionListeners.remove(listener);
     }
 
     /**
