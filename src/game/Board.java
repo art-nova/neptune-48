@@ -335,9 +335,11 @@ public class Board extends GameObject {
 
     public void setState(int state) {
         if (state < 0 || state > 2) throw new IllegalArgumentException("Board does not support state " + state);
-        int oldState = this.state;
-        this.state = state;
-        for (StateListener listener : stateListeners) listener.onStateChanged(oldState, state);
+        if (state != this.state) {
+            int oldState = this.state;
+            this.state = state;
+            for (StateListener listener : stateListeners) listener.onStateChanged(oldState, state);
+        }
     }
 
     public int getBaseTileLevel() {
