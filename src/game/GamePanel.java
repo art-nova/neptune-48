@@ -3,11 +3,14 @@ package game;
 import game.bonuses.BonusManager;
 import game.events.*;
 import game.utils.GamePanelGraphics;
+
+import java.rmi.server.UID;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Set;
 import UI.UIManager;
 
 /**
@@ -29,9 +32,9 @@ public class GamePanel extends JPanel implements Runnable {
     private final Board board;
     private final Entity entity;
     private final Attack attack;
-    private final ArrayList<TimeListener> timeListeners = new ArrayList<>();
-    private final ArrayList<GameOverListener> gameOverListeners = new ArrayList<>();
-    private final ArrayList<StateListener> stateListeners = new ArrayList<>();
+    private final List<GameOverListener> gameOverListeners = new ArrayList<>();
+    private final List<StateListener> stateListeners = new ArrayList<>();
+    private final List<UIDataListener> uiDataListeners = new ArrayList<>();
     private final int baseTileDamage;
 
     private int state = PLAYING;
@@ -89,7 +92,7 @@ public class GamePanel extends JPanel implements Runnable {
             if (secondsTimer >= 1000000000 && state == PLAYING) {
                 secondsTimer = 0;
                 timeLeft--;
-                for (TimeListener listener : new ArrayList<>(timeListeners)) listener.onTimeChanged(timeLeft + 1, timeLeft);
+                for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
                 if (timeLeft <= 0) loseLevel();
             }
 
@@ -179,19 +182,11 @@ public class GamePanel extends JPanel implements Runnable {
     public void offsetTimeLeft(int delta) {
         int oldTimeLeft = this.timeLeft;
         this.timeLeft = Math.max(timeLeft + delta, 0);
-        for (TimeListener listener : new ArrayList<>(timeListeners)) listener.onTimeChanged(oldTimeLeft, this.timeLeft);
+        for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
     }
 
     public int getBaseTileDamage() {
         return baseTileDamage;
-    }
-
-    public void addTimeListener(TimeListener listener) {
-        timeListeners.add(listener);
-    }
-
-    public void removeTimeListener(TimeListener listener) {
-        timeListeners.remove(listener);
     }
 
     public void addGameOverListener(GameOverListener listener) {
@@ -208,6 +203,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void removeStateListener(StateListener listener) {
         stateListeners.remove(listener);
+    }
+
+    public void addUIDataListener(UIDataListener listener) {
+        uiDataListeners.add(listener);
+    }
+
+    public void removeUIDataListener(UIDataListener listener) {
+        uiDataListeners.remove(listener);
     }
 
 }
