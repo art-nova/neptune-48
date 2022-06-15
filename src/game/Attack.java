@@ -1,9 +1,6 @@
 package game;
 
-import game.events.AttackEvent;
-import game.events.AttackListener;
-import game.events.CellSelectionListener;
-import game.events.StateListener;
+import game.events.*;
 import game.utils.GamePanelGraphics;
 
 import java.awt.*;
@@ -36,7 +33,10 @@ public class Attack extends GameModifier {
         gp.getBoard().addTurnListener(() -> {
             if (currentCooldown > 0) {
                 currentCooldown--;
-                if (currentCooldown == 0) setState(GameModifier.APPLICABLE);
+                if (currentCooldown == 0) setState(GameModifier.APPLICABLE); // Triggers UI data listeners as well
+                else {
+                    for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
+                }
             }
         });
         int targetX = (int)(gp.getEntity().getX() + (GamePanelGraphics.ENTITY_WIDTH - GamePanelGraphics.TILE_SIZE)/2f);

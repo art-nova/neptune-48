@@ -40,7 +40,7 @@ public abstract class GameModifier {
         if (state < 0 || state > 2) throw new IllegalArgumentException(getClass().getName() + " does not support state " + state);
         if (this.state != state) {
             this.state = state;
-            for (UIDataListener listener : uiDataListeners) listener.onUIDataChanged();
+            for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
         }
     }
 
