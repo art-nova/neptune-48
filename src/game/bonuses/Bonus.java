@@ -2,13 +2,15 @@ package game.bonuses;
 
 import game.GameModifier;
 import game.GamePanel;
+import game.UIDataHolder;
+import game.events.UIDataListener;
 
 /**
  * Class that describes an abstract game bonus.
  *
  * @author Artem Novak
  */
-public abstract class Bonus extends GameModifier {
+public abstract class Bonus extends GameModifier implements UIDataHolder {
 
     /**
      * Constructs an abstract bonus.

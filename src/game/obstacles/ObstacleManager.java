@@ -1,8 +1,10 @@
 package game.obstacles;
 
 import game.GamePanel;
+import game.UIDataHolder;
 import game.events.ObstacleEvent;
 import game.events.ObstacleListener;
+import game.events.UIDataListener;
 import game.utils.WeightedRandom;
 
 import java.util.ArrayList;
@@ -12,19 +14,24 @@ import java.util.Map;
 
 /**
  * Class that handles application of in-game obstacles.
+ * <br>
+ * As a {@link UIDataHolder}, triggers corresponding event when a new obstacle is applied.
+ * The obstacle can be queried via {@link ObstacleManager#getLatestObstacle()}.
  *
  * @author Artem Novak
  */
-public class ObstacleManager {
+public class ObstacleManager implements UIDataHolder {
     private final int minInterval;
     private final int maxInterval;
     private final Map<Obstacle, Integer> obstacleWeights = new HashMap<>();
     private final Map<Boolean, Integer> triggerLikelihood = new HashMap<>();
     private final WeightedRandom random = new WeightedRandom();
     private final List<ObstacleListener> obstacleListeners = new ArrayList<>();
+    private final List<UIDataListener> uiDataListeners = new ArrayList<>();
     private final GamePanel gp;
 
     private int turnsElapsed = 0;
+    private Obstacle latestObstacle;
 
     /**
      * Creates a new ObstacleManager with specified obstacles and their probability.
@@ -91,7 +98,11 @@ public class ObstacleManager {
                 } while (obstacle.getState() != Obstacle.APPLICABLE);
                 ObstacleEvent e = new ObstacleEvent(obstacle);
                 for (ObstacleListener listener : new ArrayList<>(obstacleListeners)) listener.onObstacle(e);
-                if (e.getObstacle() != null) e.getObstacle().startApplication();
+                if (e.getObstacle() != null) {
+                    e.getObstacle().startApplication();
+                    latestObstacle = e.getObstacle();
+                    for (UIDataListener listener : uiDataListeners) listener.onUIDataChanged();
+                }
                 turnsElapsed = 0;
             }
         }
@@ -103,5 +114,17 @@ public class ObstacleManager {
 
     public void removeObstacleListener(ObstacleListener listener) {
         obstacleListeners.remove(listener);
+    }
+
+    public void addUIDataListener(UIDataListener listener) {
+        uiDataListeners.add(listener);
+    }
+
+    public void removeUIDataListener(UIDataListener listener) {
+        uiDataListeners.remove(listener);
+    }
+
+    public Obstacle getLatestObstacle() {
+        return latestObstacle;
     }
 }
