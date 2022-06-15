@@ -1,6 +1,6 @@
 package game.events;
 
-import game.BoardCell;
+import game.gameobjects.BoardCell;
 
 import java.util.List;
 

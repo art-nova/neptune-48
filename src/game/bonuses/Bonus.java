@@ -1,6 +1,5 @@
 package game.bonuses;
 
-import game.Board;
 import game.GameModifier;
 import game.GamePanel;
 

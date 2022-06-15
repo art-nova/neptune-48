@@ -1,5 +1,6 @@
-package game;
+package game.gameobjects;
 
+import game.GamePanel;
 import game.utils.GamePanelGraphics;
 import java.awt.*;
 

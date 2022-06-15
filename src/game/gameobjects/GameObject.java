@@ -1,4 +1,6 @@
-package game;
+package game.gameobjects;
+
+import game.GamePanel;
 
 import java.awt.*;
 

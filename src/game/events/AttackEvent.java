@@ -1,7 +1,7 @@
 package game.events;
 
-import game.BoardCell;
-import game.Tile;
+import game.gameobjects.BoardCell;
+import game.gameobjects.Tile;
 
 /**
  * Class that holds information about an attack that is about to or has occurred.

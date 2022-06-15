@@ -1,6 +1,10 @@
 package game;
 
 import game.events.*;
+import game.gameobjects.Board;
+import game.gameobjects.BoardCell;
+import game.gameobjects.Entity;
+import game.gameobjects.Tile;
 import game.utils.GamePanelGraphics;
 
 import java.awt.*;

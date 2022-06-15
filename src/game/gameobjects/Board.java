@@ -1,5 +1,9 @@
-package game;
+package game.gameobjects;
 
+import game.GameLogicException;
+import game.GamePanel;
+import game.KeyHandler;
+import game.MouseHandler;
 import game.events.AttackEvent;
 import game.events.CellSelectionListener;
 import game.events.StateListener;

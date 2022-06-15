@@ -1,4 +1,4 @@
-package game;
+package game.gameobjects;
 /**
  * Lightweight pair class for simplifying board position operations.
  *

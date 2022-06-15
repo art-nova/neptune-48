@@ -1,10 +1,10 @@
 package game;
 
-import game.bonuses.BonusManager;
 import game.events.*;
+import game.gameobjects.Board;
+import game.gameobjects.Entity;
 import game.utils.GamePanelGraphics;
 
-import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.List;
