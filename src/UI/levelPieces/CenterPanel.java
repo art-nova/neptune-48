@@ -8,6 +8,7 @@ import game.GamePanel;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import models.App;
@@ -33,8 +34,10 @@ public class CenterPanel extends JLayeredPane{
         //add(new Board());
         try
 	{
-	    add(new GamePanel(4, 4, new HashSet<>(), new HashSet<>(),
-                new GamePanelGraphics("resources/images/neptun"), 5000, 1, 120, 5));
+        HashMap<String, Integer> obstacleWeights = new HashMap<>();
+	    add(new GamePanel(4, 4, new HashSet<>(), obstacleWeights,
+                new GamePanelGraphics("resources/images/neptun"), 5000, 1, 120, 5,
+                10, 30));
 	}
 	catch (IOException e){}
         add(new Attack());

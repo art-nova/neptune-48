@@ -3,9 +3,11 @@ package game;
 import game.events.*;
 import game.gameobjects.Board;
 import game.gameobjects.Entity;
+import game.obstacles.ObstacleManager;
 import game.utils.GamePanelGraphics;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 import java.util.List;
 import javax.swing.*;
@@ -31,6 +33,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final Thread gameThread = new Thread(this);
     private final Board board;
     private final Entity entity;
+    private final ObstacleManager obstacleManager;
     private final Attack attack;
     private final List<GameOverListener> gameOverListeners = new ArrayList<>();
     private final List<StateListener> stateListeners = new ArrayList<>();
@@ -47,19 +50,22 @@ public class GamePanel extends JPanel implements Runnable {
      * @param boardRows number of board rows
      * @param boardCols number of board columns
      * @param bonusNameIDs NameIDs of selected bonuses
-     * @param obstacleNameIDs NameIDs of level's obstacles
+     * @param obstacleWeights map of obstacle NameIDs to their relative weights during selection
      * @param graphics non-loaded graphics manager object
      * @param entityMaxHealth max health of the entity
      * @param entityIndex index of the entity to be loaded (in the entity texture folder)
      * @param time time in seconds after which level is considered failed
      * @param baseTileDamage damage dealt by level 1 tile
+     * @param minObstacleInterval minimal interval in turns between obstacles
+     * @param maxObstacleInterval maximal interval in turns between obstacles
      */
-    public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs, GamePanelGraphics graphics,
-                     int entityMaxHealth, int entityIndex, int time, int baseTileDamage) throws IOException {
+    public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Map<String, Integer> obstacleWeights, GamePanelGraphics graphics,
+                     int entityMaxHealth, int entityIndex, int time, int baseTileDamage, int minObstacleInterval, int maxObstacleInterval) throws IOException {
         this.graphics = graphics;
         this.entity = new Entity(0, 0, entityMaxHealth, this);
         this.board = new Board(0, GamePanelGraphics.ENTITY_HEIGHT + GamePanelGraphics.ENTITY_BOARD_DISTANCE, boardRows, boardCols, 1, this);
         this.attack = new Attack(this);
+        this.obstacleManager = new ObstacleManager(obstacleWeights, minObstacleInterval, maxObstacleInterval, this);
         UIManager.getFrame().addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
@@ -182,7 +188,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void offsetTimeLeft(int delta) {
         int oldTimeLeft = this.timeLeft;
         this.timeLeft = Math.max(timeLeft + delta, 0);
-        for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
+        if (oldTimeLeft != timeLeft) for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
     }
 
     public int getBaseTileDamage() {

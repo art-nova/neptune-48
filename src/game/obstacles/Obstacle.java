@@ -9,8 +9,6 @@ import game.GamePanel;
  * @author Artem Novak
  */
 public abstract class Obstacle extends GameModifier {
-    protected GamePanel gp;
-
     /**
      * Constructs an abstract obstacle.
      *
