@@ -144,7 +144,7 @@ public class Board extends GameObject {
                     }
                 }
             }
-            if (keyHandler.getLastPressKey() != null && keyHandler.getLastPressKey().equals("escape")) abortSelection();
+            if (keyHandler.isKeyPressed() && keyHandler.getLastPressKey().equals("escape")) abortSelection();
         }
 
         /**
@@ -253,15 +253,6 @@ public class Board extends GameObject {
         board[cell.row][cell.col] = tile;
         tileCount++;
         if (tileCount == rows * cols && checkForLoseCondition()) gp.loseLevel();
-    }
-
-    public Tile tileByBoardCell(BoardCell cell) {
-        try {
-            return board[cell.row][cell.col];
-        }
-        catch (IndexOutOfBoundsException ignore) {
-            return null;
-        }
     }
 
     /**
@@ -398,20 +389,105 @@ public class Board extends GameObject {
     }
 
     /**
-     * Moves tile inside the given cell to a given point.
-     * This animation is purely visual and tile is logically deleted from the board.
+     * Initiates transient animated movement of tile inside the given cell to a given point.
+     * This animation is purely visual and tile is logically deleted from the board. The tile will stop displaying after animation finishes.
      *
      * @param cell cell whose contents to move
      * @param target target point
      * @throws GameLogicException if cell is empty
      */
     public void moveCellContentTransient(BoardCell cell, Point target) throws GameLogicException {
-        Tile tile = tileByBoardCell(cell);
-        if (tile == null) throw new GameLogicException("Trying to move contents of an empty cell");
-        board[cell.row][cell.col] = null;
+        Tile tile = getTileInCell(cell);
+        if (tile == null) throw new GameLogicException("Trying to move contents of an empty cell " + cell);
+        putTileInCell(null, cell);
         tile.moveTowards(target);
         transientTiles.add(tile);
         tileCount--;
+        flush();
+    }
+
+    /**
+     * Initiates animated movement of tile inside the given cell to the other, target cell.
+     * Origin cell must be empty, but the target cell does not have to be. This means that contents of the target cell will be overridden.
+     *
+     * @param originCell origin cell
+     * @param targetCell target cell
+     * @throws GameLogicException if there is no tile at origin cell
+     */
+    public void moveCellContent(BoardCell originCell, BoardCell targetCell) throws GameLogicException {
+        Tile tile = getTileInCell(originCell);
+        if (tile == null) throw new GameLogicException("Trying to move contents of an empty cell " + originCell);
+        putTileInCell(null, originCell);
+        putTileInCell(tile, targetCell);
+        tile.moveTowards(pointByCell(targetCell));
+        flush();
+    }
+
+    /**
+     * Swaps contents of two non-empty cells.
+     *
+     * @param cell1 first cell
+     * @param cell2 second cell
+     * @throws GameLogicException if either of the cells is empty
+     */
+    public void swapCellContents(BoardCell cell1, BoardCell cell2) throws GameLogicException {
+        Tile tile1 = getTileInCell(cell1);
+        Tile tile2 = getTileInCell(cell2);
+        if (tile1 == null) throw new GameLogicException("Trying to initiate swapping while the first cell, " + cell1 +", is empty");
+        if (tile2 == null) throw new GameLogicException("Trying to initiate swapping while the second cell, " + cell2 +", is empty");
+        putTileInCell(tile1, cell2);
+        putTileInCell(tile2, cell1);
+        tile1.moveTowards(pointByCell(cell2));
+        tile2.moveTowards(pointByCell(cell1));
+        flush();
+    }
+
+    /**
+     * Initiates merge between contents of two cells. Merge base remains largely unaffected, and transient tile gets logically deleted from the board.
+     *
+     * @param mergeBaseCell merge base cell
+     * @param transientTileCell cell of the tile that will get deleted
+     * @throws GameLogicException if either of the cells is empty
+     */
+    public void mergeCellContentInto(BoardCell mergeBaseCell, BoardCell transientTileCell) throws GameLogicException {
+        Tile mergeBase = getTileInCell(mergeBaseCell);
+        Tile transientTile = getTileInCell(transientTileCell);
+        if (mergeBase == null) throw new GameLogicException("Trying to initiate merge while merge base cell, " + mergeBaseCell +", is empty");
+        if (transientTile == null) throw new GameLogicException("Trying to initiate merge while transient tile cell, " + transientTileCell +", is empty");
+        mergeBase.makeMergeBase();
+        moveCellContentTransient(transientTileCell, pointByCell(mergeBaseCell));
+    }
+
+    /**
+     * Puts a tile into the given cell, overriding its previous content
+     *
+     * @param tile tile to be put
+     * @param cell cell to put the tile in
+     * @throws GameLogicException if there is no such cell within the boundaries of the board
+     */
+    public void putTileInCell(Tile tile, BoardCell cell) throws GameLogicException {
+        try {
+            board[cell.row][cell.col] = tile;
+        }
+        catch (IndexOutOfBoundsException e){
+            throw new GameLogicException("Trying to put a tile into a nonexistent cell " + cell);
+        }
+    }
+
+    /**
+     * Gets cell's contents.
+     *
+     * @param cell cell to query from
+     * @return {@link Tile} contained inside the cell, or null if cell is empty
+     * @throws GameLogicException if there is no such cell within the boundaries of the board
+     */
+    public Tile getTileInCell(BoardCell cell) throws GameLogicException {
+        try {
+            return board[cell.row][cell.col];
+        }
+        catch (IndexOutOfBoundsException ignore) {
+            throw new GameLogicException("Trying to get a tile from a nonexistent cell " + cell);
+        }
     }
 
     /**
@@ -433,8 +509,8 @@ public class Board extends GameObject {
     }
 
     private void checkForTurnInput() {
-        if (keyHandler.getLastPressKey() != null) {
-            handlePlayingKeyInput();
+        if (keyHandler.isKeyPressed()) {
+            handleMovementKeyInput();
             if (turnReactionScheduled) {
                 turnReactionScheduled = false;
                 generateRandomTile();
@@ -443,7 +519,7 @@ public class Board extends GameObject {
         }
     }
 
-    private void handlePlayingKeyInput() {
+    private void handleMovementKeyInput() {
         switch (keyHandler.getLastPressKey()) {
             case "up" -> {
                 shiftUp();
@@ -534,24 +610,19 @@ public class Board extends GameObject {
      * @return true if the tiles interacted in any way (not necessarily moved), false otherwise
      */
     private boolean cellAction(BoardCell cellStatic, BoardCell cellDynamic, BoardCell cellEdge, int rowStep, int colStep) {
-        Tile tileStatic = tileByBoardCell(cellStatic);
-        Tile tileDynamic = tileByBoardCell(cellDynamic);
+        Tile tileStatic = getTileInCell(cellStatic);
+        Tile tileDynamic = getTileInCell(cellDynamic);
         // Move to edge case
         if (tileStatic == null && cellStatic.equals(cellEdge)) {
-            tileDynamic.moveTowards(pointByCell(cellStatic));
-            board[cellStatic.row][cellStatic.col] = tileDynamic;
-            board[cellDynamic.row][cellDynamic.col] = null;
+            moveCellContent(cellDynamic, cellStatic);
             turnReactionScheduled = true;
-            flush();
             return true;
         }
         if (tileStatic != null) {
             // Merge case
             if (tileStatic.getState() != Tile.MERGING && !tileStatic.isLocked() && tileStatic.getLevel() == tileDynamic.getLevel()) {
-                tileStatic.makeMergeBase();
-                moveCellContentTransient(cellDynamic, pointByCell(cellStatic));
+                mergeCellContentInto(cellStatic, cellDynamic);
                 turnReactionScheduled = true;
-                flush();
                 return true;
             }
             // Move limited by other tile case
@@ -562,11 +633,8 @@ public class Board extends GameObject {
                 if (cellStatic.equals(cellDynamic)) return true;
                 // Actual move case
                 else if (board[cellStatic.row][cellStatic.col] == null) {
-                    tileDynamic.moveTowards(pointByCell(cellStatic));
-                    board[cellStatic.row][cellStatic.col] = tileDynamic;
-                    board[cellDynamic.row][cellDynamic.col] = null;
+                    moveCellContent(cellDynamic, cellStatic);
                     turnReactionScheduled = true;
-                    flush();
                     return true;
                 }
             }

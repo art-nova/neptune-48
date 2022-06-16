@@ -59,7 +59,7 @@ public class Attack extends GameModifier {
     @Override
     public void startApplication() {
         if (state == APPLICABLE) {
-            board.initSelection(x -> board.tileByBoardCell(x) != null, 1);
+            board.initSelection(x -> board.getTileInCell(x) != null, 1);
             setState(APPLYING);
             board.addCellSelectionListener(new CellSelectionListener() {
                 @Override
@@ -80,7 +80,7 @@ public class Attack extends GameModifier {
      * Updates logical state of the attack.
      */
     public void update() {
-        if (keyHandler.getLastPressKey() != null && keyHandler.getLastPressKey().equals("space")) startApplication();
+        if (keyHandler.isKeyPressed() && keyHandler.getLastPressKey().equals("space")) startApplication();
     }
 
     /**
@@ -94,7 +94,7 @@ public class Attack extends GameModifier {
      * @throws GameLogicException when trying to attack from empty cell
      */
     public void startAttack(BoardCell cell) throws GameLogicException {
-        Tile tile = board.tileByBoardCell(cell);
+        Tile tile = board.getTileInCell(cell);
         if (tile == null) throw new GameLogicException("Trying to attack from empty cell");
         board.moveCellContentTransient(cell, targetPoint);
         AttackEvent attackEvent = new AttackEvent(cell, tile, gp.getBaseTileDamage());
