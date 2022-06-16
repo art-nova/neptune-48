@@ -2,9 +2,8 @@ package game;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-import javax.swing.JFrame;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Class that implements methods for registering pressed keys by certain NameIDs.
@@ -12,45 +11,76 @@ import javax.swing.JFrame;
  * @author Artem Novak
  */
 public class KeyHandler extends KeyAdapter {
-    private String lastPressKey = null;
+    private LinkedList<String> pressedKeys = new LinkedList<>();
 
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
-            lastPressKey = "up";
+            pressedKeys.add("up");
         }
         else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
-            lastPressKey = "down";
+            pressedKeys.add("down");
         }
         else if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
-            lastPressKey = "left";
+            pressedKeys.add("left");
         }
         else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
-            lastPressKey = "right";
+            pressedKeys.add("right");
         }
         else if (key == KeyEvent.VK_SPACE) {
-            lastPressKey = "space";
+            pressedKeys.add("space");
         }
         else if (key == KeyEvent.VK_ESCAPE) {
-            lastPressKey = "escape";
+            pressedKeys.add("escape");
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        int key = e.getKeyCode();
+        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
+            pressedKeys.removeIf(x -> x.equals("up"));
+        }
+        else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
+            pressedKeys.removeIf(x -> x.equals("down"));
+        }
+        else if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
+            pressedKeys.removeIf(x -> x.equals("left"));
+        }
+        else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
+            pressedKeys.removeIf(x -> x.equals("right"));
+        }
+        else if (key == KeyEvent.VK_SPACE) {
+            pressedKeys.removeIf(x -> x.equals("space"));
+        }
+        else if (key == KeyEvent.VK_ESCAPE) {
+            pressedKeys.removeIf(x -> x.equals("escape"));
         }
     }
 
     /**
-     * Determines whether there is an unprocessed pressed key.
+     * Determines whether there are any registered pressed keys.
      *
-     * @return true if there is an unprocessed key
+     * @return true if there is at least one registered pressed key
      */
     public boolean isKeyPressed() {
-        return lastPressKey != null;
+        return !pressedKeys.isEmpty();
     }
 
+    /**
+     * Gets the latest registered pressed key
+     *
+     * @return last pressed key
+     */
     public String getLastPressKey() {
-        return lastPressKey;
+        return pressedKeys.peekLast();
     }
 
+    /**
+     * Removes last registered pressed key.
+     */
     public void clearLastPress() {
-        lastPressKey = null;
+        pressedKeys.removeLast();
     }
 }
