@@ -20,6 +20,7 @@ public class WeightedRandom extends Random {
         for (T key : new HashSet<>(weightMap.keySet())) {
             if (weightMap.get(key) == null || weightMap.get(key) <= 0) weightMap.remove(key);
         }
+        if (weightMap.isEmpty()) return null;
         int num = nextInt(0, weightMap.values().stream().mapToInt(x -> x).sum());
         int upperBound = 0;
         for (T key : weightMap.keySet()) {
