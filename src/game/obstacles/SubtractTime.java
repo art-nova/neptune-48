@@ -2,8 +2,18 @@ package game.obstacles;
 
 import game.GamePanel;
 
+/**
+ * Class that implements functionality of "subtractTime" obstacle.
+ *
+ * @author Artem Novak
+ */
 public class SubtractTime extends Obstacle {
-    SubtractTime(GamePanel gp) {
+    /**
+     * Number of seconds this bonus subtracts from the timer.
+     */
+    public static final int TIME_SUBTRACTED = 30;
+
+    public SubtractTime(GamePanel gp) {
         super(gp);
     }
 
@@ -14,6 +24,6 @@ public class SubtractTime extends Obstacle {
 
     @Override
     public void startApplication() {
-        //TODO
+        gp.offsetTimeLeft(-TIME_SUBTRACTED);
     }
 }

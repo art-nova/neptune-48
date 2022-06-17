@@ -17,6 +17,7 @@ import java.util.Map;
  * <br>
  * As a {@link UIDataHolder}, triggers corresponding event when a new obstacle is applied.
  * The obstacle can be queried via {@link ObstacleManager#getLatestObstacle()}.
+ * Note: the obstacle may be null, which would mean that it was due programmatically, but got negated by something else.
  *
  * @author Artem Novak
  */
@@ -50,52 +51,39 @@ public class ObstacleManager implements UIDataHolder {
         this.minInterval = minInterval;
         this.maxInterval = maxInterval;
         triggerLikelihood.put(true, 1);
-        tryForObstacle();
+        attemptObstacle();
         gp.getBoard().addTurnListener(() -> {
             turnsElapsed++;
-            tryForObstacle();
+            attemptObstacle();
         });
     }
 
     private Obstacle registerObstacle(String nameID) {
-        switch (nameID) {
-            case "downgrade" -> {
-                System.out.println("downgrade"); // PLACEHOLDER
-            }
-            case "freeze" -> {
-                System.out.println("freeze"); // PLACEHOLDER
-            }
-            case "garbageTile" -> {
-                System.out.println("garbageTile"); // PLACEHOLDER
-            }
-            case "randomDispose" -> {
-                System.out.println("randomDispose"); // PLACEHOLDER
-            }
-            case "randomScramble" -> {
-                System.out.println("randomScramble"); // PLACEHOLDER
-            }
-            case "randomSwap" -> {
-                System.out.println("randomSwap"); // PLACEHOLDER
-            }
-            case "subtractTime" -> {
-                return new SubtractTime(gp);
-            }
-            default -> {
-                throw new IllegalArgumentException("Obstacle " + nameID + " does not exist");
-            }
-        }
-        return null;
+        return switch (nameID) {
+            case "downgrade" -> new Downgrade(gp);
+            case "freeze" -> new Freeze(gp);
+            case "garbageTile" -> new GarbageTile(gp);
+            case "randomDispose" -> new RandomDispose(gp);
+            case "randomScramble" -> new RandomScramble(gp);
+            case "randomSwap" -> new RandomSwap(gp);
+            case "subtractTime" -> new SubtractTime(gp);
+            default -> throw new IllegalArgumentException("Obstacle " + nameID + " does not exist");
+        };
     }
 
-    private void tryForObstacle() {
+    private void attemptObstacle() {
+        System.out.println(turnsElapsed);
         if (turnsElapsed >= minInterval) {
             triggerLikelihood.put(false, maxInterval + 1 - turnsElapsed);
             if (random.weightedChoice(triggerLikelihood)) {
-                Obstacle obstacle;
+                Obstacle obstacle = null;
+                Map<Obstacle, Integer> runtimeLikelihoods = new HashMap<>(obstacleWeights);
                 do {
-                    obstacle = random.weightedChoice(this.obstacleWeights);
+                    runtimeLikelihoods.remove(obstacle);
+                    obstacle = random.weightedChoice(runtimeLikelihoods);
                     if (obstacle == null) break;
                 } while (obstacle.getState() != Obstacle.APPLICABLE);
+                if (runtimeLikelihoods.isEmpty()) return; // Happens when no obstacle could be applied. Turn counter is not reset, so if it exceeds max interval, attempt next turn is guaranteed.
                 ObstacleEvent e = new ObstacleEvent(obstacle);
                 for (ObstacleListener listener : new ArrayList<>(obstacleListeners)) listener.onObstacle(e);
                 if (e.getObstacle() != null) {
@@ -108,10 +96,24 @@ public class ObstacleManager implements UIDataHolder {
         }
     }
 
+    /**
+     * Adds an {@link ObstacleListener} implementation to this object.
+     * {@link ObstacleListener#onObstacle(ObstacleEvent)} is triggered when obstacle is selected to be applied this turn,
+     * but not yet applied.
+     *
+     * @param listener ObstacleListener implementation
+     */
     public void addObstacleListener(ObstacleListener listener) {
         obstacleListeners.add(listener);
     }
 
+    /**
+     * Removes an {@link ObstacleListener} implementation from this object.
+     * {@link ObstacleListener#onObstacle(ObstacleEvent)} is triggered when obstacle is selected to be applied this turn,
+     * but not yet applied.
+     *
+     * @param listener ObstacleListener implementation
+     */
     public void removeObstacleListener(ObstacleListener listener) {
         obstacleListeners.remove(listener);
     }
@@ -124,6 +126,11 @@ public class ObstacleManager implements UIDataHolder {
         uiDataListeners.remove(listener);
     }
 
+    /**
+     * Returns latest applied obstacle.
+     *
+     * @return last applied obstacle
+     */
     public Obstacle getLatestObstacle() {
         return latestObstacle;
     }
