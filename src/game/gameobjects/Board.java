@@ -299,6 +299,14 @@ public class Board extends GameObject {
         this.baseTileLevel = baseTileLevel;
     }
 
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
     public int getRows() {
         return rows;
     }

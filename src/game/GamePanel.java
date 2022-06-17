@@ -118,9 +118,11 @@ public class GamePanel extends JPanel implements Runnable {
      * Updates all components of the panel.
      */
     public void update() {
-        entity.update();
+        if (state != ENDING) {
+            entity.update();
+            attack.update();
+        }
         board.update();
-        attack.update();
     }
 
     @Override
@@ -134,11 +136,15 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void loseLevel() {
         state = ENDING;
+        if (board.getState() == Board.SELECTING) board.abortSelection();
+        board.setLocked(true);
         for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onLose();
     }
 
     public void winLevel() {
         state = ENDING;
+        if (board.getState() == Board.SELECTING) board.abortSelection();
+        board.setLocked(true);
         for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onWin(timeLeft);
     }
 
