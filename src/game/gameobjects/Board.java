@@ -4,7 +4,6 @@ import game.GameLogicException;
 import game.GamePanel;
 import game.KeyHandler;
 import game.MouseHandler;
-import game.events.AttackEvent;
 import game.events.CellSelectionListener;
 import game.events.StateListener;
 import game.events.TurnListener;
@@ -39,7 +38,6 @@ public class Board extends GameObject {
     private final List<TurnListener> turnListeners = new ArrayList<>();
     private final List<StateListener> stateListeners = new ArrayList<>();
     private final List<CellSelectionListener> cellSelectionListeners = new ArrayList<>();
-    private final List<AttackEvent> pendingAttacks = new ArrayList<>();
     private final int rows;
     private final int cols;
     private final int preferredWidth;
@@ -54,6 +52,7 @@ public class Board extends GameObject {
     private int tileCount;
     private int moveDirection;
     private boolean turnReactionScheduled;
+    private boolean locked = false;
 
     public Board(int x, int y, int rows, int cols, int baseTileLevel, GamePanel gp) throws IllegalArgumentException {
         super(x, y, gp);
@@ -180,17 +179,14 @@ public class Board extends GameObject {
     }
 
     public void update() {
-        if (state == IDLE) {
-            checkForTurnInput();
-            updateTiles(); // May change board state to ANIMATING.
-        }
-        else if (state == ANIMATING) {
-            checkForTurnInput();
-            updateTiles(); // May change board state to IDLE.
+        if (state == IDLE || state == ANIMATING) {
+            if (!locked) handleTurnInput();
+            updateTiles(); // May change board state.
         }
         else if (state == SELECTING) {
             selectionHandler.update();
         }
+        else updateTiles();
     }
 
     public void render(Graphics2D g2d) {
@@ -217,42 +213,6 @@ public class Board extends GameObject {
         }
         for (Tile tile : transientTiles) tile.render(g2d);
         if (state == SELECTING) selectionHandler.render(g2d);
-    }
-
-    /**
-     * Generates a random tile at a certain board position.
-     * Reacts appropriately if the tile is unable to be generated (board full).
-     */
-    public void generateRandomTile() throws GameLogicException {
-        if (tileCount == rows * cols) throw new GameLogicException("Attempt to generate a tile on a full board");
-        ArrayList<BoardCell> freeBoardCells = new ArrayList<>();
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (board[i][j] == null) freeBoardCells.add(new BoardCell(i, j));
-            }
-        }
-        if (!freeBoardCells.isEmpty()) {
-            BoardCell finalCell = freeBoardCells.get(random.nextInt(0, freeBoardCells.size()));
-            HashMap<Integer, Integer> newTileWeights = new HashMap<>();
-            newTileWeights.put(baseTileLevel, 3);
-            newTileWeights.put(baseTileLevel+1, 1);
-            generateTile(finalCell, random.<Integer>weightedChoice(newTileWeights));
-        }
-    }
-
-    /**
-     * Generates a tile with specific settings (useful for any kind of scripted levels).
-     *
-     * @param cell tile's cell
-     * @param level tile's level
-     */
-    public void generateTile(BoardCell cell, int level) throws GameLogicException {
-        if (tileCount == rows * cols) throw new GameLogicException("Attempt to generate a tile on a full board");
-        Point point = pointByCell(cell);
-        Tile tile = new Tile(point.x, point.y, level, gp);
-        board[cell.row][cell.col] = tile;
-        tileCount++;
-        if (tileCount == rows * cols && checkForLoseCondition()) gp.loseLevel();
     }
 
     /**
@@ -322,7 +282,7 @@ public class Board extends GameObject {
     }
 
     public void setState(int state) {
-        if (state < 0 || state > 2) throw new IllegalArgumentException("Board does not support state " + state);
+        if (state < 0 || state > 3) throw new IllegalArgumentException("Board does not support state " + state);
         if (state != this.state) {
             int oldState = this.state;
             this.state = state;
@@ -339,8 +299,12 @@ public class Board extends GameObject {
         this.baseTileLevel = baseTileLevel;
     }
 
-    public Tile[][] getBoard() {
-        return board;
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
     }
 
     /**
@@ -382,33 +346,94 @@ public class Board extends GameObject {
      *
      * @param cell board cell
      * @return base-scale point relative to the GamePanel
+     * @throws IllegalArgumentException if cell is outside of board bounds
      */
-    public Point pointByCell(BoardCell cell) {
+    public Point pointByCell(BoardCell cell) throws IllegalArgumentException {
+        if (cell.row < 0 || cell.row >= rows || cell.col < 0 || cell.col > cols) throw new IllegalArgumentException("Nonexistent cell!");
         return new Point((int)x + cell.col * GamePanelGraphics.TILE_SIZE + (cell.col + 1) * GamePanelGraphics.TILE_OFFSET,
                 (int)y + cell.row * GamePanelGraphics.TILE_SIZE + (cell.row + 1) * GamePanelGraphics.TILE_OFFSET);
     }
 
     /**
-     * Initiates transient animated movement of tile inside the given cell to a given point.
-     * This animation is purely visual and tile is logically deleted from the board. The tile will stop displaying after animation finishes.
-     *
-     * @param cell cell whose contents to move
-     * @param target target point
-     * @throws GameLogicException if cell is empty
+     * Generates a random tile at a certain board position.
+     * Reacts appropriately if the tile is unable to be generated (board full).
      */
-    public void moveCellContentTransient(BoardCell cell, Point target) throws GameLogicException {
-        Tile tile = getTileInCell(cell);
-        if (tile == null) throw new GameLogicException("Trying to move contents of an empty cell " + cell);
-        putTileInCell(null, cell);
-        tile.moveTowards(target);
-        transientTiles.add(tile);
-        tileCount--;
-        flush();
+    public void generateRandomTile() throws GameLogicException {
+        if (tileCount == rows * cols) throw new GameLogicException("Attempt to generate a tile on a full board");
+        List<BoardCell> cells = getCellsByPredicate(x -> getTileInCell(x) == null);
+        if (!cells.isEmpty()) {
+            BoardCell cell = cells.get(random.nextInt(0, cells.size()));
+            HashMap<Integer, Integer> newTileWeights = new HashMap<>();
+            newTileWeights.put(baseTileLevel, 3);
+            newTileWeights.put(baseTileLevel+1, 1);
+            generateTile(cell, random.<Integer>weightedChoice(newTileWeights));
+        }
     }
 
     /**
-     * Initiates animated movement of tile inside the given cell to the other, target cell.
-     * Origin cell must be empty, but the target cell does not have to be. This means that contents of the target cell will be overridden.
+     * Generates a tile with specific settings (useful for any kind of scripted levels).
+     *
+     * @param cell tile's cell
+     * @param level tile's level
+     */
+    public void generateTile(BoardCell cell, int level) throws GameLogicException {
+        if (tileCount == rows * cols) throw new GameLogicException("Attempt to generate a tile on a full board");
+        Point point = pointByCell(cell);
+        Tile tile = new Tile(point.x, point.y, level, gp);
+        board[cell.row][cell.col] = tile;
+        tileCount++;
+        if (tileCount == rows * cols && checkForLoseCondition()) gp.loseLevel();
+    }
+
+    /**
+     * Logically deletes tile from the board.
+     *
+     * @param cell cell where the tile is located
+     * @throws GameLogicException if the cell is nonexistent or empty
+     */
+    public void disposeCellContent(BoardCell cell) throws GameLogicException {
+        Tile tile = getTileInCell(cell);
+        if (tile == null) throw new GameLogicException("Trying to dispose of content of an empty cell");
+        putTileInCell(null, cell);
+        tileCount--;
+    }
+
+    /**
+     * Animates disposing of a tile.
+     *
+     * @param tile tile whose disposal is to be animated
+     * @throws GameLogicException if the tile is equal to null
+     */
+    public void animateTileDisposal(Tile tile) throws GameLogicException {
+        flush();
+        if (tile == null) throw new GameLogicException("Trying to dispose of a nonexistent tile");
+        transientTiles.add(tile);
+        tile.dispose();
+    }
+
+    /**
+     * Adds tile to transient tiles and makes it keep displaying, even after its current animation finishes.
+     *
+     * @param tile tile
+     */
+    public void lingerTile(Tile tile) {
+        transientTiles.add(tile);
+        tile.setLingering(true);
+    }
+
+    /**
+     * Removes tile from transient list.
+     *
+     * @param tile tile
+     */
+    public void unlingerTile(Tile tile) {
+        transientTiles.remove(tile);
+        tile.setLingering(false);
+    }
+
+    /**
+     * Logically moves tile inside the given cell to the other, target cell.
+     * Origin cell must contain a tile, target cell does not have limitations. This means that contents of the target cell will be overridden.
      *
      * @param originCell origin cell
      * @param targetCell target cell
@@ -419,12 +444,36 @@ public class Board extends GameObject {
         if (tile == null) throw new GameLogicException("Trying to move contents of an empty cell " + originCell);
         putTileInCell(null, originCell);
         putTileInCell(tile, targetCell);
-        tile.moveTowards(pointByCell(targetCell));
-        flush();
     }
 
     /**
-     * Swaps contents of two non-empty cells.
+     * Initiates animation of tile moving to target cell.
+     *
+     * @param tile tile
+     * @param targetCell target cell
+     */
+    public void animateTileMove(Tile tile, BoardCell targetCell) {
+        flush();
+        tile.moveTowards(pointByCell(targetCell));
+    }
+
+    /**
+     * Initiates transient animation of movement of the given tile to a given point.
+     * This animation is purely visual and separate from logical rendering of the tile, on which it has no effect.
+     *
+     * @param tile tile whose movement is to be animated
+     * @param target target point
+     * @throws GameLogicException if tile is null
+     */
+    public void animateTileMoveTransient(Tile tile, Point target) throws GameLogicException {
+        flush();
+        if (tile == null) throw new GameLogicException("Trying to move nonexistent tile");
+        transientTiles.add(tile);
+        tile.moveTowards(target);
+    }
+
+    /**
+     * Logically swaps contents of two non-empty cells.
      *
      * @param cell1 first cell
      * @param cell2 second cell
@@ -437,25 +486,28 @@ public class Board extends GameObject {
         if (tile2 == null) throw new GameLogicException("Trying to initiate swapping while the second cell, " + cell2 +", is empty");
         putTileInCell(tile1, cell2);
         putTileInCell(tile2, cell1);
-        tile1.moveTowards(pointByCell(cell2));
-        tile2.moveTowards(pointByCell(cell1));
-        flush();
     }
 
     /**
-     * Initiates merge between contents of two cells. Merge base remains largely unaffected, and transient tile gets logically deleted from the board.
+     * Logically merges contents of two cells and starts merge animation. Resulting tile is located at the merge base's cell.
      *
      * @param mergeBaseCell merge base cell
      * @param transientTileCell cell of the tile that will get deleted
-     * @throws GameLogicException if either of the cells is empty
+     * @throws GameLogicException if either of the cells is empty, contains a 0-level tile or if their levels are not equal
      */
-    public void mergeCellContentInto(BoardCell mergeBaseCell, BoardCell transientTileCell) throws GameLogicException {
+    public void fullMerge(BoardCell mergeBaseCell, BoardCell transientTileCell) throws GameLogicException {
+        flush();
         Tile mergeBase = getTileInCell(mergeBaseCell);
         Tile transientTile = getTileInCell(transientTileCell);
         if (mergeBase == null) throw new GameLogicException("Trying to initiate merge while merge base cell, " + mergeBaseCell +", is empty");
         if (transientTile == null) throw new GameLogicException("Trying to initiate merge while transient tile cell, " + transientTileCell +", is empty");
+        if (mergeBase.getLevel() == 0) throw new GameLogicException("Trying to merge a tile into a 0-level tile at cell " + mergeBaseCell);
+        if (transientTile.getLevel() == 0) throw new GameLogicException("Trying to merge a 0-level tile from cell " + transientTileCell + " into merge base");
+        if (mergeBase.getLevel() != transientTile.getLevel()) throw new GameLogicException("Trying to merge tiles of different levels, " + mergeBase.getLevel() + " and " + transientTile.getLevel());
         mergeBase.makeMergeBase();
-        moveCellContentTransient(transientTileCell, pointByCell(mergeBaseCell));
+        putTileInCell(null, transientTileCell);
+        animateTileMoveTransient(transientTile, pointByCell(mergeBaseCell));
+        tileCount--;
     }
 
     /**
@@ -491,6 +543,23 @@ public class Board extends GameObject {
     }
 
     /**
+     * Gets a {@link List} of cells that satisfy the {@link Predicate}.
+     *
+     * @param predicate predicate
+     * @return list of cells that satisfy the predicate
+     */
+    public List<BoardCell> getCellsByPredicate(Predicate<BoardCell> predicate) {
+        List<BoardCell> cells = new ArrayList<>();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                BoardCell cell = new BoardCell(i, j);
+                if (predicate.test(cell)) cells.add(cell);
+            }
+        }
+        return cells;
+    }
+
+    /**
      * Finds the board cell corresponding to given point
      *
      * @param point base-scale point relative to the GamePanel
@@ -508,39 +577,46 @@ public class Board extends GameObject {
         return null;
     }
 
-    private void checkForTurnInput() {
+    private void handleTurnInput() {
         if (keyHandler.isKeyPressed()) {
-            handleMovementKeyInput();
-            if (turnReactionScheduled) {
-                turnReactionScheduled = false;
-                generateRandomTile();
-                for (TurnListener listener : new ArrayList<>(turnListeners)) listener.onTurn();
+            switch (keyHandler.getLastPressKey()) {
+                case "up" -> {
+                    shiftUp();
+                    keyHandler.clearLastPress();
+                    moveDirection = UP;
+                    moveInputFollowup();
+                }
+                case "down" -> {
+                    shiftDown();
+                    keyHandler.clearLastPress();
+                    moveDirection = DOWN;
+                    moveInputFollowup();
+                }
+                case "left" -> {
+                    shiftLeft();
+                    keyHandler.clearLastPress();
+                    moveDirection = LEFT;
+                    moveInputFollowup();
+                }
+                case "right" -> {
+                    shiftRight();
+                    keyHandler.clearLastPress();
+                    moveDirection = RIGHT;
+                    moveInputFollowup();
+                }
             }
         }
+
     }
 
-    private void handleMovementKeyInput() {
-        switch (keyHandler.getLastPressKey()) {
-            case "up" -> {
-                shiftUp();
-                keyHandler.clearLastPress();
-                moveDirection = UP;
-            }
-            case "down" -> {
-                shiftDown();
-                keyHandler.clearLastPress();
-                moveDirection = DOWN;
-            }
-            case "left" -> {
-                shiftLeft();
-                keyHandler.clearLastPress();
-                moveDirection = LEFT;
-            }
-            case "right" -> {
-                shiftRight();
-                keyHandler.clearLastPress();
-                moveDirection = RIGHT;
-            }
+    /**
+     * If there is a turn reaction scheduled, reacts to it by notifying all listeners (normally happens after the animation).
+     */
+    private void moveInputFollowup() {
+        if (turnReactionScheduled) {
+            turnReactionScheduled = false;
+            generateRandomTile();
+            for (TurnListener listener : new ArrayList<>(turnListeners)) listener.onTurn();
         }
     }
 
@@ -615,13 +691,14 @@ public class Board extends GameObject {
         // Move to edge case
         if (tileStatic == null && cellStatic.equals(cellEdge)) {
             moveCellContent(cellDynamic, cellStatic);
+            animateTileMove(tileDynamic, cellStatic);
             turnReactionScheduled = true;
             return true;
         }
         if (tileStatic != null) {
             // Merge case
-            if (tileStatic.getState() != Tile.MERGING && !tileStatic.isLocked() && tileStatic.getLevel() == tileDynamic.getLevel()) {
-                mergeCellContentInto(cellStatic, cellDynamic);
+            if (tileStatic.getState() != Tile.MERGING && !tileStatic.isLocked() && tileDynamic.getLevel() > 0 && tileStatic.getLevel() == tileDynamic.getLevel()) {
+                fullMerge(cellStatic, cellDynamic);
                 turnReactionScheduled = true;
                 return true;
             }
@@ -634,6 +711,7 @@ public class Board extends GameObject {
                 // Actual move case
                 else if (board[cellStatic.row][cellStatic.col] == null) {
                     moveCellContent(cellDynamic, cellStatic);
+                    animateTileMove(tileDynamic, cellStatic);
                     turnReactionScheduled = true;
                     return true;
                 }
@@ -654,7 +732,7 @@ public class Board extends GameObject {
             tile.update();
             animating = animating || tile.getState() != Tile.IDLE;
         }
-        transientTiles.removeIf(x -> x.getState() == Tile.IDLE);
+        transientTiles.removeIf(x -> x.getState() == Tile.IDLE && !x.isLingering());
         if (state == IDLE && animating) setState(ANIMATING);
         else if (state == ANIMATING && !animating) setState(IDLE);
     }
@@ -662,7 +740,7 @@ public class Board extends GameObject {
     /**
      * Finishes all tile animations and deletes transient tiles if animating.
      */
-    private void flush() {
+    public void flush() {
         if (state == ANIMATING) {
             for (Tile[] row : board) {
                 for (Tile tile : row) {

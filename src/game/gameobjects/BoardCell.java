@@ -7,7 +7,7 @@ package game.gameobjects;
 public class BoardCell {
     public int row;
     public int col;
-    BoardCell(int row, int col) {
+    public BoardCell(int row, int col) {
         this.row = row;
         this.col = col;
     }

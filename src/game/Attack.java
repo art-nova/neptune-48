@@ -96,7 +96,8 @@ public class Attack extends GameModifier {
     public void startAttack(BoardCell cell) throws GameLogicException {
         Tile tile = board.getTileInCell(cell);
         if (tile == null) throw new GameLogicException("Trying to attack from empty cell");
-        board.moveCellContentTransient(cell, targetPoint);
+        board.disposeCellContent(cell);
+        board.animateTileMoveTransient(tile, targetPoint);
         AttackEvent attackEvent = new AttackEvent(cell, tile, gp.getBaseTileDamage());
         currentCooldown = COOLDOWN;
         setState(GameModifier.UNAPPLICABLE);

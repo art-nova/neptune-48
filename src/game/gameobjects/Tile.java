@@ -1,5 +1,6 @@
 package game.gameobjects;
 
+import game.GameLogicException;
 import game.GamePanel;
 import game.utils.GamePanelGraphics;
 import java.awt.*;
@@ -17,7 +18,9 @@ public class Tile extends GameObject {
 
     private int state = GENERATING;
     private int level;
+    private int levelVisualOffset;
     private boolean locked = false;
+    private boolean visuallyLocked = false;
     private boolean visible = false;
 
     private float speedX, speedY;
@@ -28,6 +31,7 @@ public class Tile extends GameObject {
     private int targetVisualOffset;
 
     private int animationFramesLeft;
+    private boolean lingering;
 
     public Tile(int x, int y, int level, GamePanel gp) {
         super(x, y, gp);
@@ -45,7 +49,10 @@ public class Tile extends GameObject {
             x += speedX;
             y += speedY;
             animationFramesLeft--;
-            if (state == MERGING && animationFramesLeft <= 0) pulse(0, GamePanelGraphics.TILE_PULSE_OFFSET);;
+            if (state == MERGING && animationFramesLeft <= 0) {
+                setLevelVisualOffset(levelVisualOffset+1);
+                upgradeAnimation();
+            }
         }
         else if (state == PULSATING) {
             if (targetVisualOffset > visualOffset) visualOffset += speedVisualOffset;
@@ -58,7 +65,7 @@ public class Tile extends GameObject {
         else if (state == GENERATING) {
             if (animationFramesLeft <= 0) {
                 visible = true;
-                pulse(-GamePanelGraphics.TILE_SIZE / 2, GamePanelGraphics.TILE_PULSE_OFFSET);
+                pulse(GamePanelGraphics.TILE_SIZE / 2, -GamePanelGraphics.TILE_PULSE_OFFSET);
             }
         }
         if (state != IDLE && animationFramesLeft <= 0) flush();
@@ -70,16 +77,13 @@ public class Tile extends GameObject {
             int screenY = (int)y;
 
             if (state == PULSATING) {
-                int size = (GamePanelGraphics.TILE_SIZE + (int)(visualOffset * 2));
+                int size = (GamePanelGraphics.TILE_SIZE - (int)(visualOffset * 2));
                 int offset = (int)visualOffset;
-                g2d.drawImage(graphics.getTexture("tile"+level), screenX - offset, screenY - offset, size, size, null);
-            }
-            else if (state == MERGING) {
-                g2d.drawImage(graphics.getTexture(("tile"+(level-1))), screenX, screenY, null);
+                g2d.drawImage(graphics.getTexture("tile"+(level + levelVisualOffset)), screenX + offset, screenY + offset, size, size, null);
             }
             else {
-                g2d.drawImage(graphics.getTexture(("tile"+level)), screenX, screenY, null);
-                if (locked) g2d.drawImage(graphics.getTexture(("lockedOverlay")), screenX, screenY, null);
+                g2d.drawImage(graphics.getTexture(("tile"+(level + levelVisualOffset))), screenX, screenY, null);
+                if (visuallyLocked) g2d.drawImage(graphics.getTexture(("lockedOverlay")), screenX, screenY, null);
             }
         }
     }
@@ -95,6 +99,7 @@ public class Tile extends GameObject {
         speedVisualOffset = 0;
         targetVisualOffset = 0;
         visualOffset = 0;
+        if (state == MERGING) setLevelVisualOffset(levelVisualOffset + 1);
         if (state == GENERATING) visible = true;
         animationFramesLeft = 0;
         state = IDLE;
@@ -113,6 +118,25 @@ public class Tile extends GameObject {
         return level;
     }
 
+    /**
+     * Sets tile level.
+     *
+     * @param level new level
+     */
+    public void setLevel(int level) {
+        if (level < 0 || level > 11) throw new GameLogicException("Trying to set tile to nonexistent level " + level);
+        this.level = level;
+    }
+
+    public int getLevelVisualOffset() {
+        return levelVisualOffset;
+    }
+
+    public void setLevelVisualOffset(int levelVisualOffset) {
+        if (level + levelVisualOffset < 0 || level + levelVisualOffset > 11) throw new GameLogicException("Trying to set a level offset that will visually amount to nonexistent level " + level + levelVisualOffset);
+        this.levelVisualOffset = levelVisualOffset;
+    }
+
     public boolean isLocked() {
         return locked;
     }
@@ -121,12 +145,41 @@ public class Tile extends GameObject {
         this.locked = locked;
     }
 
+    public boolean isVisuallyLocked() {
+        return visuallyLocked;
+    }
+
+    public void setVisuallyLocked(boolean visuallyLocked) {
+        this.visuallyLocked = visuallyLocked;
+    }
+
     public boolean isVisible() {
         return visible;
     }
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    /**
+     * Returns whether this tile is lingering.
+     * Lingering tiles do not stop displaying on the board, even if they do not have a logical place there and are in
+     * {@link Tile#IDLE} state
+     *
+     * @return true if the tile is lingering
+     */
+    public boolean isLingering() {
+        return lingering;
+    }
+
+    /**
+     * Changes whether this tile is lingering or not.
+     * will make the state {@link Tile#IDLE}.
+     *
+     * @param lingering new value for whether tile is suspended or not.
+     */
+    public void setLingering(boolean lingering) {
+        this.lingering = lingering;
     }
 
     /**
@@ -147,23 +200,17 @@ public class Tile extends GameObject {
     }
 
     /**
-     * Increases tile level and initiates outward pulse animation.
+     * Initiates outward pulse animation and lets tile display its true level.
      */
-    public void upgrade() {
-        if (level < 11) {
-            level++;
-            pulse(0, GamePanelGraphics.TILE_PULSE_OFFSET);
-        }
+    public void upgradeAnimation() {
+        pulse(0, -GamePanelGraphics.TILE_PULSE_OFFSET);
     }
 
     /**
-     * Decreases tile level and initiates inward pulse animation.
+     * Initiates inward pulse animation and lets tile display its true level.
      */
-    public void downgrade() {
-        if (level > 1) {
-            level--;
-            pulse(0, -GamePanelGraphics.TILE_PULSE_OFFSET);
-        }
+    public void downgradeAnimation() {
+        pulse(0, GamePanelGraphics.TILE_PULSE_OFFSET);
     }
 
     /**
@@ -187,6 +234,15 @@ public class Tile extends GameObject {
         startAnimationCycle();
         state = MERGING;
         level++;
+        setLevelVisualOffset(levelVisualOffset-1);
+    }
+
+    public void dispose() {
+        startAnimationCycle();
+        visualOffset = 0;
+        targetVisualOffset = GamePanelGraphics.TILE_SIZE/2;
+        speedVisualOffset = (float)(targetVisualOffset) / GamePanelGraphics.ANIMATION_CYCLE;
+        state = PULSATING;
     }
 
     private void startAnimationCycle() {
