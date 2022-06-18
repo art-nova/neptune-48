@@ -131,13 +131,15 @@ public class Board extends GameObject {
                 if (cell != null && predicate.test(cell)) {
                     if (selected.contains(cell)) {
                         selected.remove(cell);
+                        for (CellSelectionListener listener : new ArrayList<>(cellSelectionListeners)) listener.onSelectionUpdated(selected);
                     }
                     else {
                         selected.add(cell);
+                        for (CellSelectionListener listener : new ArrayList<>(cellSelectionListeners)) listener.onSelectionUpdated(selected);
                         if (selected.size() == maxSelection) {
                             for (CellSelectionListener listener : new ArrayList<>(cellSelectionListeners)) listener.onSelectionCompleted(selected);
-                            selectionHandler.selected = new ArrayList<>();
-                            selectionHandler.predicate = null;
+                            selected = new ArrayList<>();
+                            predicate = null;
                             setState(IDLE);
                         }
                     }
@@ -314,6 +316,8 @@ public class Board extends GameObject {
     public int getCols() {
         return cols;
     }
+
+    public int getTileCount() {return tileCount;}
 
     /**
      * Adds a turn listener.
@@ -568,6 +572,22 @@ public class Board extends GameObject {
     }
 
     /**
+     * Finishes all tile animations and deletes transient tiles if animating.
+     */
+    public void flush() {
+        // The loop is for all animations additionally scheduled on state change from ANIMATING to IDLE. As the trigger happens after the flush, the flush may need to be repeated.
+        while (state != IDLE) {
+            for (Tile[] row : board) {
+                for (Tile tile : row) {
+                    if (tile != null) tile.flush();
+                }
+            }
+            transientTiles.removeIf(x -> true);
+            setState(IDLE);
+        }
+    }
+
+    /**
      * Finds the board cell corresponding to given point
      *
      * @param point base-scale point relative to the GamePanel
@@ -743,21 +763,6 @@ public class Board extends GameObject {
         transientTiles.removeIf(x -> x.getState() == Tile.IDLE && !x.isLingering());
         if (state == IDLE && animating) setState(ANIMATING);
         else if (state == ANIMATING && !animating) setState(IDLE);
-    }
-
-    /**
-     * Finishes all tile animations and deletes transient tiles if animating.
-     */
-    public void flush() {
-        if (state == ANIMATING) {
-            for (Tile[] row : board) {
-                for (Tile tile : row) {
-                    if (tile != null) tile.flush();
-                }
-            }
-            transientTiles.removeIf(x -> true);
-            setState(IDLE);
-        }
     }
 
     /**

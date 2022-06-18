@@ -11,9 +11,12 @@ import java.util.List;
  */
 public interface CellSelectionListener {
     /**
-     * Triggers when cells are successfully selected in Board selection mode.
-     * That is, max amount of cells that fit selection predicate are selected.
+     * Triggers when a cell is added to or removed from selection.
+     *
+     * @param cells updated cell selection
      */
+    void onSelectionUpdated(List<BoardCell> cells);
+
     void onSelectionCompleted(List<BoardCell> cells);
 
     /**

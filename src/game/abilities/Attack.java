@@ -55,6 +55,11 @@ public class Attack extends ActiveAbility {
         setState(APPLYING);
         board.addCellSelectionListener(new CellSelectionListener() {
             @Override
+            public void onSelectionUpdated(List<BoardCell> cells) {
+
+            }
+
+            @Override
             public void onSelectionCompleted(List<BoardCell> cells) {
                 board.removeCellSelectionListener(this);
                 setCurrentCooldown(cooldown);
@@ -83,7 +88,7 @@ public class Attack extends ActiveAbility {
         board.disposeCellContent(cell);
         board.animateTileMoveTransient(tile, targetPoint);
         AttackEvent attackEvent = new AttackEvent(cell, tile, gp.getBaseTileDamage());
-        for (AttackListener listener : attackListeners) listener.onAttack(attackEvent); // Attack event may potentially be modified.
+        for (AttackListener listener : new ArrayList<>(attackListeners)) listener.onAttack(attackEvent); // Attack event may potentially be modified.
         board.addStateListener(new StateListener() {
             @Override
             public void onStateChanged(int oldState, int newState) {
