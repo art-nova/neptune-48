@@ -85,12 +85,10 @@ public class ObstacleManager implements UIDataHolder {
                 if (runtimeLikelihoods.isEmpty()) return; // Happens when no obstacle could be applied. Turn counter is not reset, so if it exceeds max interval, attempt next turn is guaranteed.
                 ObstacleEvent e = new ObstacleEvent(obstacle);
                 for (ObstacleListener listener : new ArrayList<>(obstacleListeners)) listener.onObstacleSelected(e);
-                if (e.getObstacle() != null) {
-                    latestObstacle = e.getObstacle();
-                    latestObstacle.startApplication();
-                    for (UIDataListener listener : uiDataListeners) listener.onUIDataChanged();
-                }
+                latestObstacle = e.getObstacle();
+                if (latestObstacle != null) latestObstacle.startApplication();
                 turnsElapsed = 0;
+                for (UIDataListener listener : uiDataListeners) listener.onUIDataChanged();
             }
         }
     }
@@ -111,7 +109,7 @@ public class ObstacleManager implements UIDataHolder {
     }
 
     /**
-     * Returns latest applied obstacle.
+     * Returns the latest applied obstacle. If it is equal to null, that means the obstacle was negated.
      *
      * @return last applied obstacle
      */
