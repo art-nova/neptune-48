@@ -513,8 +513,6 @@ public class Board extends GameObject {
         Tile transientTile = getTileInCell(transientTileCell);
         if (mergeBase == null) throw new GameLogicException("Trying to initiate merge while merge base cell, " + mergeBaseCell +", is empty");
         if (transientTile == null) throw new GameLogicException("Trying to initiate merge while transient tile cell, " + transientTileCell +", is empty");
-        if (mergeBase.getLevel() == 0) throw new GameLogicException("Trying to merge a tile into a 0-level tile at cell " + mergeBaseCell);
-        if (transientTile.getLevel() == 0) throw new GameLogicException("Trying to merge a 0-level tile from cell " + transientTileCell + " into merge base");
         if (mergeBase.getLevel() != transientTile.getLevel()) throw new GameLogicException("Trying to merge tiles of different levels, " + mergeBase.getLevel() + " and " + transientTile.getLevel());
         mergeBase.makeMergeBase();
         putTileInCell(null, transientTileCell);
@@ -725,7 +723,7 @@ public class Board extends GameObject {
         }
         if (tileStatic != null) {
             // Merge case
-            if (tileStatic.getState() != Tile.MERGING && !tileStatic.isLocked() && tileDynamic.getLevel() > 0 && tileStatic.getLevel() == tileDynamic.getLevel()) {
+            if (tileStatic.getState() != Tile.MERGING && !tileStatic.isLocked() && tileStatic.getLevel() == tileDynamic.getLevel()) {
                 fullMerge(cellStatic, cellDynamic);
                 turnReactionScheduled = true;
                 return true;
