@@ -31,8 +31,8 @@ public class Attack extends ActiveAbility {
     private final Point targetPoint;
     private final ArrayList<AttackListener> attackListeners = new ArrayList<>();
 
-    public Attack(GamePanel gp) {
-        super(gp, DEFAULT_COOLDOWN);
+    public Attack(GamePanel gp, AbilityManager abilityManager) {
+        super(gp, abilityManager, DEFAULT_COOLDOWN);
         this.board = gp.getBoard();
         this.entity = gp.getEntity();
         int targetX = (int)(gp.getEntity().getX() + (GamePanelGraphics.ENTITY_WIDTH - GamePanelGraphics.TILE_SIZE)/2f);
