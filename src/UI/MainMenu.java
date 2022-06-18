@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -20,7 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
- * Main menu JFrame
+ * Main menu JFrame with parallax effect
  * @author Artemii Kolomiichuk
  */
 public class MainMenu extends JFrame{

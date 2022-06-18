@@ -59,4 +59,15 @@ public class Utilities {
     public static Color withZeroAlpha(Color input){
         return new Color(input.getRed(), input.getBlue(), input.getGreen(), 0);
     }
+
+    /**
+     * Returns color between two colors by percentage.
+     */
+    public static Color colorBetween(Color first, Color second, double percentage){
+	    percentage /= 100;
+        int red = (int)Math.round(first.getRed() + (second.getRed() - first.getRed()) * percentage);
+        int green = (int)Math.round(first.getGreen() + (second.getGreen() - first.getGreen()) * percentage);
+        int blue = (int)Math.round(first.getBlue() + (second.getBlue() - first.getBlue()) * percentage);
+        return new Color(red, green, blue);
+    }
 }

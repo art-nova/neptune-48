@@ -1,5 +1,6 @@
 package models;
 import UI.LevelGraphics;
+import UI.LevelsMenu;
 import UI.MainMenu;
 import UI.UIManager;
 
@@ -16,7 +17,8 @@ public class App {
     }
     
     public static void main(String[] args) {
-        MainMenu m  = new MainMenu();
+        //MainMenu m  = new MainMenu();
+        LevelsMenu lm = new LevelsMenu();
         /*
         UIManager.initFrame();
         
