@@ -1,5 +1,6 @@
 package game;
 
+import game.abilities.AbilityManager;
 import game.events.*;
 import game.gameobjects.Board;
 import game.gameobjects.Entity;
@@ -34,6 +35,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final Board board;
     private final Entity entity;
     private final ObstacleManager obstacleManager;
+    private final AbilityManager abilityManager;
     private final List<GameOverListener> gameOverListeners = new ArrayList<>();
     private final List<StateListener> stateListeners = new ArrayList<>();
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
@@ -48,7 +50,9 @@ public class GamePanel extends JPanel implements Runnable {
      *
      * @param boardRows number of board rows
      * @param boardCols number of board columns
-     * @param bonusNameIDs NameIDs of selected abilities
+     * @param activeAbility1 NameID of the first active ability (or null if none selected)
+     * @param activeAbility2 NameID of the second active ability (or null if none selected)
+     * @param passiveAbility NameID of the passive ability (or null if none selected)
      * @param obstacleWeights map of obstacle NameIDs to their relative weights during selection
      * @param graphics non-loaded graphics manager object
      * @param entityMaxHealth max health of the entity
@@ -58,7 +62,7 @@ public class GamePanel extends JPanel implements Runnable {
      * @param minObstacleInterval minimal interval in turns between obstacles
      * @param maxObstacleInterval maximal interval in turns between obstacles
      */
-    public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Map<String, Integer> obstacleWeights, GamePanelGraphics graphics,
+    public GamePanel(int boardRows, int boardCols, String activeAbility1, String activeAbility2, String passiveAbility, Map<String, Integer> obstacleWeights, GamePanelGraphics graphics,
                      int entityMaxHealth, int entityIndex, int time, int baseTileDamage, int minObstacleInterval, int maxObstacleInterval) throws IOException {
         this.timeLeft = time;
         this.baseTileDamage = baseTileDamage;
@@ -66,6 +70,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.entity = new Entity(0, 0, entityMaxHealth, this);
         this.board = new Board(0, GamePanelGraphics.ENTITY_HEIGHT + GamePanelGraphics.ENTITY_BOARD_DISTANCE, boardRows, boardCols, 1, this);
         this.obstacleManager = new ObstacleManager(obstacleWeights, minObstacleInterval, maxObstacleInterval, this);
+        this.abilityManager = new AbilityManager(activeAbility1, activeAbility2, passiveAbility, this);
         UIManager.getFrame().addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
@@ -118,7 +123,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         if (state != ENDING) {
             entity.update();
-            attack.update();
+            abilityManager.update();
         }
         board.update();
     }
@@ -197,6 +202,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     public int getBaseTileDamage() {
         return baseTileDamage;
+    }
+
+    public ObstacleManager getObstacleManager() {
+        return obstacleManager;
+    }
+
+    public AbilityManager getAbilityManager() {
+        return abilityManager;
     }
 
     public void addGameOverListener(GameOverListener listener) {

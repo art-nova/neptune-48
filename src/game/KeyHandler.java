@@ -11,52 +11,32 @@ import java.util.List;
  * @author Artem Novak
  */
 public class KeyHandler extends KeyAdapter {
-    private LinkedList<String> pressedKeys = new LinkedList<>();
+    private final LinkedList<String> pressedKeys = new LinkedList<>();
 
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
-            pressedKeys.add("up");
-        }
-        else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
-            pressedKeys.add("down");
-        }
-        else if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
-            pressedKeys.add("left");
-        }
-        else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
-            pressedKeys.add("right");
-        }
-        else if (key == KeyEvent.VK_SPACE) {
-            pressedKeys.add("space");
-        }
-        else if (key == KeyEvent.VK_ESCAPE) {
-            pressedKeys.add("escape");
-        }
+        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) pressedKeys.add("up");
+        else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) pressedKeys.add("down");
+        else if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) pressedKeys.add("left");
+        else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) pressedKeys.add("right");
+        else if (key == KeyEvent.VK_SPACE) pressedKeys.add("attack");
+        else if (key == KeyEvent.VK_1) pressedKeys.add("active1");
+        else if (key == KeyEvent.VK_2) pressedKeys.add("active2");
+        else if (key == KeyEvent.VK_ESCAPE) pressedKeys.add("escape");
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
-            pressedKeys.removeIf(x -> x.equals("up"));
-        }
-        else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
-            pressedKeys.removeIf(x -> x.equals("down"));
-        }
-        else if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
-            pressedKeys.removeIf(x -> x.equals("left"));
-        }
-        else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
-            pressedKeys.removeIf(x -> x.equals("right"));
-        }
-        else if (key == KeyEvent.VK_SPACE) {
-            pressedKeys.removeIf(x -> x.equals("space"));
-        }
-        else if (key == KeyEvent.VK_ESCAPE) {
-            pressedKeys.removeIf(x -> x.equals("escape"));
-        }
+        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) pressedKeys.removeIf(x -> x.equals("up"));
+        else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) pressedKeys.removeIf(x -> x.equals("down"));
+        else if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) pressedKeys.removeIf(x -> x.equals("left"));
+        else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) pressedKeys.removeIf(x -> x.equals("right"));
+        else if (key == KeyEvent.VK_SPACE) pressedKeys.removeIf(x -> x.equals("attack"));
+        else if (key == KeyEvent.VK_1) pressedKeys.removeIf(x -> x.equals("active1"));
+        else if (key == KeyEvent.VK_2) pressedKeys.removeIf(x -> x.equals("active2"));
+        else if (key == KeyEvent.VK_ESCAPE) pressedKeys.removeIf(x -> x.equals("escape"));
     }
 
     /**

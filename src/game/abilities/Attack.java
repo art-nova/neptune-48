@@ -1,5 +1,9 @@
-package game;
+package game.abilities;
 
+import game.GameLogicException;
+import game.GameModifier;
+import game.GamePanel;
+import game.KeyHandler;
 import game.events.*;
 import game.gameobjects.Board;
 import game.gameobjects.BoardCell;
@@ -12,37 +16,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class that manages all attacks in the level.
+ * Class that implements the attacking feature.
  *
  * @author Artem Novak
  */
-public class Attack extends GameModifier {
+public class Attack extends ActiveAbility {
     /**
      * Represents the number of turns the attack remains locked after usage before becoming usable again.
      */
-    public static int COOLDOWN = 10;
+    public static int DEFAULT_COOLDOWN = 10;
 
     private final Board board;
     private final Entity entity;
-    private final KeyHandler keyHandler;
     private final Point targetPoint;
     private final ArrayList<AttackListener> attackListeners = new ArrayList<>();
-    private int currentCooldown = 0;
 
     public Attack(GamePanel gp) {
-        super(gp);
+        super(gp, DEFAULT_COOLDOWN);
         this.board = gp.getBoard();
         this.entity = gp.getEntity();
-        this.keyHandler = gp.getKeyHandler();
-        gp.getBoard().addTurnListener(() -> {
-            if (currentCooldown > 0) {
-                currentCooldown--;
-                if (currentCooldown == 0) setState(GameModifier.APPLICABLE); // Triggers UI data listeners as well
-                else {
-                    for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
-                }
-            }
-        });
         int targetX = (int)(gp.getEntity().getX() + (GamePanelGraphics.ENTITY_WIDTH - GamePanelGraphics.TILE_SIZE)/2f);
         int targetY = (int)(gp.getEntity().getY() + (GamePanelGraphics.ENTITY_HEIGHT - GamePanelGraphics.TILE_SIZE)/2f);
         targetPoint = new Point(targetX, targetY);
@@ -54,53 +46,43 @@ public class Attack extends GameModifier {
     }
 
     /**
-     * Starts selection of attack origin cell. Does nothing if the state of this attack is not {@link #APPLICABLE}.
+     * Starts selection of attack origin cell with subsequent attack if selection is successful.
      */
     @Override
     public void startApplication() {
-        if (state == APPLICABLE) {
-            board.initSelection(x -> board.getTileInCell(x) != null, 1);
-            setState(APPLYING);
-            board.addCellSelectionListener(new CellSelectionListener() {
-                @Override
-                public void onSelectionCompleted(List<BoardCell> cells) {
-                    startAttack(cells.get(0));
-                    board.removeCellSelectionListener(this);
-                }
+        super.startApplication();
+        board.initSelection(x -> board.getTileInCell(x) != null, 1);
+        setState(APPLYING);
+        board.addCellSelectionListener(new CellSelectionListener() {
+            @Override
+            public void onSelectionCompleted(List<BoardCell> cells) {
+                board.removeCellSelectionListener(this);
+                setCurrentCooldown(cooldown);
+                startAttack(cells.get(0));
+                for (AbilityListener listener : new ArrayList<>(abilityListeners)) listener.onAbilityApplied();
+            }
 
-                @Override
-                public void onSelectionAborted() {
-                    board.removeCellSelectionListener(this);
-                }
-            });
-        }
-    }
-
-    /**
-     * Updates logical state of the attack.
-     */
-    public void update() {
-        if (keyHandler.isKeyPressed() && keyHandler.getLastPressKey().equals("space")) startApplication();
+            @Override
+            public void onSelectionAborted() {
+                board.removeCellSelectionListener(this);
+                updateApplicability();
+            }
+        });
     }
 
     /**
      * Starts attack from given cell.
-     * <br>
-     * Note: this is not the method for standard attack (see {@link #startApplication()} for that).
-     * This method intentionally does not respect applicability to allow for programmatic overattack.
-     * Use this only if you know what you are doing!
      *
      * @param cell cell to start attack from
      * @throws GameLogicException when trying to attack from empty cell
      */
-    public void startAttack(BoardCell cell) throws GameLogicException {
+    private void startAttack(BoardCell cell) throws GameLogicException {
+        super.startApplication();
         Tile tile = board.getTileInCell(cell);
         if (tile == null) throw new GameLogicException("Trying to attack from empty cell");
         board.disposeCellContent(cell);
         board.animateTileMoveTransient(tile, targetPoint);
         AttackEvent attackEvent = new AttackEvent(cell, tile, gp.getBaseTileDamage());
-        currentCooldown = COOLDOWN;
-        setState(GameModifier.UNAPPLICABLE);
         for (AttackListener listener : attackListeners) listener.onAttack(attackEvent); // Attack event may potentially be modified.
         board.addStateListener(new StateListener() {
             @Override
@@ -112,15 +94,6 @@ public class Attack extends GameModifier {
                 }
             }
         });
-    }
-
-    /**
-     * Returns the current cooldown of the attack.
-     *
-     * @return number of turns before attack becomes available (aka "cooldown")
-     */
-    public int getCurrentCooldown() {
-        return currentCooldown;
     }
 
     public void addAttackListener(AttackListener listener) {

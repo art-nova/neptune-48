@@ -35,7 +35,7 @@ public class CenterPanel extends JLayeredPane{
         try
 	{
         HashMap<String, Integer> obstacleWeights = new HashMap<>();
-	    add(new GamePanel(4, 4, new HashSet<>(), obstacleWeights,
+	    add(new GamePanel(4, 4, null, null, null, obstacleWeights,
                 new GamePanelGraphics("resources/images/neptun"), 5000, 1, 120, 5,
                 10, 30));
 	}
