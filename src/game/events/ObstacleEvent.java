@@ -3,9 +3,7 @@ package game.events;
 import game.obstacles.Obstacle;
 
 /**
- * Abstract class that holds information about an obstacle that is about to or has occurred.
- * <br>
- * The primary purpose of this class is to allow outside injections into obstacle application process.
+ * Class that holds information about an obstacle occurrence.
  *
  * @author Artem Novak
  */

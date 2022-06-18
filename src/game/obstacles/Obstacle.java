@@ -16,6 +16,7 @@ public abstract class Obstacle extends GameModifier {
      */
     public Obstacle(GamePanel gp) {
         super(gp);
+        gp.getBoard().addTurnListener(this::updateApplicability);
     }
 
     @Override

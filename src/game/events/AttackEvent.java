@@ -4,7 +4,7 @@ import game.gameobjects.BoardCell;
 import game.gameobjects.Tile;
 
 /**
- * Class that holds information about an attack that is about to or has occurred.
+ * Class that holds information about an attack occurrence.
  *
  * @author Artem Novak
  */

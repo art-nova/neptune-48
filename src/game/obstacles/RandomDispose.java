@@ -1,6 +1,5 @@
 package game.obstacles;
 
-import game.GameModifier;
 import game.GamePanel;
 import game.events.StateListener;
 import game.gameobjects.Board;
@@ -25,14 +24,6 @@ public class RandomDispose extends Obstacle {
     public RandomDispose(GamePanel gp) {
         super(gp);
         this.board = gp.getBoard();
-        board.addTurnListener(() -> {
-            lastCheckCells = board.getCellsByPredicate(x -> {
-                Tile tile = board.getTileInCell(x);
-                return tile != null && tile.getLevel() > 0;
-            });
-            if (lastCheckCells.isEmpty()) setState(GameModifier.UNAPPLICABLE);
-            else setState(GameModifier.APPLICABLE);
-        });
     }
 
     @Override
@@ -57,5 +48,14 @@ public class RandomDispose extends Obstacle {
                 }
             }
         });
+    }
+
+    @Override
+    protected boolean determineApplicability() {
+        lastCheckCells = board.getCellsByPredicate(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile != null && tile.getLevel() > 0;
+        });
+        return !lastCheckCells.isEmpty();
     }
 }

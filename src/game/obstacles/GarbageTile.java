@@ -1,8 +1,6 @@
 package game.obstacles;
 
-import game.GameModifier;
 import game.GamePanel;
-import game.events.StateListener;
 import game.gameobjects.Board;
 import game.gameobjects.BoardCell;
 
@@ -24,11 +22,6 @@ public class GarbageTile extends Obstacle {
     public GarbageTile(GamePanel gp) {
         super(gp);
         this.board = gp.getBoard();
-        board.addTurnListener(() -> {
-            lastCheckCells = board.getCellsByPredicate(x -> board.getTileInCell(x) == null);
-            if (lastCheckCells.isEmpty()) setState(GameModifier.UNAPPLICABLE);
-            else setState(GameModifier.APPLICABLE);
-        });
     }
 
     @Override
@@ -40,5 +33,11 @@ public class GarbageTile extends Obstacle {
     public void startApplication() {
         BoardCell cell = lastCheckCells.get(random.nextInt(0, lastCheckCells.size()));
         board.generateTile(cell, 0);
+    }
+
+    @Override
+    protected boolean determineApplicability() {
+        lastCheckCells = board.getCellsByPredicate(x -> board.getTileInCell(x) == null);
+        return !lastCheckCells.isEmpty();
     }
 }

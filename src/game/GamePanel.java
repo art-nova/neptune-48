@@ -16,7 +16,7 @@ import java.io.IOException;
 import UI.UIManager;
 
 /**
- * Implementation of the panel in which the core game loop (2048 gameplay, attacking, triggering bonuses etc.) happens.
+ * Implementation of the panel in which the core game loop (2048 gameplay, attacking, triggering abilities etc.) happens.
  *
  * @author Artem Novak
  */
@@ -34,7 +34,6 @@ public class GamePanel extends JPanel implements Runnable {
     private final Board board;
     private final Entity entity;
     private final ObstacleManager obstacleManager;
-    private final Attack attack;
     private final List<GameOverListener> gameOverListeners = new ArrayList<>();
     private final List<StateListener> stateListeners = new ArrayList<>();
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
@@ -49,7 +48,7 @@ public class GamePanel extends JPanel implements Runnable {
      *
      * @param boardRows number of board rows
      * @param boardCols number of board columns
-     * @param bonusNameIDs NameIDs of selected bonuses
+     * @param bonusNameIDs NameIDs of selected abilities
      * @param obstacleWeights map of obstacle NameIDs to their relative weights during selection
      * @param graphics non-loaded graphics manager object
      * @param entityMaxHealth max health of the entity
@@ -61,10 +60,11 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Map<String, Integer> obstacleWeights, GamePanelGraphics graphics,
                      int entityMaxHealth, int entityIndex, int time, int baseTileDamage, int minObstacleInterval, int maxObstacleInterval) throws IOException {
+        this.timeLeft = time;
+        this.baseTileDamage = baseTileDamage;
         this.graphics = graphics;
         this.entity = new Entity(0, 0, entityMaxHealth, this);
         this.board = new Board(0, GamePanelGraphics.ENTITY_HEIGHT + GamePanelGraphics.ENTITY_BOARD_DISTANCE, boardRows, boardCols, 1, this);
-        this.attack = new Attack(this);
         this.obstacleManager = new ObstacleManager(obstacleWeights, minObstacleInterval, maxObstacleInterval, this);
         UIManager.getFrame().addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
@@ -72,8 +72,6 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
         this.setPreferredSize(new Dimension(GamePanelGraphics.ENTITY_WIDTH, board.getPreferredHeight() + GamePanelGraphics.ENTITY_BOARD_DISTANCE + GamePanelGraphics.ENTITY_HEIGHT));
         board.setX((GamePanelGraphics.ENTITY_WIDTH - board.getPreferredWidth())/2f);
-        this.timeLeft = time;
-        this.baseTileDamage = baseTileDamage;
 
         graphics.load(boardRows, boardCols, entityIndex);
         board.generateRandomTile();

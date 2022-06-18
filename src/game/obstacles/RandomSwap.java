@@ -1,6 +1,5 @@
 package game.obstacles;
 
-import game.GameModifier;
 import game.GamePanel;
 import game.events.StateListener;
 import game.gameobjects.Board;
@@ -25,11 +24,6 @@ public class RandomSwap extends Obstacle {
     public RandomSwap(GamePanel gp) {
         super(gp);
         board = gp.getBoard();
-        board.addTurnListener(() -> {
-            lastCheckCells = board.getCellsByPredicate(x -> board.getTileInCell(x) != null);
-            if (lastCheckCells.size() < 2) setState(GameModifier.UNAPPLICABLE);
-            else setState(GameModifier.APPLICABLE);
-        });
     }
 
     @Override
@@ -59,5 +53,11 @@ public class RandomSwap extends Obstacle {
                 }
             }
         });
+    }
+
+    @Override
+    protected boolean determineApplicability() {
+        lastCheckCells = board.getCellsByPredicate(x -> board.getTileInCell(x) != null);
+        return lastCheckCells.size() > 1;
     }
 }

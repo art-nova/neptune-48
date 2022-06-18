@@ -1,6 +1,5 @@
 package game.obstacles;
 
-import game.GameModifier;
 import game.GamePanel;
 import game.events.StateListener;
 import game.gameobjects.Board;
@@ -24,9 +23,6 @@ public class RandomScramble extends Obstacle {
         super(gp);
         this.board = gp.getBoard();
         board.addTurnListener(() -> {
-            lastCheckCells = board.getCellsByPredicate(x -> board.getTileInCell(x) != null);
-            if (lastCheckCells.size() < 4) setState(GameModifier.UNAPPLICABLE);
-            else setState(GameModifier.APPLICABLE);
         });
     }
 
@@ -65,5 +61,11 @@ public class RandomScramble extends Obstacle {
                 }
             }
         });
+    }
+
+    @Override
+    protected boolean determineApplicability() {
+        lastCheckCells = board.getCellsByPredicate(x -> board.getTileInCell(x) != null);
+        return lastCheckCells.size() > 3;
     }
 }

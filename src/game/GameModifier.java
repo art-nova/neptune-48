@@ -1,10 +1,5 @@
 package game;
 
-import game.events.UIDataListener;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Class that represents an abstract game modifier - an entity that is not displayed, but influences the game process in some way.
  * <br>
@@ -12,12 +7,11 @@ import java.util.List;
  *
  * @author Artem Novak
  */
-public abstract class GameModifier implements UIDataHolder {
+public abstract class GameModifier {
     // States
     public static final int APPLICABLE = 0, UNAPPLICABLE = 1, APPLYING = 2;
 
     protected GamePanel gp;
-    protected List<UIDataListener> uiDataListeners = new ArrayList<>();
     protected int state;
 
     public GameModifier(GamePanel gp) {
@@ -40,17 +34,16 @@ public abstract class GameModifier implements UIDataHolder {
 
     public void setState(int state) {
         if (state < 0 || state > 2) throw new IllegalArgumentException(getClass().getName() + " does not support state " + state);
-        if (this.state != state) {
-            this.state = state;
-            for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
-        }
+        this.state = state;
     }
 
-    public void addUIDataListener(UIDataListener listener) {
-        uiDataListeners.add(listener);
-    }
+    protected abstract boolean determineApplicability();
 
-    public void removeUIDataListener(UIDataListener listener) {
-        uiDataListeners.remove(listener);
+    /**
+     * Is meant to be run every time one of the applicability components changes, to determine whether that results in general applicability change.
+     */
+    public void updateApplicability() {
+        if (determineApplicability()) setState(APPLICABLE);
+        else setState(UNAPPLICABLE);
     }
 }

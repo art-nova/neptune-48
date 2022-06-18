@@ -1,6 +1,5 @@
 package game.obstacles;
 
-import game.GameModifier;
 import game.GamePanel;
 import game.events.StateListener;
 import game.gameobjects.Board;
@@ -25,14 +24,6 @@ public class Downgrade extends Obstacle{
     public Downgrade(GamePanel gp) {
         super(gp);
         board = gp.getBoard();
-        board.addTurnListener(() -> {
-            lastCheckCells = board.getCellsByPredicate(x -> {
-                Tile tile = board.getTileInCell(x);
-                return tile != null && tile.getLevel() > 1;
-            });
-            if (lastCheckCells.isEmpty()) setState(GameModifier.UNAPPLICABLE);
-            else setState(GameModifier.APPLICABLE);
-        });
     }
 
     @Override
@@ -46,7 +37,6 @@ public class Downgrade extends Obstacle{
         Tile tile = board.getTileInCell(cell);
         tile.setLevel(tile.getLevel() - 1);
         tile.setLevelVisualOffset(tile.getLevelVisualOffset()+1);
-        System.out.println(cell);
         board.addStateListener(new StateListener() {
             @Override
             public void onStateChanged(int oldState, int newState) {
@@ -58,5 +48,14 @@ public class Downgrade extends Obstacle{
                 }
             }
         });
+    }
+
+    @Override
+    protected boolean determineApplicability() {
+        lastCheckCells = board.getCellsByPredicate(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile != null && tile.getLevel() > 1;
+        });
+        return !lastCheckCells.isEmpty();
     }
 }

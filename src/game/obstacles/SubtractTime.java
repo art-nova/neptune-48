@@ -26,4 +26,9 @@ public class SubtractTime extends Obstacle {
     public void startApplication() {
         gp.offsetTimeLeft(-TIME_SUBTRACTED);
     }
+
+    @Override
+    protected boolean determineApplicability() {
+        return true;
+    }
 }

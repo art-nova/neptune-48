@@ -72,7 +72,6 @@ public class ObstacleManager implements UIDataHolder {
     }
 
     private void attemptObstacle() {
-        System.out.println(turnsElapsed);
         if (turnsElapsed >= minInterval) {
             triggerLikelihood.put(false, maxInterval + 1 - turnsElapsed);
             if (random.weightedChoice(triggerLikelihood)) {
@@ -85,35 +84,20 @@ public class ObstacleManager implements UIDataHolder {
                 } while (obstacle.getState() != Obstacle.APPLICABLE);
                 if (runtimeLikelihoods.isEmpty()) return; // Happens when no obstacle could be applied. Turn counter is not reset, so if it exceeds max interval, attempt next turn is guaranteed.
                 ObstacleEvent e = new ObstacleEvent(obstacle);
-                for (ObstacleListener listener : new ArrayList<>(obstacleListeners)) listener.onObstacle(e);
+                for (ObstacleListener listener : new ArrayList<>(obstacleListeners)) listener.onObstacleSelected(e);
                 if (e.getObstacle() != null) {
-                    e.getObstacle().startApplication();
                     latestObstacle = e.getObstacle();
+                    latestObstacle.startApplication();
                     for (UIDataListener listener : uiDataListeners) listener.onUIDataChanged();
                 }
                 turnsElapsed = 0;
             }
         }
     }
-
-    /**
-     * Adds an {@link ObstacleListener} implementation to this object.
-     * {@link ObstacleListener#onObstacle(ObstacleEvent)} is triggered when obstacle is selected to be applied this turn,
-     * but not yet applied.
-     *
-     * @param listener ObstacleListener implementation
-     */
     public void addObstacleListener(ObstacleListener listener) {
         obstacleListeners.add(listener);
     }
 
-    /**
-     * Removes an {@link ObstacleListener} implementation from this object.
-     * {@link ObstacleListener#onObstacle(ObstacleEvent)} is triggered when obstacle is selected to be applied this turn,
-     * but not yet applied.
-     *
-     * @param listener ObstacleListener implementation
-     */
     public void removeObstacleListener(ObstacleListener listener) {
         obstacleListeners.remove(listener);
     }
