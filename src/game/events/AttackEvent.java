@@ -14,7 +14,6 @@ public class AttackEvent {
     private final BoardCell originCell;
     private final Tile tile;
     private final int baseTileDamage;
-    private boolean turnConsuming = true;
 
     /**
      * Creates a new attack event.
@@ -84,19 +83,5 @@ public class AttackEvent {
      */
     public Tile getTile() {
         return tile;
-    }
-
-    /**
-     * @return whether this attack will trigger a turn reaction
-     */
-    public boolean isTurnConsuming() {
-        return turnConsuming;
-    }
-
-    /**
-     * @param turnConsuming whether this attack will trigger a turn reaction
-     */
-    public void setTurnConsuming(boolean turnConsuming) {
-        this.turnConsuming = turnConsuming;
     }
 }

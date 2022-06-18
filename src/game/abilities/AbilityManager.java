@@ -94,13 +94,13 @@ public class AbilityManager {
     private ActiveAbility registerActiveAbility(String nameID) {
         if (nameID == null) return null;
         return switch (nameID) {
-            case "crit" -> null; // PLACEHOLDER
-            case "dispose" -> null; // PLACEHOLDER
-            case "merge" -> null; // PLACEHOLDER
-            case "safeAttack" -> null; // PLACEHOLDER
-            case "scramble" -> null; // PLACEHOLDER
-            case "swap" -> null; // PLACEHOLDER
-            case "upgrade" -> null; //PLACEHOLDER
+            case "crit" -> new Crit(gp, this);
+            case "dispose" -> new Dispose(gp, this);
+            case "merge" -> new Merge(gp, this);
+            case "safeAttack" -> new SafeAttack(gp, this);
+            case "scramble" -> new Scramble(gp, this);
+            case "swap" -> new Swap(gp, this);
+            case "upgrade" -> new Upgrade(gp, this);
             default -> throw new IllegalArgumentException("Active ability " + nameID + " does not exist");
         };
     }
