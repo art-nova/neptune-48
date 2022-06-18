@@ -33,24 +33,24 @@ public class RandomScramble extends Obstacle {
 
     @Override
     public void startApplication() {
-        List<Tile> tiles = new ArrayList<>();
-        for (BoardCell cell : lastCheckCells) tiles.add(board.getTileInCell(cell));
-        List<BoardCell> destinationCells = new ArrayList<>();
-        for (int i = 0; i < board.getRows(); i++) {
-            for (int j = 0; j < board.getCols(); j++) destinationCells.add(new BoardCell(i, j));
-        }
-        Map<Tile, BoardCell> tilesDestinations = new HashMap<>();
-        for (int i = 0; i < lastCheckCells.size(); i++) {
-            int tileIndex = random.nextInt(0, tiles.size());
-            int destinationIndex = random.nextInt(0, destinationCells.size());
-            Tile tile = tiles.get(tileIndex);
-            BoardCell destination = destinationCells.get(destinationIndex);
-            tiles.remove(tileIndex);
-            tilesDestinations.put(tile, destination);
-            destinationCells.remove(destinationIndex);
+        Map<Tile, BoardCell> tilesOrigins = new HashMap<>();
+        for (BoardCell cell : lastCheckCells) tilesOrigins.put(board.getTileInCell(cell), cell);
+        List<BoardCell> destinationCells = board.getCellsByPredicate(x -> true);
+        Map<Tile, BoardCell> tilesDestinations = new HashMap<>(); // Map for delayed animations.
+
+        for (Tile tile : tilesOrigins.keySet()) {
+            BoardCell originCell = tilesOrigins.get(tile);
+            boolean originVacant = destinationCells.contains(originCell);
+
+            destinationCells.remove(tilesOrigins.get(tile)); // Temporarily removing current tile cell from the pool to guarantee movement.
+            BoardCell destination = destinationCells.get(random.nextInt(0, destinationCells.size()));
             board.putTileInCell(tile, destination);
+            tilesDestinations.put(tile, destination);
+            destinationCells.remove(destination);
+            if (originVacant) destinationCells.add(tilesOrigins.get(tile)); // Returning cell the tile was in as a possible destination for other tiles.
         }
         for (BoardCell leftover : destinationCells) board.putTileInCell(null, leftover);
+
         board.addStateListener(new StateListener() {
             @Override
             public void onStateChanged(int oldState, int newState) {
