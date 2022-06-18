@@ -35,7 +35,7 @@ public class AbilityManager {
         if (active1 == null && active2 != null) throw new GameLogicException("Trying to pass an active ability into the second slot while the first is empty");
         this.gp = gp;
         this.keyHandler = gp.getKeyHandler();
-        this.attack = new Attack(gp);
+        this.attack = new Attack(gp, this);
         this.active1 = registerActiveAbility(active1);
         this.active2 = registerActiveAbility(active2);
         this.passive = registerPassiveAbility(passive);
@@ -82,11 +82,11 @@ public class AbilityManager {
     private PassiveAbility registerPassiveAbility(String nameID) {
         if (nameID == null) return null;
         return switch (nameID) {
-            case "betterBaseLevel" -> null; // PLACEHOLDER
-            case "bonusDamage" -> null; // PLACEHOLDER
-            case "bonusTime" -> null; // PLACEHOLDER
-            case "cooldownReduction" -> null; // PLACEHOLDER
-            case "resistance" -> null; // PLACEHOLDER
+            case "betterBaseLevel" -> new BetterBaseLevel(gp, this);
+            case "bonusDamage" -> new BonusDamage(gp, this);
+            case "bonusTime" -> new BonusTime(gp, this);
+            case "cooldownReduction" -> new CooldownReduction(gp, this);
+            case "resistance" -> new Resistance(gp, this);
             default -> throw new IllegalArgumentException("Passive ability " + nameID + " does not exist");
         };
     }
