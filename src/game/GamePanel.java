@@ -71,7 +71,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.board = new Board(0, GamePanelGraphics.ENTITY_HEIGHT + GamePanelGraphics.ENTITY_BOARD_DISTANCE, boardRows, boardCols, 1, this);
         this.obstacleManager = new ObstacleManager(obstacleWeights, minObstacleInterval, maxObstacleInterval, this);
         this.abilityManager = new AbilityManager(activeAbility1, activeAbility2, passiveAbility, this);
-        UIManager.getFrame().addKeyListener(keyHandler);
+        SwingUtilities.getRoot(this).addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
