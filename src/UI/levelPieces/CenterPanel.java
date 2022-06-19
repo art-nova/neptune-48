@@ -3,6 +3,7 @@ package UI.levelPieces;
 import javax.swing.JLayeredPane;
 
 import UI.LevelGraphics;
+import UI.UIManager;
 import game.GamePanel;
 
 import javax.swing.*;
@@ -36,7 +37,7 @@ public class CenterPanel extends JLayeredPane{
 	{
         HashMap<String, Integer> obstacleWeights = new HashMap<>();
 	    add(new GamePanel(4, 4, null, null, null, obstacleWeights,
-                new GamePanelGraphics("resources/images/neptun"), 5000, 1, 120, 5,
+                new GamePanelGraphics("resources/images/neptun"), UIManager.getFrame(), 5000, 1, 120, 5,
                 10, 30));
 	}
 	catch (IOException e){}

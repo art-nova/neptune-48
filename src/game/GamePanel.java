@@ -55,6 +55,7 @@ public class GamePanel extends JPanel implements Runnable {
      * @param passiveAbility NameID of the passive ability (or null if none selected)
      * @param obstacleWeights map of obstacle NameIDs to their relative weights during selection
      * @param graphics non-loaded graphics manager object
+     * @param baseFrame base {@link JFrame} of this panel
      * @param entityMaxHealth max health of the entity
      * @param entityIndex index of the entity to be loaded (in the entity texture folder)
      * @param time time in seconds after which level is considered failed
@@ -62,7 +63,7 @@ public class GamePanel extends JPanel implements Runnable {
      * @param minObstacleInterval minimal interval in turns between obstacles
      * @param maxObstacleInterval maximal interval in turns between obstacles
      */
-    public GamePanel(int boardRows, int boardCols, String activeAbility1, String activeAbility2, String passiveAbility, Map<String, Integer> obstacleWeights, GamePanelGraphics graphics,
+    public GamePanel(int boardRows, int boardCols, String activeAbility1, String activeAbility2, String passiveAbility, Map<String, Integer> obstacleWeights, GamePanelGraphics graphics, JFrame baseFrame,
                      int entityMaxHealth, int entityIndex, int time, int baseTileDamage, int minObstacleInterval, int maxObstacleInterval) throws IOException {
         this.timeLeft = time;
         this.baseTileDamage = baseTileDamage;
@@ -71,7 +72,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.board = new Board(0, GamePanelGraphics.ENTITY_HEIGHT + GamePanelGraphics.ENTITY_BOARD_DISTANCE, boardRows, boardCols, 1, this);
         this.obstacleManager = new ObstacleManager(obstacleWeights, minObstacleInterval, maxObstacleInterval, this);
         this.abilityManager = new AbilityManager(activeAbility1, activeAbility2, passiveAbility, this);
-        UIManager.getFrame().addKeyListener(keyHandler);
+        baseFrame.addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
