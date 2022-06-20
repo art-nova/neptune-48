@@ -394,7 +394,6 @@ public class Board extends GameObject {
         Tile tile = new Tile(point.x, point.y, level, gp);
         board[cell.row][cell.col] = tile;
         tileCount++;
-        if (tileCount == rows * cols && checkForLoseCondition()) gp.loseLevel();
     }
 
     /**
@@ -643,6 +642,7 @@ public class Board extends GameObject {
             turnReactionScheduled = false;
             generateRandomTile();
             for (TurnListener listener : new ArrayList<>(turnListeners)) listener.onTurn();
+            if (tileCount == rows * cols && checkForLoseCondition()) gp.loseLevel();
         }
     }
 

@@ -25,7 +25,7 @@ public class Merge extends ActiveAbility {
 
     @Override
     public String getNameID() {
-        return "upgrade";
+        return "merge";
     }
 
     @Override

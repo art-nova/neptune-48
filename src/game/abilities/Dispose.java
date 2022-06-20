@@ -24,7 +24,7 @@ public class Dispose extends ActiveAbility{
 
     @Override
     public String getNameID() {
-        return "upgrade";
+        return "dispose";
     }
 
     /**
