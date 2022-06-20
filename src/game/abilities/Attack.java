@@ -1,9 +1,7 @@
 package game.abilities;
 
 import game.GameLogicException;
-import game.GameModifier;
 import game.GamePanel;
-import game.KeyHandler;
 import game.events.*;
 import game.gameobjects.Board;
 import game.gameobjects.BoardCell;
@@ -94,8 +92,8 @@ public class Attack extends ActiveAbility {
             @Override
             public void onStateChanged(int oldState, int newState) {
                 if (oldState == Board.ANIMATING && newState == Board.IDLE) {
-                    entity.changeHealth(-attackEvent.getDamage());
-                    // TODO code that will play a visual explosion in a later release
+                    if (gp.getGameMode() == GamePanel.GAME_MODE_ATTACK) entity.takeDamage(attackEvent.getDamage());
+                    else entity.takeHealing(attackEvent.getDamage());
                     board.removeStateListener(this);
                 }
             }

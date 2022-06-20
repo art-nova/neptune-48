@@ -3,19 +3,16 @@ package game;
 import game.abilities.AbilityManager;
 import game.events.*;
 import game.gameobjects.Board;
-import game.gameobjects.EnemyEntity;
 import game.gameobjects.Entity;
 import game.obstacles.ObstacleManager;
 import game.utils.GamePanelGraphics;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import UI.UIManager;
 
 /**
  * Implementation of the panel in which the core game loop (2048 gameplay, attacking, triggering abilities etc.) happens.
@@ -119,7 +116,7 @@ public class GamePanel extends JPanel implements Runnable {
                 repaint();
                 delta -= (int)delta;
 
-                if (state == ENDING && board.getState() == Board.IDLE) state = ENDED;
+                if (state == ENDING && board.getState() == Board.IDLE && entity.getState() == Entity.IDLE) state = ENDED;
             }
         }
     }
@@ -129,9 +126,9 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void update() {
         if (state != ENDING) {
-            entity.update();
             abilityManager.update();
         }
+        entity.update();
         board.update();
     }
 

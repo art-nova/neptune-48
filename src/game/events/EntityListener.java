@@ -4,6 +4,7 @@ package game.events;
  * Interface that allows to register entity-specific events.
  *
  * @author Artem Novak
+ * @deprecated
  */
 public interface EntityListener {
     /**
