@@ -3,6 +3,7 @@ package game;
 import game.abilities.AbilityManager;
 import game.events.*;
 import game.gameobjects.Board;
+import game.gameobjects.EnemyEntity;
 import game.gameobjects.Entity;
 import game.obstacles.ObstacleManager;
 import game.utils.GamePanelGraphics;
@@ -24,6 +25,8 @@ import UI.UIManager;
 public class GamePanel extends JPanel implements Runnable {
     // Game state
     public static final int PLAYING = 0, PAUSED = 1, ENDING = 2, ENDED = 3;
+    // Game mode
+    public static final int GAME_MODE_ATTACK = 0, GAME_MODE_REPAIR = 1;
 
     // How many logical updates and visual repaints are done per second
     private static final int FPS = 60;
@@ -40,6 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final List<StateListener> stateListeners = new ArrayList<>();
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
     private final int baseTileDamage;
+    private final int gameMode;
 
     private int state = PLAYING;
     // Time left in seconds
@@ -62,24 +66,26 @@ public class GamePanel extends JPanel implements Runnable {
      * @param baseTileDamage damage dealt by level 1 tile
      * @param minObstacleInterval minimal interval in turns between obstacles
      * @param maxObstacleInterval maximal interval in turns between obstacles
+     * @param gameMode int id of the game mode, {@link GamePanel#GAME_MODE_ATTACK} or {@link GamePanel#GAME_MODE_REPAIR}
      */
     public GamePanel(int boardRows, int boardCols, String activeAbility1, String activeAbility2, String passiveAbility, Map<String, Integer> obstacleWeights, GamePanelGraphics graphics, JFrame baseFrame,
-                     int entityMaxHealth, int entityIndex, int time, int baseTileDamage, int minObstacleInterval, int maxObstacleInterval) throws IOException {
+                     int entityMaxHealth, int entityIndex, int time, int baseTileDamage, int minObstacleInterval, int maxObstacleInterval, int gameMode) throws IOException {
         this.timeLeft = time;
         this.baseTileDamage = baseTileDamage;
         this.graphics = graphics;
+        this.gameMode = gameMode;
         this.entity = new Entity(0, 0, entityMaxHealth, this);
-        this.board = new Board(0, GamePanelGraphics.ENTITY_HEIGHT + GamePanelGraphics.ENTITY_BOARD_DISTANCE, boardRows, boardCols, 1, this);
+        this.board = new Board(0, graphics.getEntityHeight() + graphics.getEntityBoardDistance(), boardRows, boardCols, 1, this);
         this.obstacleManager = new ObstacleManager(obstacleWeights, minObstacleInterval, maxObstacleInterval, this);
         this.abilityManager = new AbilityManager(activeAbility1, activeAbility2, passiveAbility, this);
         baseFrame.addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
-        this.setPreferredSize(new Dimension(GamePanelGraphics.ENTITY_WIDTH, board.getPreferredHeight() + GamePanelGraphics.ENTITY_BOARD_DISTANCE + GamePanelGraphics.ENTITY_HEIGHT));
-        board.setX((GamePanelGraphics.ENTITY_WIDTH - board.getPreferredWidth())/2f);
+        this.setPreferredSize(new Dimension(graphics.getEntityWidth(), board.getPreferredHeight() + graphics.getEntityBoardDistance() + graphics.getEntityHeight()));
+        board.setX((graphics.getEntityWidth() - board.getPreferredWidth())/2f);
 
-        graphics.load(boardRows, boardCols, entityIndex);
+        graphics.load(boardRows, boardCols, entityIndex, gameMode);
         board.generateRandomTile();
         board.generateRandomTile();
         gameThread.start();
@@ -211,6 +217,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     public AbilityManager getAbilityManager() {
         return abilityManager;
+    }
+
+    public int getGameMode() {
+        return gameMode;
     }
 
     public void addGameOverListener(GameOverListener listener) {

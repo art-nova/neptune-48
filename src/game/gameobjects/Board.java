@@ -69,8 +69,8 @@ public class Board extends GameObject {
         this.baseTileLevel = baseTileLevel;
         this.selectionHandler = new SelectionHandler();
         board = new Tile[rows][cols];
-        preferredWidth = GamePanelGraphics.TILE_SIZE * cols + GamePanelGraphics.TILE_OFFSET * (cols + 1);
-        preferredHeight = GamePanelGraphics.TILE_SIZE * rows + GamePanelGraphics.TILE_OFFSET * (rows + 1);
+        preferredWidth = graphics.getTileSize() * cols + graphics.getTileOffset() * (cols + 1);
+        preferredHeight = graphics.getTileSize() * rows + graphics.getTileOffset() * (rows + 1);
     }
 
     /**
@@ -89,10 +89,10 @@ public class Board extends GameObject {
          * Prepares a new SelectionHandler instance (predicate and maxSelection have to be set later).
          */
         private SelectionHandler() {
-            highlight = new BufferedImage(GamePanelGraphics.TILE_SIZE, GamePanelGraphics.TILE_SIZE, BufferedImage.TYPE_INT_ARGB);
+            highlight = new BufferedImage(graphics.getTileSize(), graphics.getTileSize(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = (Graphics2D) highlight.getGraphics();
             g2d.setColor(graphics.getColor("highlight"));
-            g2d.fillRect(0, 0, GamePanelGraphics.TILE_SIZE, GamePanelGraphics.TILE_SIZE);
+            g2d.fillRect(0, 0, graphics.getTileSize(), graphics.getTileSize());
             g2d.dispose();
         }
 
@@ -109,12 +109,12 @@ public class Board extends GameObject {
                         Point point = pointByCell(cell);
                         point.x -= Board.this.x;
                         point.y -= Board.this.y;
-                        overlayArea.subtract(new Area(new Rectangle(point.x, point.y, GamePanelGraphics.TILE_SIZE, GamePanelGraphics.TILE_SIZE)));
+                        overlayArea.subtract(new Area(new Rectangle(point.x, point.y, graphics.getTileSize(), graphics.getTileSize())));
                     }
                 }
             }
             Graphics2D g2d = (Graphics2D) overlay.getGraphics();
-            g2d.setColor(new Color(0, 0, 0, 128));
+            g2d.setColor(graphics.getColor("darken"));
             g2d.fill(overlayArea);
             g2d.dispose();
         }
@@ -168,8 +168,8 @@ public class Board extends GameObject {
         private BoardCell cellByMouseLocation() {
             Point mouseScreenLocation = MouseInfo.getPointerInfo().getLocation();
             Point gpScreenLocation = gp.getLocationOnScreen();
-            Point mouseGameLocation = new Point((int)((mouseScreenLocation.x - gpScreenLocation.x)/graphics.scale),
-                    (int)((mouseScreenLocation.y - gpScreenLocation.y)/graphics.scale));
+            Point mouseGameLocation = new Point(mouseScreenLocation.x - gpScreenLocation.x,
+                    mouseScreenLocation.y - gpScreenLocation.y);
             return cellByPoint(mouseGameLocation);
 
         }
@@ -362,8 +362,8 @@ public class Board extends GameObject {
      */
     public Point pointByCell(BoardCell cell) throws IllegalArgumentException {
         if (cell.row < 0 || cell.row >= rows || cell.col < 0 || cell.col > cols) throw new IllegalArgumentException("Nonexistent cell!");
-        return new Point((int)x + cell.col * GamePanelGraphics.TILE_SIZE + (cell.col + 1) * GamePanelGraphics.TILE_OFFSET,
-                (int)y + cell.row * GamePanelGraphics.TILE_SIZE + (cell.row + 1) * GamePanelGraphics.TILE_OFFSET);
+        return new Point((int)x + cell.col * graphics.getTileSize() + (cell.col + 1) * graphics.getTileOffset(),
+                (int)y + cell.row * graphics.getTileSize() + (cell.row + 1) * graphics.getTileOffset());
     }
 
     /**
@@ -595,7 +595,7 @@ public class Board extends GameObject {
             for (int j = 0; j < cols; j++) {
                 BoardCell cell = new BoardCell(i, j);
                 Point cellPoint = pointByCell(cell);
-                Rectangle bounds = new Rectangle(cellPoint.x, cellPoint.y, GamePanelGraphics.TILE_SIZE, GamePanelGraphics.TILE_SIZE);
+                Rectangle bounds = new Rectangle(cellPoint.x, cellPoint.y, graphics.getTileSize(), graphics.getTileSize());
                 if (bounds.contains(point)) return cell;
             }
         }

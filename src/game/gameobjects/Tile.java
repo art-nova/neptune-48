@@ -14,8 +14,6 @@ public class Tile extends GameObject {
     // Possible animation states.
     public static final int IDLE = 0, MOVING = 1, MERGING = 2, PULSATING = 3, GENERATING = 4;
 
-    private final GamePanelGraphics graphics;
-
     private int state = GENERATING;
     private int level;
     private int levelVisualOffset;
@@ -35,7 +33,6 @@ public class Tile extends GameObject {
 
     public Tile(int x, int y, int level, GamePanel gp) {
         super(x, y, gp);
-        this.graphics = gp.getGameGraphics();
         this.targetX = x;
         this.targetY = y;
         this.level = level;
@@ -65,7 +62,7 @@ public class Tile extends GameObject {
         else if (state == GENERATING) {
             if (animationFramesLeft <= 0) {
                 visible = true;
-                pulse(GamePanelGraphics.TILE_SIZE / 2, -GamePanelGraphics.TILE_PULSE_OFFSET);
+                pulse(graphics.getTileSize() / 2, -graphics.getTilePulseOffset());
             }
         }
         if (state != IDLE && animationFramesLeft <= 0) flush();
@@ -77,7 +74,7 @@ public class Tile extends GameObject {
             int screenY = (int)y;
 
             if (state == PULSATING) {
-                int size = (GamePanelGraphics.TILE_SIZE - (int)(visualOffset * 2));
+                int size = (graphics.getTileSize() - (int)(visualOffset * 2));
                 int offset = (int)visualOffset;
                 g2d.drawImage(graphics.getTexture("tile"+(level + levelVisualOffset)), screenX + offset, screenY + offset, size, size, null);
             }
@@ -203,14 +200,14 @@ public class Tile extends GameObject {
      * Initiates outward pulse animation and lets tile display its true level.
      */
     public void upgradeAnimation() {
-        pulse(0, -GamePanelGraphics.TILE_PULSE_OFFSET);
+        pulse(0, -graphics.getTilePulseOffset());
     }
 
     /**
      * Initiates inward pulse animation and lets tile display its true level.
      */
     public void downgradeAnimation() {
-        pulse(0, GamePanelGraphics.TILE_PULSE_OFFSET);
+        pulse(0, graphics.getTilePulseOffset());
     }
 
     /**
@@ -240,7 +237,7 @@ public class Tile extends GameObject {
     public void dispose() {
         startAnimationCycle();
         visualOffset = 0;
-        targetVisualOffset = GamePanelGraphics.TILE_SIZE/2;
+        targetVisualOffset = graphics.getTileSize()/2;
         speedVisualOffset = (float)(targetVisualOffset) / GamePanelGraphics.ANIMATION_CYCLE;
         state = PULSATING;
     }

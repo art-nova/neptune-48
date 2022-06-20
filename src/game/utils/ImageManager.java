@@ -35,7 +35,7 @@ public abstract class ImageManager {
      * @param height height of the scaled instance
      * @return scaled instance of the loaded image
      */
-    public BufferedImage getScaledImage(BufferedImage image, int width, int height) {
+    public static BufferedImage getScaledImage(BufferedImage image, int width, int height) {
         BufferedImage scaledImage = image;
         int tempWidth = image.getWidth(), tempHeight = image.getHeight();
         if (width < image.getWidth() || height <= image.getHeight()) {
@@ -56,9 +56,34 @@ public abstract class ImageManager {
         return scaledImage;
     }
 
-    public BufferedImage getImage(String filepath) throws IOException {
+    /**
+     * Reads {@link BufferedImage} from a filepath.
+     *
+     * @param filepath path to the image
+     * @return {@link BufferedImage} that was loaded
+     * @throws IOException if fails to load the image
+     */
+    public static BufferedImage getImage(String filepath) throws IOException {
         BufferedImage image = ImageIO.read(new File(filepath));
         if (image == null) throw new IOException("Failed to load image from " + filepath);
         return image;
+    }
+
+    /**
+     * Adds colored overlay to the image's filled part (transparent parts remain unchanged).
+     *
+     * @param image original image
+     * @param color color (possibly semi-transparent)
+     * @return {@link BufferedImage} with added overlay
+     */
+    public static BufferedImage addColorOverlay(BufferedImage image, Color color) {
+        BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = (Graphics2D) result.getGraphics();
+        g2d.drawImage(image, 0, 0, null);
+        g2d.setColor(color);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP));
+        g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
+        g2d.dispose();
+        return result;
     }
 }

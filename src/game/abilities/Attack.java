@@ -35,8 +35,9 @@ public class Attack extends ActiveAbility {
         super(gp, abilityManager, DEFAULT_COOLDOWN);
         this.board = gp.getBoard();
         this.entity = gp.getEntity();
-        int targetX = (int)(gp.getEntity().getX() + (GamePanelGraphics.ENTITY_WIDTH - GamePanelGraphics.TILE_SIZE)/2f);
-        int targetY = (int)(gp.getEntity().getY() + (GamePanelGraphics.ENTITY_HEIGHT - GamePanelGraphics.TILE_SIZE)/2f);
+        GamePanelGraphics graphics = gp.getGameGraphics();
+        int targetX = (int)(gp.getEntity().getX() + (graphics.getEntityWidth() - graphics.getTileSize())/2f);
+        int targetY = (int)(gp.getEntity().getY() + (graphics.getEntityHeight() - graphics.getTileSize())/2f);
         targetPoint = new Point(targetX, targetY);
     }
 

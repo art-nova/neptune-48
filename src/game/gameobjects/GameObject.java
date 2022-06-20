@@ -1,6 +1,7 @@
 package game.gameobjects;
 
 import game.GamePanel;
+import game.utils.GamePanelGraphics;
 
 import java.awt.*;
 
@@ -13,18 +14,20 @@ public abstract class GameObject {
     protected float x;
     protected float y;
     protected GamePanel gp;
+    protected GamePanelGraphics graphics;
 
     /**
      * Creates a new abstract game object.
      *
      * @param x x at the moment of creation
      * @param y y at the moment of creation
-     * @param gp the root GamePanel of this object
+     * @param gp the root {@link GamePanel} of this object
      */
     public GameObject(int x, int y, GamePanel gp) {
         this.x = x;
         this.y = y;
         this.gp = gp;
+        this.graphics = gp.getGameGraphics();
     }
 
     /**

@@ -37,10 +37,10 @@ public class CenterPanel extends JLayeredPane{
 	{
         HashMap<String, Integer> obstacleWeights = new HashMap<>();
 	    add(new GamePanel(4, 4, null, null, null, obstacleWeights,
-                new GamePanelGraphics("resources/images/neptun"), UIManager.getFrame(), 5000, 1, 120, 5,
-                10, 30));
+                new GamePanelGraphics("resources/images/default", 94, 5), UIManager.getFrame(), 5000, 0, 120, 5,
+                10, 30, GamePanel.GAME_MODE_ATTACK));
 	}
-	catch (IOException e){}
+	catch (IOException e){e.printStackTrace();}
         add(new Attack());
     }
         
