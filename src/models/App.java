@@ -11,6 +11,7 @@ import UI.UIManager;
 public class App {
      
     private static LevelGraphics levelGraphics;
+    private static LevelsMenu lm;
     
     public static LevelGraphics getLevel(){
         return levelGraphics;
@@ -18,7 +19,7 @@ public class App {
     
     public static void main(String[] args) {
         //MainMenu m  = new MainMenu();
-        LevelsMenu lm = new LevelsMenu();
+        lm = new LevelsMenu();
         /*
         UIManager.initFrame();
         
@@ -30,5 +31,9 @@ public class App {
         UIManager.init();
         UIManager.loadLevel();
         */
+    }
+
+    public static LevelsMenu getLevelsMenu(){
+        return lm;
     }
 }
