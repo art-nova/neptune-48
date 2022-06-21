@@ -3,8 +3,10 @@ package game.gameobjects;
 import game.GameLogicException;
 import game.GamePanel;
 import game.UIDataHolder;
-import game.events.AnimationListener;
+import game.events.StateListener;
 import game.events.UIDataListener;
+import game.gameobjects.particles.ParticleManager;
+import game.gameobjects.particles.TextParticle;
 import game.utils.GamePanelGraphics;
 
 import java.awt.*;
@@ -23,8 +25,9 @@ public class Entity extends GameObject implements UIDataHolder {
 
     private final long maxHealth;
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
-    private final List<AnimationListener> animationListeners = new ArrayList<>();
+    private final List<StateListener> stateListeners = new ArrayList<>();
     private final int gameMode;
+    private final ParticleManager particleManager;
 
     private long health;
     private int state;
@@ -42,6 +45,7 @@ public class Entity extends GameObject implements UIDataHolder {
     public Entity(int x, int y, long maxHealth, GamePanel gp) {
         super(x, y, gp);
         this.gameMode = gp.getGameMode();
+        this.particleManager = gp.getParticleManager();
         this.maxHealth = maxHealth;
         this.health = maxHealth;
     }
@@ -52,8 +56,7 @@ public class Entity extends GameObject implements UIDataHolder {
             animationFramesLeft--;
             if (animationFramesLeft <= 0) {
                 animationFramesLeft = 0;
-                state = IDLE;
-                for (AnimationListener listener : new ArrayList<>(animationListeners)) listener.onAnimationOver();
+                setState(IDLE);
             }
         }
     }
@@ -69,7 +72,6 @@ public class Entity extends GameObject implements UIDataHolder {
         long oldHealth = health;
         health -= damage;
         health = Math.max(health, 0);
-        if (health != oldHealth) animateDamage();
         if (health == 0) {
             switch (gameMode) {
                 case GamePanel.GAME_MODE_ATTACK -> gp.winLevel();
@@ -83,52 +85,43 @@ public class Entity extends GameObject implements UIDataHolder {
         long oldHealth = health;
         health += healing;
         health = Math.min(health, maxHealth);
-        if (health != oldHealth) animateHealing();
         if (health == maxHealth && gameMode == GamePanel.GAME_MODE_REPAIR) gp.winLevel();
     }
 
-    public void animateDamage() {
-        animationImage = graphics.getTexture("entity");
-        startAnimationCycle();
-        addAnimationListener(new AnimationListener() {
-            @Override
-            public void onAnimationOver() {
-                animationListeners.remove(this);
-                animationImage = graphics.getTexture("entityDamaged");
-                for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
-                // TODO particles
-                startAnimationCycle();
-                addAnimationListener(new AnimationListener() {
-                    @Override
-                    public void onAnimationOver() {
-                        animationListeners.remove(this);
+    public void animateDamage(long damage) {
+        if (damage > 0) {
+            animationImage = graphics.getTexture("entityDamaged");
+            for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
+            particleManager.addHealthChangeParticle("-" + damage, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
+            startAnimationCycle();
+            addStateListener(new StateListener() {
+                @Override
+                public void onStateChanged(int oldState, int newState) {
+                    if (oldState == ANIMATING && newState == IDLE) {
+                        removeStateListener(this);
                         animationImage = graphics.getTexture("entity");
                     }
-                });
-            }
-        });
+                }
+            });
+        }
     }
 
-    public void animateHealing() {
-        animationImage = graphics.getTexture("entity");
-        startAnimationCycle();
-        addAnimationListener(new AnimationListener() {
-            @Override
-            public void onAnimationOver() {
-                animationListeners.remove(this);
-                animationImage = graphics.getTexture("entityHealed");
-                for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
-                // TODO particles
-                startAnimationCycle();
-                addAnimationListener(new AnimationListener() {
-                    @Override
-                    public void onAnimationOver() {
-                        animationListeners.remove(this);
+    public void animateHealing(long healing) {
+        if (healing > 0) {
+            animationImage = graphics.getTexture("entityHealed");
+            for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
+            particleManager.addHealthChangeParticle("+" + healing, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
+            startAnimationCycle();
+            addStateListener(new StateListener() {
+                @Override
+                public void onStateChanged(int oldState, int newState) {
+                    if (oldState == ANIMATING && newState == IDLE) {
+                        removeStateListener(this);
                         animationImage = graphics.getTexture("entity");
                     }
-                });
-            }
-        });
+                }
+            });
+        }
     }
 
     public long getMaxHealth() {
@@ -137,6 +130,15 @@ public class Entity extends GameObject implements UIDataHolder {
 
     public long getHealth() {
         return health;
+    }
+
+    public void setState(int state) {
+        if (state < 0 || state > 2) throw new IllegalArgumentException("Entity does not support state " + state);
+        if (this.state != state) {
+            int oldState = this.state;
+            this.state = state;
+            for (StateListener listener : new ArrayList<>(stateListeners)) listener.onStateChanged(oldState, state);
+        }
     }
 
     public int getState() {
@@ -151,16 +153,16 @@ public class Entity extends GameObject implements UIDataHolder {
         uiDataListeners.remove(listener);
     }
 
-    public void addAnimationListener(AnimationListener listener) {
-        animationListeners.add(listener);
+    public void addStateListener(StateListener listener) {
+        stateListeners.add(listener);
     }
 
-    public void removeAnimationListener(AnimationListener listener) {
-        animationListeners.remove(listener);
+    public void removeStateListener(StateListener listener) {
+        stateListeners.remove(listener);
     }
 
     private void startAnimationCycle() {
         animationFramesLeft = GamePanelGraphics.ANIMATION_CYCLE;
-        state = ANIMATING;
+        setState(ANIMATING);
     }
 }

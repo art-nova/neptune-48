@@ -4,6 +4,7 @@ import game.abilities.AbilityManager;
 import game.events.*;
 import game.gameobjects.Board;
 import game.gameobjects.Entity;
+import game.gameobjects.particles.ParticleManager;
 import game.obstacles.ObstacleManager;
 import game.utils.GamePanelGraphics;
 
@@ -37,6 +38,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final Entity entity;
     private final ObstacleManager obstacleManager;
     private final AbilityManager abilityManager;
+    private final ParticleManager particleManager;
     private final List<GameOverListener> gameOverListeners = new ArrayList<>();
     private final List<StateListener> stateListeners = new ArrayList<>();
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
@@ -71,6 +73,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.baseTileDamage = baseTileDamage;
         this.graphics = graphics;
         this.gameMode = gameMode;
+        this.particleManager = new ParticleManager(this);
         this.entity = new Entity(0, 0, entityMaxHealth, this);
         this.board = new Board(0, graphics.getEntityHeight() + graphics.getEntityBoardDistance(), boardRows, boardCols, 1, this);
         this.obstacleManager = new ObstacleManager(obstacleWeights, minObstacleInterval, maxObstacleInterval, this);
@@ -109,7 +112,7 @@ public class GamePanel extends JPanel implements Runnable {
                 repaint();
                 delta -= (int)delta;
 
-                if (state == ENDING && board.getState() == Board.IDLE && entity.getState() == Entity.IDLE) state = ENDED;
+                if (state == ENDING && board.getState() == Board.IDLE && entity.getState() == Entity.IDLE && particleManager.getState() == ParticleManager.IDLE) state = ENDED;
             }
         }
     }
@@ -124,6 +127,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
         entity.update();
         board.update();
+        particleManager.update();
     }
 
     @Override
@@ -132,6 +136,7 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2d = (Graphics2D)g;
         entity.render(g2d);
         board.render(g2d);
+        particleManager.render(g2d);
         g.dispose();
     }
 
@@ -201,6 +206,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     public AbilityManager getAbilityManager() {
         return abilityManager;
+    }
+
+    public ParticleManager getParticleManager() {
+        return particleManager;
     }
 
     public int getGameMode() {

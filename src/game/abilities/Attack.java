@@ -87,9 +87,20 @@ public class Attack extends ActiveAbility {
         board.disposeCellContent(cell);
         board.animateTileMoveTransient(tile, targetPoint);
         AttackEvent attackEvent = new AttackEvent(cell, tile, gp.getBaseTileDamage());
+        board.addStateListener(new StateListener() {
+            @Override
+            public void onStateChanged(int oldState, int newState) {
+                if (oldState == Board.ANIMATING && newState == Board.IDLE) {
+                    board.removeStateListener(this);
+                    if (gp.getGameMode() == GamePanel.GAME_MODE_ATTACK) entity.animateDamage(attackEvent.getDamage());
+                    else entity.animateHealing(attackEvent.getDamage());
+                }
+            }
+        });
         for (AttackListener listener : new ArrayList<>(attackListeners)) listener.onAttack(attackEvent); // Attack event may potentially be modified.
         if (gp.getGameMode() == GamePanel.GAME_MODE_ATTACK) entity.takeDamage(attackEvent.getDamage());
         else entity.takeHealing(attackEvent.getDamage());
+        board.setState(Board.ANIMATING);
     }
 
     public void addAttackListener(AttackListener listener) {
