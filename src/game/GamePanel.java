@@ -32,6 +32,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final KeyHandler keyHandler = new KeyHandler();
     private final MouseHandler mouseHandler = new MouseHandler();
     private final Thread gameThread = new Thread(this);
+    private final Countdown countdown;
     private final Board board;
     private final Entity entity;
     private final ObstacleManager obstacleManager;
@@ -44,8 +45,6 @@ public class GamePanel extends JPanel implements Runnable {
     private final int gameMode;
 
     private int state = PLAYING;
-    // Time left in seconds
-    private int timeLeft;
 
     /**
      * Constructs a game panel with given graphics manager object.
@@ -68,7 +67,7 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public GamePanel(int boardRows, int boardCols, String activeAbility1, String activeAbility2, String passiveAbility, Map<String, Integer> obstacleWeights, GamePanelGraphics graphics, JFrame baseFrame,
                      int entityMaxHealth, int entityIndex, int time, int baseTileDamage, int minObstacleInterval, int maxObstacleInterval, int gameMode) throws IOException {
-        this.timeLeft = time;
+        this.countdown = new Countdown(time);
         this.baseTileDamage = baseTileDamage;
         this.graphics = graphics;
         this.gameMode = gameMode;
@@ -95,20 +94,13 @@ public class GamePanel extends JPanel implements Runnable {
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
-
-        long secondsTimer = 0;
+        countdown.addUIDataListener(() -> {if (countdown.getTime() <= 0) loseLevel();});
+        countdown.start();
 
         while (state != ENDED) {
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime)/frameInterval;
-            secondsTimer += currentTime - lastTime;
             lastTime = currentTime;
-            if (secondsTimer >= 1000000000 && state == PLAYING) {
-                secondsTimer = 0;
-                timeLeft--;
-                for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
-                if (timeLeft <= 0) loseLevel();
-            }
 
             if ((state == PLAYING || state == ENDING) && delta >= 1) {
                 for (int i = 0; i < (int)delta; i++) {
@@ -127,6 +119,7 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void update() {
         if (state != ENDING) {
+            countdown.update();
             abilityManager.update();
         }
         entity.update();
@@ -153,7 +146,7 @@ public class GamePanel extends JPanel implements Runnable {
         state = ENDING;
         if (board.getState() == Board.SELECTING) board.abortSelection();
         board.setLocked(true);
-        for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onWin(timeLeft);
+        for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onWin(countdown.getTime());
     }
 
     public GamePanelGraphics getGameGraphics() {
@@ -189,20 +182,13 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    public int getTimeLeft() {
-        return timeLeft;
-    }
-
     /**
-     * Offsets remaining time in seconds by given number. The number is added.
-     * If the result of the offset is less than 0, sets remaining time to 0 instead.
+     * Returns this GamePanel's {@link Countdown} object.
      *
-     * @param delta time change in seconds
+     * @return countdown
      */
-    public void offsetTimeLeft(int delta) {
-        int oldTimeLeft = this.timeLeft;
-        this.timeLeft = Math.max(timeLeft + delta, 0);
-        if (oldTimeLeft != timeLeft) for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
+    public Countdown getCountdown() {
+        return countdown;
     }
 
     public int getBaseTileDamage() {

@@ -1,5 +1,6 @@
 package game.obstacles;
 
+import game.Countdown;
 import game.GamePanel;
 
 /**
@@ -13,8 +14,11 @@ public class SubtractTime extends Obstacle {
      */
     public static final int TIME_SUBTRACTED = 30;
 
+    private Countdown countdown;
+
     public SubtractTime(GamePanel gp) {
         super(gp);
+        countdown = gp.getCountdown();
     }
 
     @Override
@@ -24,7 +28,7 @@ public class SubtractTime extends Obstacle {
 
     @Override
     public void startApplication() {
-        gp.offsetTimeLeft(-TIME_SUBTRACTED);
+        countdown.offsetTime(-TIME_SUBTRACTED);
     }
 
     @Override
