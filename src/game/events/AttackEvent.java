@@ -68,6 +68,7 @@ public class AttackEvent {
     }
 
     public long getDamage() {
+        if (tile.getLevel() == 0) return 0;
         return tile.getLevel() == 11 ? Long.MAX_VALUE : Math.round((Math.pow(baseTileDamage, tile.getLevel()) * damagePercent / 100f) * (100 - damageNegation) / 100f);
     }
 
