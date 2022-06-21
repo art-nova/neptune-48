@@ -137,10 +137,10 @@ public class Board extends GameObject {
                         selected.add(cell);
                         for (CellSelectionListener listener : new ArrayList<>(cellSelectionListeners)) listener.onSelectionUpdated(selected);
                         if (selected.size() == maxSelection) {
+                            setState(IDLE);
                             for (CellSelectionListener listener : new ArrayList<>(cellSelectionListeners)) listener.onSelectionCompleted(selected);
                             selected = new ArrayList<>();
                             predicate = null;
-                            setState(IDLE);
                         }
                     }
                 }
