@@ -39,6 +39,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final List<GameOverListener> gameOverListeners = new ArrayList<>();
     private final List<StateListener> stateListeners = new ArrayList<>();
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
+    private final List<UpdateListener> updateListeners = new ArrayList<>();
     private final int baseTileDamage;
     private final int gameMode;
 
@@ -220,6 +221,23 @@ public class GamePanel extends JPanel implements Runnable {
         return gameMode;
     }
 
+    /**
+     * Schedules {@link UpdateListener#onUpdate()}'s application after only the next update's completion, disposing of it afterwards.
+     * <br>
+     * This is the preferred method of scheduling actions based on out-of-sync stimuli (such as player clicking a UI button).
+     * 
+     * @param scheduled implementation of {@link UpdateListener} that contains the scheduled sequence
+     */
+    public void scheduleAfterUpdate(UpdateListener scheduled) {
+        updateListeners.add(new UpdateListener() {
+            @Override
+            public void onUpdate() {
+                scheduled.onUpdate();
+                updateListeners.remove(this);
+            }
+        });
+    }
+
     public void addGameOverListener(GameOverListener listener) {
         gameOverListeners.add(listener);
     }
@@ -242,6 +260,13 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void removeUIDataListener(UIDataListener listener) {
         uiDataListeners.remove(listener);
+    }
+
+    public void addUpdateListener(UpdateListener listener) {
+        updateListeners.add(listener);
+    }
+    public void removeUpdateListener(UpdateListener listener) {
+        updateListeners.remove(listener);
     }
 
 }
