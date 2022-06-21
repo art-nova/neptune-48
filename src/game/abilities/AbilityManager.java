@@ -5,6 +5,7 @@ import game.GameModifier;
 import game.GamePanel;
 import game.KeyHandler;
 import game.events.AbilityListener;
+import game.gameobjects.Board;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ public class AbilityManager {
     private final PassiveAbility passive;
     private final GamePanel gp;
     private final KeyHandler keyHandler;
+    private final Board board;
 
     /**
      * Constructs a new BonusManager with given abilities selected for the level.
@@ -34,6 +36,7 @@ public class AbilityManager {
     public AbilityManager(String active1, String active2, String passive, GamePanel gp) {
         if (active1 == null && active2 != null) throw new GameLogicException("Trying to pass an active ability into the second slot while the first is empty");
         this.gp = gp;
+        this.board = gp.getBoard();
         this.keyHandler = gp.getKeyHandler();
         this.attack = new Attack(gp, this);
         this.active1 = registerActiveAbility(active1);
@@ -55,12 +58,39 @@ public class AbilityManager {
      */
     public void update() {
         if (keyHandler.isKeyPressed()) {
-            if (keyHandler.getLastPressKey().equals("attack") && attack.getState() == GameModifier.APPLICABLE) attack.startApplication();
-            if (active1 != null) {
-                if (keyHandler.getLastPressKey().equals("active1") && active1.getState() == GameModifier.APPLICABLE) active1.startApplication();
-                else if (active2 != null && keyHandler.getLastPressKey().equals("active2") && active2.getState() == GameModifier.APPLICABLE) active2.startApplication();
+            switch (keyHandler.getLastPressKey()) {
+                case "attack" -> attemptAttack();
+                case "active1" -> attemptActive1();
+                case "active2" -> attemptActive2();
             }
         }
+    }
+
+    /**
+     * Attempts to apply attack (respecting all the non-application conditions).
+     * <br>
+     * Preferred method for outside access.
+     */
+    public void attemptAttack() {
+        if (!board.isLocked() && attack.getState() == GameModifier.APPLICABLE) attack.startApplication();
+    }
+
+    /**
+     * Attempts to apply active ability 1 (respecting all the non-application conditions).
+     * <br>
+     * Preferred method for outside access.
+     */
+    public void attemptActive1() {
+        if (active1 != null && !board.isLocked() && active1.getState() == GameModifier.APPLICABLE) active1.startApplication();
+    }
+
+    /**
+     * Attempts to apply active ability 2 (respecting all the non-application conditions).
+     * <br>
+     * Preferred method for outside access.
+     */
+    public void attemptActive2() {
+        if (active2 != null && !board.isLocked() && active2.getState() == GameModifier.APPLICABLE) active2.startApplication();
     }
 
     public Attack getAttack() {

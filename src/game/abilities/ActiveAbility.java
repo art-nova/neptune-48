@@ -84,6 +84,6 @@ public abstract class ActiveAbility extends Ability {
 
     @Override
     protected boolean determineApplicability() {
-        return currentCooldown == 0;
+        return !board.isLocked() && currentCooldown == 0;
     }
 }
