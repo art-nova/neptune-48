@@ -12,9 +12,9 @@ public interface GameOverListener {
     void onLose();
 
     /**
-     * Is triggered when game is won via any condition.
+     * Is triggered when game is won via any condition, after writing the necessary logical information to {@link data.PlayerData}.
      *
-     * @param timeLeft time left before losing (can be used for score calculation)
+     * @param abilityUnlocked whether the ability unlock criteria was met for the first time during this win
      */
-    void onWin(int timeLeft);
+    void onWin(boolean abilityUnlocked);
 }

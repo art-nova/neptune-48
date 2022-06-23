@@ -1,5 +1,9 @@
 package game;
 
+import data.DataManager;
+import data.LevelData;
+import data.LevelIdentifier;
+import data.PlayerData;
 import game.abilities.AbilityManager;
 import game.events.*;
 import game.gameobjects.Board;
@@ -21,14 +25,15 @@ import java.io.IOException;
  * @author Artem Novak
  */
 public class GamePanel extends JPanel implements Runnable {
+    // How many logical updates and visual repaints are done per second
+    public static final int TPS = 60;
     // Game state
     public static final int PLAYING = 0, PAUSED = 1, ENDING = 2, ENDED = 3;
     // Game mode
     public static final int GAME_MODE_ATTACK = 0, GAME_MODE_REPAIR = 1;
 
-    // How many logical updates and visual repaints are done per second
-    private static final int FPS = 60;
-
+    private final LevelData levelData;
+    private final PlayerData playerData;
     private final GamePanelGraphics graphics;
     private final KeyHandler keyHandler = new KeyHandler();
     private final MouseHandler mouseHandler = new MouseHandler();
@@ -51,33 +56,22 @@ public class GamePanel extends JPanel implements Runnable {
     /**
      * Constructs a game panel with given graphics manager object.
      *
-     * @param boardRows number of board rows
-     * @param boardCols number of board columns
-     * @param activeAbility1 NameID of the first active ability (or null if none selected)
-     * @param activeAbility2 NameID of the second active ability (or null if none selected)
-     * @param passiveAbility NameID of the passive ability (or null if none selected)
-     * @param obstacleWeights map of obstacle NameIDs to their relative weights during selection
-     * @param graphics non-loaded graphics manager object
+     * @param levelData {@link LevelData} object storing information about this panel's level
+     * @param playerData {@link PlayerData} object storing information about current player profile
      * @param baseFrame base {@link JFrame} of this panel
-     * @param entityMaxHealth max health of the entity
-     * @param entityIndex index of the entity to be loaded (in the entity texture folder)
-     * @param time time in seconds after which level is considered failed
-     * @param baseTileDamage damage dealt by level 1 tile
-     * @param minObstacleInterval minimal interval in turns between obstacles
-     * @param maxObstacleInterval maximal interval in turns between obstacles
-     * @param gameMode int id of the game mode, {@link GamePanel#GAME_MODE_ATTACK} or {@link GamePanel#GAME_MODE_REPAIR}
      */
-    public GamePanel(int boardRows, int boardCols, String activeAbility1, String activeAbility2, String passiveAbility, Map<String, Integer> obstacleWeights, GamePanelGraphics graphics, JFrame baseFrame,
-                     int entityMaxHealth, int entityIndex, int time, int baseTileDamage, int minObstacleInterval, int maxObstacleInterval, int gameMode) throws IOException {
-        this.countdown = new Countdown(time);
-        this.baseTileDamage = baseTileDamage;
-        this.graphics = graphics;
-        this.gameMode = gameMode;
+    public GamePanel(LevelData levelData, PlayerData playerData, JFrame baseFrame) throws IOException {
+        this.levelData = levelData;
+        this.playerData = playerData;
+        this.countdown = new Countdown(levelData.getTime());
+        this.baseTileDamage = levelData.getBaseTileDamage();
+        this.graphics = levelData.generateGraphics();
+        this.gameMode = levelData.getGameMode();
         this.particleManager = new ParticleManager(this);
-        this.entity = new Entity(0, 0, entityMaxHealth, this);
-        this.board = new Board(0, graphics.getEntityHeight() + graphics.getEntityBoardDistance(), boardRows, boardCols, 1, this);
-        this.obstacleManager = new ObstacleManager(obstacleWeights, minObstacleInterval, maxObstacleInterval, this);
-        this.abilityManager = new AbilityManager(activeAbility1, activeAbility2, passiveAbility, this);
+        this.entity = new Entity(0, 0, levelData.getEntityHealth(), this);
+        this.board = new Board(0, graphics.getEntityHeight() + graphics.getEntityBoardDistance(), levelData.getBoardSize(), levelData.getBoardSize(), 1, this);
+        this.obstacleManager = new ObstacleManager(levelData.getObstacleWeights(), levelData.getMinObstacleInterval(), levelData.getMaxObstacleInterval(), this);
+        this.abilityManager = new AbilityManager(playerData.getActiveAbility1(), playerData.getActiveAbility2(), playerData.getPassiveAbility(), this);
         baseFrame.addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
@@ -85,7 +79,6 @@ public class GamePanel extends JPanel implements Runnable {
         this.setPreferredSize(new Dimension(graphics.getEntityWidth(), board.getPreferredHeight() + graphics.getEntityBoardDistance() + graphics.getEntityHeight()));
         board.setX((graphics.getEntityWidth() - board.getPreferredWidth())/2f);
 
-        graphics.load(boardRows, boardCols, entityIndex, gameMode);
         board.generateRandomTile();
         board.generateRandomTile();
         gameThread.start();
@@ -93,7 +86,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        double frameInterval = 1000000000/FPS;
+        double frameInterval = 1000000000/TPS;
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
@@ -140,6 +133,9 @@ public class GamePanel extends JPanel implements Runnable {
         g.dispose();
     }
 
+    /**
+     * Finishes the game without any changes to {@link PlayerData} object and triggers {@link GameOverListener#onLose()} methods.
+     */
     public void loseLevel() {
         state = ENDING;
         if (board.getState() == Board.SELECTING) board.abortSelection();
@@ -147,11 +143,36 @@ public class GamePanel extends JPanel implements Runnable {
         for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onLose();
     }
 
+    /**
+     * Finishes the game, writes necessary information about level completion into the {@link PlayerData} object
+     * and triggers {@link GameOverListener#onWin(boolean)} methods.
+     */
     public void winLevel() {
         state = ENDING;
         if (board.getState() == Board.SELECTING) board.abortSelection();
         board.setLocked(true);
-        for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onWin(countdown.getTime());
+
+        LevelIdentifier level = levelData.getLevelIdentifier();
+        boolean unlockedAbility;
+        int timeSpent = countdown.getDedicatedTime() - countdown.getTime();
+        int stars = 1;
+        if (timeSpent <= levelData.getThreeStarThreshold()) stars = 3;
+        else if (timeSpent <= levelData.getTwoStarThreshold()) stars = 2;
+        unlockedAbility = stars > 1 && !playerData.getUnlockedAbilities().contains(levelData.getRewardAbility());
+        // Checking whether new information should be written.
+        if (!playerData.isLevelCompleted(level) || timeSpent < playerData.getLevelTimeSpent(level)) {
+            playerData.setLevelBestResult(level, timeSpent, stars);
+            if (levelData.getNextLevelIdentifier() != null && !playerData.isLevelUnlocked(levelData.getNextLevelIdentifier())) playerData.unlockLevel(levelData.getNextLevelIdentifier());
+            if (unlockedAbility) playerData.unlockAbility(levelData.getRewardAbility());
+            try {
+                DataManager.savePlayerData(playerData);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
+        for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onWin(unlockedAbility);
     }
 
     public GamePanelGraphics getGameGraphics() {
