@@ -76,7 +76,6 @@ public class Countdown implements UIDataHolder {
      * Starts the timer.
      */
     public void start() {
-        time = dedicatedTime;
         state = TICKING;
     }
 
