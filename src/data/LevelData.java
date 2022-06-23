@@ -16,7 +16,8 @@ import java.util.Map;
 public class LevelData implements Serializable {
     private LevelIdentifier levelIdentifier;
     private LevelIdentifier nextLevelIdentifier;
-    private int entityHealth;
+    private long entityHealth;
+    private long entityTolerance;
     private int time;
     private int twoStarThreshold;
     private int threeStarThreshold;
@@ -32,6 +33,7 @@ public class LevelData implements Serializable {
      * @param levelIdentifier identifier of this level (difficulty and index)
      * @param nextLevelIdentifier identifier of the level unlocked after beating this one (difficulty and index)
      * @param entityHealth max health of the {@link game.gameobjects.Entity}
+     * @param entityTolerance number of health points up to whose value damage / healing is nullified (e.g. if it is 5, damage / healing that is <= 5 is nullified)
      * @param time maximal time for the level (in seconds)
      * @param twoStarThreshold maximal spent time necessary to obtain two stars for the level (and the reward ability)
      * @param threeStarThreshold maximal spent time necessary to obtain three stars for the level
@@ -41,11 +43,12 @@ public class LevelData implements Serializable {
      * @param maxObstacleInterval maximal interval in turns between two consecutive obstacles
      * @param rewardAbility NameID of the ability awarded to the player upon getting 2 or more stars on this level
      */
-    public LevelData(LevelIdentifier levelIdentifier, LevelIdentifier nextLevelIdentifier, int entityHealth, int time, int twoStarThreshold, int threeStarThreshold, int gameMode, Map<String, Integer> obstacleWeights, int minObstacleInterval, int maxObstacleInterval, String rewardAbility) {
+    public LevelData(LevelIdentifier levelIdentifier, LevelIdentifier nextLevelIdentifier, long entityHealth, long entityTolerance, int time, int twoStarThreshold, int threeStarThreshold, int gameMode, Map<String, Integer> obstacleWeights, int minObstacleInterval, int maxObstacleInterval, String rewardAbility) {
         if (levelIdentifier == null) throw new IllegalArgumentException("Unacceptable level identifier: null");
         this.levelIdentifier = levelIdentifier;
         this.nextLevelIdentifier = nextLevelIdentifier;
         this.entityHealth = entityHealth;
+        this.entityTolerance = entityTolerance;
         this.time = time;
         this.twoStarThreshold = twoStarThreshold;
         this.threeStarThreshold = threeStarThreshold;
@@ -94,9 +97,11 @@ public class LevelData implements Serializable {
         return levelIdentifier.difficulty().equals("normal") ? 5 : 4;
     }
 
-    public int getEntityHealth() {
+    public long getEntityHealth() {
         return entityHealth;
     }
+
+    public long getEntityTolerance() {return entityTolerance;}
 
     public int getTime() {
         return time;
@@ -147,8 +152,12 @@ public class LevelData implements Serializable {
         this.nextLevelIdentifier = nextLevelIdentifier;
     }
 
-    public void setEntityHealth(int entityHealth) {
+    public void setEntityHealth(long entityHealth) {
         this.entityHealth = entityHealth;
+    }
+
+    public void setEntityTolerance(long entityTolerance) {
+        this.entityTolerance = entityTolerance;
     }
 
     public void setTime(int time) {

@@ -24,6 +24,7 @@ public class Entity extends GameObject implements UIDataHolder {
     public static int IDLE = 0, ANIMATING = 1;
 
     private final long maxHealth;
+    private final long tolerance;
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
     private final List<StateListener> stateListeners = new ArrayList<>();
     private final int gameMode;
@@ -40,14 +41,16 @@ public class Entity extends GameObject implements UIDataHolder {
      * @param x x coordinate
      * @param y y coordinate
      * @param maxHealth max health
+     * @param tolerance tolerance to damage healing. Any damage / healing less than or equal to this number is nullified
      * @param gp root GamePanel
      */
-    public Entity(int x, int y, long maxHealth, GamePanel gp) {
+    public Entity(int x, int y, long maxHealth, long tolerance, GamePanel gp) {
         super(x, y, gp);
         this.gameMode = gp.getGameMode();
         this.particleManager = gp.getParticleManager();
         this.maxHealth = maxHealth;
         this.health = gameMode == GamePanel.GAME_MODE_REPAIR ? maxHealth / 10 : maxHealth;
+        this.tolerance = tolerance;
     }
 
     @Override
@@ -69,30 +72,35 @@ public class Entity extends GameObject implements UIDataHolder {
 
     public void takeDamage(long damage) {
         if (damage < 0) throw new GameLogicException("Trying to damage by negative amount, use takeHealing() instead");
-        long oldHealth = health;
-        health -= damage;
-        health = Math.max(health, 0);
-        if (health == 0) {
-            switch (gameMode) {
-                case GamePanel.GAME_MODE_ATTACK -> gp.winLevel();
-                case GamePanel.GAME_MODE_REPAIR -> gp.loseLevel();
+        if (damage > tolerance) {
+            health -= damage;
+            health = Math.max(health, 0);
+            if (health == 0) {
+                switch (gameMode) {
+                    case GamePanel.GAME_MODE_ATTACK -> gp.winLevel();
+                    case GamePanel.GAME_MODE_REPAIR -> gp.loseLevel();
+                }
             }
         }
     }
 
     public void takeHealing(long healing) {
         if (healing < 0) throw new GameLogicException("Trying to heal by negative amount, use takeDamage() instead");
-        long oldHealth = health;
-        health += healing;
-        health = Math.min(health, maxHealth);
-        if (health == maxHealth && gameMode == GamePanel.GAME_MODE_REPAIR) gp.winLevel();
+        if (healing > tolerance) {
+            health += healing;
+            health = Math.min(health, maxHealth);
+            if (health == maxHealth && gameMode == GamePanel.GAME_MODE_REPAIR) gp.winLevel();
+        }
     }
 
     public void animateDamage(long damage) {
         if (damage > 0) {
             animationImage = graphics.getTexture("entityDamaged");
-            for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
-            particleManager.addHealthChangeParticle("-" + damage, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
+            if (damage > tolerance) {
+                for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
+                particleManager.addHealthChangeParticle("-" + damage, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
+            }
+            else particleManager.addHealthChangeParticle("NEGATED", new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
             startAnimationCycle();
             addStateListener(new StateListener() {
                 @Override
@@ -109,8 +117,11 @@ public class Entity extends GameObject implements UIDataHolder {
     public void animateHealing(long healing) {
         if (healing > 0) {
             animationImage = graphics.getTexture("entityHealed");
-            for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
-            particleManager.addHealthChangeParticle("+" + healing, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
+            if (healing > tolerance) {
+                for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
+                particleManager.addHealthChangeParticle("+" + healing, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
+            }
+            else particleManager.addHealthChangeParticle("NEGATED", new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
             startAnimationCycle();
             addStateListener(new StateListener() {
                 @Override

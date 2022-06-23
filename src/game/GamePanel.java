@@ -68,7 +68,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.graphics = levelData.generateGraphics();
         this.gameMode = levelData.getGameMode();
         this.particleManager = new ParticleManager(this);
-        this.entity = new Entity(0, 0, levelData.getEntityHealth(), this);
+        this.entity = new Entity(0, 0, levelData.getEntityHealth(), levelData.getEntityTolerance(), this);
         this.board = new Board(0, graphics.getEntityHeight() + graphics.getEntityBoardDistance(), levelData.getBoardSize(), levelData.getBoardSize(), 1, this);
         this.obstacleManager = new ObstacleManager(levelData.getObstacleWeights(), levelData.getMinObstacleInterval(), levelData.getMaxObstacleInterval(), this);
         this.abilityManager = new AbilityManager(playerData.getActiveAbility1(), playerData.getActiveAbility2(), playerData.getPassiveAbility(), this);
