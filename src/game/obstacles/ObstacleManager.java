@@ -60,9 +60,11 @@ public class ObstacleManager implements UIDataHolder {
 
     private Obstacle registerObstacle(String nameID) {
         return switch (nameID) {
+            case "damageEntity" -> new DamageEntity(gp);
             case "downgrade" -> new Downgrade(gp);
             case "freeze" -> new Freeze(gp);
             case "garbageTile" -> new GarbageTile(gp);
+            case "healEntity" -> new HealEntity(gp);
             case "randomDispose" -> new RandomDispose(gp);
             case "randomScramble" -> new RandomScramble(gp);
             case "randomSwap" -> new RandomSwap(gp);
