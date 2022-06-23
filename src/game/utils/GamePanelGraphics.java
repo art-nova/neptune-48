@@ -31,7 +31,6 @@ public class GamePanelGraphics extends ImageManager {
     // General
     private final int entityBoardDistance;
 
-    private final String baseFolderPath;
     private final HashMap<String, Color> palette = new HashMap<>();
 
     private Font font;
@@ -39,17 +38,22 @@ public class GamePanelGraphics extends ImageManager {
     /**
      * Initializes (but not loads!) the graphics manager.
      *
-     * @param baseFolderPath path to the folder with all graphics for the level's game panel
      * @param tileSize size of one tile in pixels
      * @param tileOffset offset between tiles (and between a tile and the board edge) in pixels
+     * @param boardRows number of rows (height)
+     * @param boardCols number of columns (width)
+     * @param gameMode {@link GamePanel#GAME_MODE_ATTACK} or {@link GamePanel#GAME_MODE_REPAIR}
+     * @param entityIndex index of the entity texture
      */
-    public GamePanelGraphics(String baseFolderPath, int tileSize, int tileOffset) {
+    public GamePanelGraphics(int tileSize, int tileOffset, int boardRows, int boardCols, int gameMode, int entityIndex) throws IOException {
         try {
             this.font = Font.createFont(Font.TRUETYPE_FONT, new File("resources/fonts/Rubik-VariableFont_wght.ttf"));
         }
-        catch (Exception ignore) {}
+        catch (FontFormatException e) {
+            e.printStackTrace();
+            font = new Font(null);
+        }
         font = font.deriveFont(Font.PLAIN, 20);
-        this.baseFolderPath = baseFolderPath;
 
         // Palette
         palette.put("textColor", Color.white);
@@ -67,6 +71,10 @@ public class GamePanelGraphics extends ImageManager {
         entityWidth = tileSize * 5 + tileOffset * 6;
         entityHeight = tileSize * 2;
         entityBoardDistance = tileSize / 5;
+
+        // Loading
+        loadBoard(boardRows, boardCols, gameMode);
+        loadEntity(entityIndex);
     }
 
     /**
@@ -80,34 +88,21 @@ public class GamePanelGraphics extends ImageManager {
         return palette.get(nameID);
     }
 
-    /**
-     * Loads the actual textures using supplied non-graphical data.
-     *
-     * @param boardRows rows of the board
-     * @param boardCols columns of the board
-     * @param entityIndex index of the entity texture for this level
-     * @param gameMode game mode of this level (dependent on {@link game.GamePanel})
-     */
-    public void load(int boardRows, int boardCols, int entityIndex, int gameMode) throws IOException {
-        loadBoard(boardRows, boardCols, gameMode);
-        loadEntity(entityIndex);
-    }
-
     private void loadBoard(int boardRows, int boardCols, int gameMode) throws IOException{
         String tileFolderPath;
         if (gameMode == GamePanel.GAME_MODE_ATTACK) {
-            tileFolderPath = baseFolderPath+"/tiles_attack";
+            tileFolderPath = "resources/images/tiles_attack/";
         }
         else {
-            tileFolderPath = baseFolderPath+"/tiles_repair";
+            tileFolderPath = "resources/images/tiles_repair/";
         }
 
         // Loading tiles
         for (int i = 0; i <= 11; i++) {
-            BufferedImage image = getScaledImage(getImage(tileFolderPath+"/tile"+i+".png"), tileSize, tileSize);
+            BufferedImage image = getScaledImage(getImage(tileFolderPath+"tile"+i+".png"), tileSize, tileSize);
             textures.put("tile"+i, image);
         }
-        textures.put("lockedOverlay", getScaledImage(getImage(tileFolderPath+"/lockedOverlay.png"), tileSize, tileSize));
+        textures.put("lockedOverlay", getScaledImage(getImage(tileFolderPath+"lockedOverlay.png"), tileSize, tileSize));
 
         // Loading the actual board
         int boardWidth = tileSize * boardCols + tileOffset * (boardCols + 1);
@@ -128,7 +123,7 @@ public class GamePanelGraphics extends ImageManager {
     }
 
     private void loadEntity(int entityIndex) throws IOException {
-        BufferedImage entity = getScaledImage(getImage(baseFolderPath+"/entities/entity" + entityIndex + ".png"), entityWidth, entityHeight);
+        BufferedImage entity = getScaledImage(getImage("resources/images/entities/entity" + entityIndex + ".png"), entityWidth, entityHeight);
         textures.put("entity", entity);
         textures.put("entityDamaged", addColorOverlay(entity, palette.get("damageOverlay")));
         textures.put("entityHealed", addColorOverlay(entity, palette.get("healOverlay")));
