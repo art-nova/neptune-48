@@ -47,7 +47,7 @@ public class Entity extends GameObject implements UIDataHolder {
         this.gameMode = gp.getGameMode();
         this.particleManager = gp.getParticleManager();
         this.maxHealth = maxHealth;
-        this.health = maxHealth;
+        this.health = gameMode == GamePanel.GAME_MODE_REPAIR ? maxHealth / 10 : maxHealth;
     }
 
     @Override
