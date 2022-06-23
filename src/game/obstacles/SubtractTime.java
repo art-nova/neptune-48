@@ -9,16 +9,15 @@ import game.GamePanel;
  * @author Artem Novak
  */
 public class SubtractTime extends Obstacle {
-    /**
-     * Number of seconds this bonus subtracts from the timer.
-     */
-    public static final int TIME_SUBTRACTED = 30;
+    public static final int TIME_SUBTRACTED_PERCENTAGE = 5;
 
-    private Countdown countdown;
+    private final Countdown countdown;
+    private final int timeSubtracted;
 
     public SubtractTime(GamePanel gp) {
         super(gp);
         countdown = gp.getCountdown();
+        timeSubtracted = Math.round(gp.getCountdown().getDedicatedTime() * TIME_SUBTRACTED_PERCENTAGE / 100f);
     }
 
     @Override
@@ -28,7 +27,7 @@ public class SubtractTime extends Obstacle {
 
     @Override
     public void startApplication() {
-        countdown.offsetTime(-TIME_SUBTRACTED);
+        countdown.offsetTime(-timeSubtracted);
     }
 
     @Override

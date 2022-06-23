@@ -28,7 +28,7 @@ public class BonusTime extends PassiveAbility {
     @Override
     public void startApplication() {
         super.startApplication();
-        gp.getCountdown().offsetTime((int)(gp.getCountdown().getTime() * ADDED_PERCENTAGE / 100f));
+        gp.getCountdown().offsetTime((int)(gp.getCountdown().getDedicatedTime() * ADDED_PERCENTAGE / 100f));
         for (AbilityListener listener : new ArrayList<>(abilityListeners)) listener.onAbilityApplied();
     }
 }
