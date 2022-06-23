@@ -20,7 +20,7 @@ public abstract class PassiveAbility extends Ability {
      */
     @Override
     public void startApplication() {
-        if (applied) throw new GameLogicException("Trying to apply a passive bonus " + getNameID() + " twice");
+        if (applied) throw new GameLogicException("Trying to apply a passive ability " + getNameID() + " twice");
         applied = true;
     }
 
