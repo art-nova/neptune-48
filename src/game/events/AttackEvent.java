@@ -10,7 +10,6 @@ import game.gameobjects.Tile;
  */
 public class AttackEvent {
     private int damagePercent = 100;
-    private int damageNegation;
     private final BoardCell originCell;
     private final Tile tile;
     private final int baseTileDamage;
@@ -46,30 +45,9 @@ public class AttackEvent {
         if (damagePercent < 0) damagePercent = 0;
     }
 
-    /**
-     * Returns the percentage of damage that gets ignored, on a scale from 0% to 100%.
-     *
-     * @return damage negation percentage
-     */
-    public int getDamageNegation() {
-        return damageNegation;
-    }
-
-    /**
-     * Changes current damage negation (from the attack target).
-     * Damage negation only works on a scale from 0% to 100%, 0% not affecting damage calculation and 100% resulting in damage 0.
-     *
-     * @param damageNegationOffset offset in percents
-     */
-    public void offsetDamageNegation(int damageNegationOffset) {
-        damageNegation += damageNegationOffset;
-        if (damageNegation > 100) damageNegation = 100;
-        if (damageNegation < 0) damageNegation = 0;
-    }
-
     public long getDamage() {
         if (tile.getLevel() == 0) return 0;
-        return tile.getLevel() == 11 ? Long.MAX_VALUE : Math.round((Math.pow(baseTileDamage, tile.getLevel()) * damagePercent / 100f) * (100 - damageNegation) / 100f);
+        return tile.getLevel() == 11 ? Long.MAX_VALUE : Math.round(Math.pow(baseTileDamage, tile.getLevel()) * damagePercent / 100f);
     }
 
     /**
