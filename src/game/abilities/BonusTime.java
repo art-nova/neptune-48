@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @author Artem Novak
  */
 public class BonusTime extends PassiveAbility {
-    public static final int ADDED_PERCENTAGE = 50;
+    public static final int ADDED_PERCENTAGE = 30;
 
     public BonusTime(GamePanel gp, AbilityManager abilityManager) {
         super(gp, abilityManager);

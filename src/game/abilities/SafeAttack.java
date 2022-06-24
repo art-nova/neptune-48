@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * @author Artem Novak
  */
 public class SafeAttack extends ActiveAbility {
-    public static final int DEFAULT_COOLDOWN = 20;
+    public static final int DEFAULT_COOLDOWN = 40;
 
     private final Attack attack;
 

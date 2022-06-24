@@ -15,7 +15,7 @@ import java.util.*;
  * @author Artem Novak
  */
 public class Scramble extends ActiveAbility {
-    public static final int DEFAULT_COOLDOWN = 10;
+    public static final int DEFAULT_COOLDOWN = 30;
 
     private final Random random = new Random();
 

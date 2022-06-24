@@ -15,7 +15,7 @@ import java.util.List;
  * @author Artem Novak
  */
 public class Swap extends ActiveAbility {
-    public static final int DEFAULT_COOLDOWN = 10;
+    public static final int DEFAULT_COOLDOWN = 20;
 
     public Swap(GamePanel gp, AbilityManager abilityManager) {
         super(gp, abilityManager, DEFAULT_COOLDOWN);

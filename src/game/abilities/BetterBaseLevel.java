@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @author Artem Novak
  */
 public class BetterBaseLevel extends PassiveAbility {
-    public static final int LEVEL_INCREASE = 2;
+    public static final int LEVEL_INCREASE = 1;
 
     public BetterBaseLevel(GamePanel gp, AbilityManager abilityManager) {
         super(gp, abilityManager);

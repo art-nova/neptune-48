@@ -14,7 +14,7 @@ import java.util.Map;
  * @author Artem Novak
  */
 public class Resistance extends PassiveAbility {
-    public static final int TRIGGER_PROBABILITY = 40;
+    public static final int TRIGGER_PROBABILITY = 50;
 
     private final WeightedRandom random = new WeightedRandom();
     private final Map<Boolean, Integer> resultProbabilities = new HashMap<>();

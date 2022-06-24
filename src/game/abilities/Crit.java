@@ -13,8 +13,8 @@ import java.util.ArrayList;
  * @author Artem Novak
  */
 public class Crit extends ActiveAbility {
-    public static final int DEFAULT_COOLDOWN = 20;
-    public static final int DAMAGE_ADDED_PERCENTAGE = 100;
+    public static final int DEFAULT_COOLDOWN = 40;
+    public static final int DAMAGE_ADDED_PERCENTAGE = 200;
 
     private final Attack attack;
 

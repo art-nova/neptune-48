@@ -15,7 +15,7 @@ import java.util.List;
  * @author Artem Novak
  */
 public class Upgrade extends ActiveAbility {
-    public static final int DEFAULT_COOLDOWN = 5;
+    public static final int DEFAULT_COOLDOWN = 35;
 
     public Upgrade(GamePanel gp, AbilityManager abilityManager) {
         super(gp, abilityManager, DEFAULT_COOLDOWN);
