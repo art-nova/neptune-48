@@ -12,9 +12,11 @@ import java.util.List;
  */
 public class KeyHandler extends KeyAdapter {
     private final LinkedList<String> pressedKeys = new LinkedList<>();
+    private boolean busy = false;
 
     @Override
     public void keyPressed(KeyEvent e) {
+        busy = true;
         int key = e.getKeyCode();
         if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) pressedKeys.add("up");
         else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) pressedKeys.add("down");
@@ -24,10 +26,12 @@ public class KeyHandler extends KeyAdapter {
         else if (key == KeyEvent.VK_1) pressedKeys.add("active1");
         else if (key == KeyEvent.VK_2) pressedKeys.add("active2");
         else if (key == KeyEvent.VK_ESCAPE) pressedKeys.add("escape");
+        busy = false;
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        busy = true;
         int key = e.getKeyCode();
         if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) pressedKeys.removeIf(x -> x.equals("up"));
         else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) pressedKeys.removeIf(x -> x.equals("down"));
@@ -37,6 +41,7 @@ public class KeyHandler extends KeyAdapter {
         else if (key == KeyEvent.VK_1) pressedKeys.removeIf(x -> x.equals("active1"));
         else if (key == KeyEvent.VK_2) pressedKeys.removeIf(x -> x.equals("active2"));
         else if (key == KeyEvent.VK_ESCAPE) pressedKeys.removeIf(x -> x.equals("escape"));
+        busy = false;
     }
 
     /**
@@ -45,7 +50,7 @@ public class KeyHandler extends KeyAdapter {
      * @return true if there is at least one registered pressed key
      */
     public boolean isKeyPressed() {
-        return !pressedKeys.isEmpty();
+        return !busy && !pressedKeys.isEmpty();
     }
 
     /**
@@ -54,6 +59,7 @@ public class KeyHandler extends KeyAdapter {
      * @return last pressed key
      */
     public String getLastPressKey() {
+        if (busy) return null;
         return pressedKeys.peekLast();
     }
 
