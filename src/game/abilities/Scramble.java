@@ -8,6 +8,7 @@ import game.gameobjects.BoardCell;
 import game.gameobjects.Tile;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Class that implements functionality of "scramble" active ability along with tile selection for it.
@@ -42,18 +43,31 @@ public class Scramble extends ActiveAbility {
             Tile tile = board.getTileInCell(x);
             return tile == null || !tile.isLocked();
         });
-        Map<Tile, BoardCell> tilesDestinations = new HashMap<>(); // Map for delayed animations.
+        Map<Tile, BoardCell> tilesDestinations = new HashMap<>(tilesOrigins);
 
         for (Tile tile : tilesOrigins.keySet()) {
-            BoardCell originCell = tilesOrigins.get(tile);
-            boolean originVacant = destinationCells.contains(originCell);
+            BoardCell currentDestination = tilesDestinations.get(tile);
+            BoardCell excludedCell = tilesOrigins.get(tile); // Origin cell, excluded for obvious reasons.
+            BoardCell excludedSwapCell = tilesDestinations.get(board.getTileInCell(currentDestination)); // Cell in which the tile with origin at current tile's location is located. May overlap with excludedCell.
 
-            destinationCells.remove(tilesOrigins.get(tile)); // Temporarily removing current tile cell from the pool to guarantee movement.
+            destinationCells.remove(excludedCell);
+            destinationCells.remove(excludedSwapCell);
+
             BoardCell destination = destinationCells.get(random.nextInt(0, destinationCells.size()));
-            board.putTileInCell(tile, destination);
+            // If destination is not empty, start swapping destinations between tiles.
+            if (tilesDestinations.containsValue(destination)) {
+                Tile otherTile = keyOfInterest(tilesDestinations, x -> tilesDestinations.get(x).equals(destination));
+                tilesDestinations.put(otherTile, currentDestination);
+            }
             tilesDestinations.put(tile, destination);
+            destinationCells.add(excludedCell);
+            if (!destinationCells.contains(excludedSwapCell)) destinationCells.add(excludedSwapCell);
+        }
+
+        for (Tile tile : tilesOrigins.keySet()) {
+            BoardCell destination = tilesDestinations.get(tile);
+            board.putTileInCell(tile, destination);
             destinationCells.remove(destination);
-            if (originVacant) destinationCells.add(tilesOrigins.get(tile)); // Returning cell the tile was in as a possible destination for other tiles.
         }
         for (BoardCell leftover : destinationCells) board.putTileInCell(null, leftover);
 
@@ -76,6 +90,10 @@ public class Scramble extends ActiveAbility {
 
         currentCooldown = cooldown;
         for (AbilityListener listener : new ArrayList<>(abilityListeners)) listener.onAbilityApplied();
+    }
+
+    private <K, V> K keyOfInterest(Map<K, V> map, Predicate<K> predicate) {
+        return map.keySet().stream().filter(predicate).findFirst().orElse(null);
     }
 
     @Override
