@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implements frame-based seconds countdown allowing for modifications.
- * As a {@link UIDataHolder} notifies its listeners on any time change.
+ * Implements turn-based countdown allowing for modifications.
+ * As a {@link UIDataHolder} notifies its listeners on any turn change.
  *
  * @author Artem Novak
  */
@@ -16,60 +16,52 @@ public class Countdown implements UIDataHolder {
 
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
 
-    private int dedicatedTime;
-    private int time;
+    private int dedicatedTurns;
+    private int turns;
     private int state;
-    private int framesPassed;
 
     /**
-     * Constructs a countdown from given time in seconds.
+     * Constructs a countdown from given turn number to zero.
      *
-     * @param time number of seconds this countdown lasts
+     * @param turns number of turns dedicated for the level
      */
-    public Countdown(int time) {
-        this.dedicatedTime = time;
-        this.time = time;
-    }
-
-    public void update() {
-        if (state == TICKING) {
-            framesPassed++;
-            if (framesPassed >= 60) {
-                offsetTime(-1);
-                framesPassed = 0;
-            }
-        }
+    public Countdown(int turns, GamePanel gp) {
+        this.dedicatedTurns = turns;
+        this.turns = turns;
+        gp.getBoard().addTurnListener(() -> {
+            if (state == TICKING) offsetTurns(-1);
+        });
     }
 
     /**
-     * Sets time from which following countdowns start (no effect on the currently proceeding countdown).
+     * Sets turns from which following countdowns start (no effect on the currently proceeding countdown).
      *
-     * @param time time in seconds
+     * @param turns number of turns
      */
-    public void setDedicatedTime(int time) {
-        this.dedicatedTime = time;
+    public void setDedicatedTime(int turns) {
+        this.dedicatedTurns = turns;
     }
 
     /**
-     * Offsets time left by adding a given number of seconds.
+     * Offsets turns left by adding a given number.
      *
-     * @param delta number of seconds added
+     * @param delta number of turns added
      */
-    public void offsetTime(int delta) {
-        int oldTime = time;
-        time = Math.max(time + delta, 0);
-        if (time <= 0) state = IDLE;
-        if (oldTime != time) {
+    public void offsetTurns(int delta) {
+        int oldTurns = turns;
+        turns = Math.max(turns + delta, 0);
+        if (turns <= 0) state = IDLE;
+        if (oldTurns != turns) {
             for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
         }
     }
 
-    public int getDedicatedTime() {
-        return dedicatedTime;
+    public int getDedicatedTurns() {
+        return dedicatedTurns;
     }
 
-    public int getTime() {
-        return time;
+    public int getTurns() {
+        return turns;
     }
 
     /**

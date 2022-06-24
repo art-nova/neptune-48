@@ -68,7 +68,7 @@ public class ObstacleManager implements UIDataHolder {
             case "randomDispose" -> new RandomDispose(gp);
             case "randomScramble" -> new RandomScramble(gp);
             case "randomSwap" -> new RandomSwap(gp);
-            case "subtractTime" -> new SubtractTime(gp);
+            case "subtractTurns" -> new SubtractTurns(gp);
             default -> throw new IllegalArgumentException("Obstacle " + nameID + " does not exist");
         };
     }

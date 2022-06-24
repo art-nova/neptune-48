@@ -7,9 +7,6 @@ import game.KeyHandler;
 import game.events.AbilityListener;
 import game.gameobjects.Board;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Class that handles application of abilities.
  *
@@ -114,7 +111,7 @@ public class AbilityManager {
         return switch (nameID) {
             case "betterBaseLevel" -> new BetterBaseLevel(gp, this);
             case "bonusDamage" -> new BonusDamage(gp, this);
-            case "bonusTime" -> new BonusTime(gp, this);
+            case "bonusTurns" -> new BonusTurns(gp, this);
             case "cooldownReduction" -> new CooldownReduction(gp, this);
             case "resistance" -> new Resistance(gp, this);
             default -> throw new IllegalArgumentException("Passive ability " + nameID + " does not exist");

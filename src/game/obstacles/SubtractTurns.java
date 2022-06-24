@@ -8,16 +8,16 @@ import game.GamePanel;
  *
  * @author Artem Novak
  */
-public class SubtractTime extends Obstacle {
-    public static final int TIME_SUBTRACTED_PERCENTAGE = 5;
+public class SubtractTurns extends Obstacle {
+    public static final int SUBTRACTED_PERCENTAGE = 5;
 
     private final Countdown countdown;
-    private final int timeSubtracted;
+    private final int turnsSubtracted;
 
-    public SubtractTime(GamePanel gp) {
+    public SubtractTurns(GamePanel gp) {
         super(gp);
         countdown = gp.getCountdown();
-        timeSubtracted = Math.round(gp.getCountdown().getDedicatedTime() * TIME_SUBTRACTED_PERCENTAGE / 100f);
+        turnsSubtracted = Math.round(gp.getCountdown().getDedicatedTurns() * SUBTRACTED_PERCENTAGE / 100f);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class SubtractTime extends Obstacle {
 
     @Override
     public void startApplication() {
-        countdown.offsetTime(-timeSubtracted);
+        countdown.offsetTurns(-turnsSubtracted);
     }
 
     @Override

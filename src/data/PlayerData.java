@@ -35,9 +35,9 @@ public class PlayerData implements Serializable {
     /**
      * Class that holds dynamic (player-based) information about a level
      */
-    public record DynamicLevelEntry (int bestTimeLeft, int stars) implements Serializable {
+    public record DynamicLevelEntry (int bestTurnsLeft, int stars) implements Serializable {
         public DynamicLevelEntry {
-            if (bestTimeLeft < 0) throw new GameLogicException("Illegal time left: " + bestTimeLeft);
+            if (bestTurnsLeft < 0) throw new GameLogicException("Illegal turns left: " + bestTurnsLeft);
             if (stars < 1 || stars > 3) throw new GameLogicException("Illegal number of stars: " + stars);
         }
     }
@@ -95,14 +95,14 @@ public class PlayerData implements Serializable {
     }
 
     /**
-     * Returns best recorded time left after a level was completed.
+     * Returns the highest recorded number of turns left after this level's completion.
      *
      * @param level level identifier
-     * @return the time left
+     * @return the turns spent
      */
-    public int getLevelTimeLeft(LevelIdentifier level) {
+    public int getLevelTurnsLeft(LevelIdentifier level) {
         if (!isLevelCompleted(level)) throw new GameLogicException("Trying to query results of an uncompleted level");
-        return unlockedLevels.get(level.difficulty()).get(level.index()).bestTimeLeft();
+        return unlockedLevels.get(level.difficulty()).get(level.index()).bestTurnsLeft();
     }
 
     /**

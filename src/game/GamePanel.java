@@ -63,13 +63,13 @@ public class GamePanel extends JPanel implements Runnable {
     public GamePanel(LevelData levelData, PlayerData playerData, JFrame baseFrame) throws IOException {
         this.levelData = levelData;
         this.playerData = playerData;
-        this.countdown = new Countdown(levelData.getTime());
         this.baseTileDamage = levelData.getBaseTileDamage();
         this.graphics = levelData.generateGraphics();
         this.gameMode = levelData.getGameMode();
         this.particleManager = new ParticleManager(this);
         this.entity = new Entity(0, 0, levelData.getEntityHealth(), levelData.getEntityTolerance(), this);
         this.board = new Board(0, graphics.getEntityHeight() + graphics.getEntityBoardDistance(), levelData.getBoardSize(), levelData.getBoardSize(), 1, this);
+        this.countdown = new Countdown(levelData.getTurns(), this);
         this.obstacleManager = new ObstacleManager(levelData.getObstacleWeights(), levelData.getMinObstacleInterval(), levelData.getMaxObstacleInterval(), this);
         this.abilityManager = new AbilityManager(playerData.getActiveAbility1(), playerData.getActiveAbility2(), playerData.getPassiveAbility(), this);
         baseFrame.addKeyListener(keyHandler);
@@ -90,7 +90,7 @@ public class GamePanel extends JPanel implements Runnable {
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
-        countdown.addUIDataListener(() -> {if (countdown.getTime() <= 0) loseLevel();});
+        countdown.addUIDataListener(() -> {if (countdown.getTurns() <= 0) loseLevel();});
         countdown.start();
 
         while (state != ENDED) {
@@ -115,7 +115,6 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void update() {
         if (state != ENDING) {
-            countdown.update();
             abilityManager.update();
         }
         entity.update();
@@ -156,12 +155,12 @@ public class GamePanel extends JPanel implements Runnable {
         boolean unlockedAbility;
 //        int timeSpent = countdown.getDedicatedTime() - countdown.getTime();
         int stars = 1;
-        if (countdown.getTime() >= levelData.getThreeStarThreshold()) stars = 3;
-        else if (countdown.getTime() >= levelData.getTwoStarThreshold()) stars = 2;
+        if (countdown.getTurns() >= levelData.getThreeStarThreshold()) stars = 3;
+        else if (countdown.getTurns() >= levelData.getTwoStarThreshold()) stars = 2;
         unlockedAbility = stars > 1 && !playerData.getUnlockedAbilities().contains(levelData.getRewardAbility());
         // Checking whether new information should be written.
-        if (!playerData.isLevelCompleted(level) || countdown.getTime() > playerData.getLevelTimeLeft(level)) {
-            playerData.setLevelBestResult(level, countdown.getTime(), stars);
+        if (!playerData.isLevelCompleted(level) || countdown.getTurns() > playerData.getLevelTurnsLeft(level)) {
+            playerData.setLevelBestResult(level, countdown.getTurns(), stars);
             if (levelData.getNextLevelIdentifier() != null && !playerData.isLevelUnlocked(levelData.getNextLevelIdentifier())) playerData.unlockLevel(levelData.getNextLevelIdentifier());
             if (unlockedAbility) playerData.unlockAbility(levelData.getRewardAbility());
             try {
