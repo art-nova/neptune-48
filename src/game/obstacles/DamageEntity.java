@@ -30,7 +30,7 @@ public class DamageEntity extends Obstacle {
     @Override
     public void startApplication() {
         entity.takeDamage(damage);
-        entity.takeDamage(damage);
+        entity.animateDamage(damage);
     }
 
     @Override
