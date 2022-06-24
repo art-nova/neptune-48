@@ -22,8 +22,6 @@ public class RandomScramble extends Obstacle {
     public RandomScramble(GamePanel gp) {
         super(gp);
         this.board = gp.getBoard();
-        board.addTurnListener(() -> {
-        });
     }
 
     @Override
@@ -35,7 +33,10 @@ public class RandomScramble extends Obstacle {
     public void startApplication() {
         Map<Tile, BoardCell> tilesOrigins = new HashMap<>();
         for (BoardCell cell : lastCheckCells) tilesOrigins.put(board.getTileInCell(cell), cell);
-        List<BoardCell> destinationCells = board.getCellsByPredicate(x -> true);
+        List<BoardCell> destinationCells = board.getCellsByPredicate(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile == null || !tile.isLocked();
+        });
         Map<Tile, BoardCell> tilesDestinations = new HashMap<>(); // Map for delayed animations.
 
         for (Tile tile : tilesOrigins.keySet()) {
@@ -65,7 +66,10 @@ public class RandomScramble extends Obstacle {
 
     @Override
     protected boolean determineApplicability() {
-        lastCheckCells = board.getCellsByPredicate(x -> board.getTileInCell(x) != null);
+        lastCheckCells = board.getCellsByPredicate(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile != null && tile.getLevel() > 0  && !tile.isLocked();
+        });
         return lastCheckCells.size() > 3;
     }
 }

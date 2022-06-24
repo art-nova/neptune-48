@@ -32,10 +32,16 @@ public class Scramble extends ActiveAbility {
     public void startApplication() {
         super.startApplication();
 
-        List<BoardCell> cells = board.getCellsByPredicate(x -> board.getTileInCell(x) != null);
+        List<BoardCell> cells = board.getCellsByPredicate(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile != null && !tile.isLocked();
+        });
         Map<Tile, BoardCell> tilesOrigins = new HashMap<>();
         for (BoardCell cell : cells) tilesOrigins.put(board.getTileInCell(cell), cell);
-        List<BoardCell> destinationCells = board.getCellsByPredicate(x -> true);
+        List<BoardCell> destinationCells = board.getCellsByPredicate(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile == null || !tile.isLocked();
+        });
         Map<Tile, BoardCell> tilesDestinations = new HashMap<>(); // Map for delayed animations.
 
         for (Tile tile : tilesOrigins.keySet()) {
@@ -70,5 +76,13 @@ public class Scramble extends ActiveAbility {
 
         currentCooldown = cooldown;
         for (AbilityListener listener : new ArrayList<>(abilityListeners)) listener.onAbilityApplied();
+    }
+
+    @Override
+    protected boolean determineApplicability() {
+        return super.determineApplicability() && !board.getCellsByPredicate(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile != null && !tile.isLocked();
+        }).isEmpty();
     }
 }

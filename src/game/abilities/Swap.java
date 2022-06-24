@@ -34,7 +34,10 @@ public class Swap extends ActiveAbility {
     public void startApplication() {
         super.startApplication();
         setState(APPLYING);
-        board.initSelection(x -> board.getTileInCell(x) != null, 2);
+        board.initSelection(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile != null && !tile.isLocked();
+        }, 2);
         board.addCellSelectionListener(new CellSelectionListener() {
             @Override
             public void onSelectionUpdated(List<BoardCell> cells) {
@@ -60,5 +63,13 @@ public class Swap extends ActiveAbility {
                 updateApplicability();
             }
         });
+    }
+
+    @Override
+    protected boolean determineApplicability() {
+        return super.determineApplicability() && board.getCellsByPredicate(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile != null && !tile.isLocked();
+        }).size() > 1;
     }
 }

@@ -34,7 +34,10 @@ public class Upgrade extends ActiveAbility {
     public void startApplication() {
         super.startApplication();
         setState(APPLYING);
-        board.initSelection(x -> board.getTileInCell(x) != null, 1);
+        board.initSelection(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile != null && !tile.isLocked();
+        }, 1);
         board.addCellSelectionListener(new CellSelectionListener() {
             @Override
             public void onSelectionUpdated(List<BoardCell> cells) {
@@ -61,6 +64,9 @@ public class Upgrade extends ActiveAbility {
 
     @Override
     protected boolean determineApplicability() {
-        return super.determineApplicability() && !board.getCellsByPredicate(x -> board.getTileInCell(x) != null).isEmpty();
+        return super.determineApplicability() && !board.getCellsByPredicate(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile != null && !tile.isLocked();
+        }).isEmpty();
     }
 }

@@ -54,7 +54,7 @@ public class RandomDispose extends Obstacle {
     protected boolean determineApplicability() {
         lastCheckCells = board.getCellsByPredicate(x -> {
             Tile tile = board.getTileInCell(x);
-            return tile != null && tile.getLevel() > 0;
+            return tile != null && tile.getLevel() > 0  && !tile.isLocked();
         });
         return !lastCheckCells.isEmpty();
     }

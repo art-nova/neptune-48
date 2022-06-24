@@ -50,7 +50,10 @@ public class Attack extends ActiveAbility {
     @Override
     public void startApplication() {
         super.startApplication();
-        board.initSelection(x -> board.getTileInCell(x) != null, 1);
+        board.initSelection(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile != null && !tile.isLocked();
+        }, 1);
         setState(APPLYING);
         board.addCellSelectionListener(new CellSelectionListener() {
             @Override
@@ -101,6 +104,14 @@ public class Attack extends ActiveAbility {
         if (gp.getGameMode() == GamePanel.GAME_MODE_ATTACK) entity.takeDamage(attackEvent.getDamage());
         else entity.takeHealing(attackEvent.getDamage());
         board.setState(Board.ANIMATING);
+    }
+
+    @Override
+    protected boolean determineApplicability() {
+        return super.determineApplicability() && !board.getCellsByPredicate(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile != null && !tile.isLocked();
+        }).isEmpty();
     }
 
     public void addAttackListener(AttackListener listener) {

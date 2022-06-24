@@ -70,7 +70,10 @@ public class Freeze extends Obstacle {
 
     @Override
     protected boolean determineApplicability() {
-        lastCheckCells = board.getCellsByPredicate(x -> board.getTileInCell(x) != null);
+        lastCheckCells = board.getCellsByPredicate(x -> {
+            Tile tile = board.getTileInCell(x);
+            return tile != null && !tile.isLocked();
+        });
         return !lastCheckCells.isEmpty();
     }
 }
