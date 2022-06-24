@@ -35,8 +35,8 @@ public class LevelData implements Serializable {
      * @param entityHealth max health of the {@link game.gameobjects.Entity}
      * @param entityTolerance number of health points up to whose value damage / healing is nullified (e.g. if it is 5, damage / healing that is <= 5 is nullified)
      * @param time maximal time for the level (in seconds)
-     * @param twoStarThreshold maximal spent time necessary to obtain two stars for the level (and the reward ability)
-     * @param threeStarThreshold maximal spent time necessary to obtain three stars for the level
+     * @param twoStarThreshold minimal remaining time necessary to obtain two stars for the level (and the reward ability)
+     * @param threeStarThreshold minimal remaining time necessary to obtain three stars for the level
      * @param gameMode one of {@link game.GamePanel#GAME_MODE_ATTACK} and {{@link game.GamePanel#GAME_MODE_REPAIR}}
      * @param obstacleWeights map of obstacle NameIDs to their relative occurrence weights
      * @param minObstacleInterval minimal interval in turns between two consecutive obstacles
@@ -68,7 +68,6 @@ public class LevelData implements Serializable {
     public GamePanelGraphics generateGraphics() throws IOException {
         int tileSize;
         int tileOffset;
-        int boardSize;
         if (levelIdentifier.difficulty().equals("normal")) {
             tileSize = 94;
             tileOffset = 5;

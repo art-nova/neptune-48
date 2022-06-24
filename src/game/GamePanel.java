@@ -154,14 +154,14 @@ public class GamePanel extends JPanel implements Runnable {
 
         LevelIdentifier level = levelData.getLevelIdentifier();
         boolean unlockedAbility;
-        int timeSpent = countdown.getDedicatedTime() - countdown.getTime();
+//        int timeSpent = countdown.getDedicatedTime() - countdown.getTime();
         int stars = 1;
-        if (timeSpent <= levelData.getThreeStarThreshold()) stars = 3;
-        else if (timeSpent <= levelData.getTwoStarThreshold()) stars = 2;
+        if (countdown.getTime() >= levelData.getThreeStarThreshold()) stars = 3;
+        else if (countdown.getTime() >= levelData.getTwoStarThreshold()) stars = 2;
         unlockedAbility = stars > 1 && !playerData.getUnlockedAbilities().contains(levelData.getRewardAbility());
         // Checking whether new information should be written.
-        if (!playerData.isLevelCompleted(level) || timeSpent < playerData.getLevelTimeSpent(level)) {
-            playerData.setLevelBestResult(level, timeSpent, stars);
+        if (!playerData.isLevelCompleted(level) || countdown.getTime() > playerData.getLevelTimeLeft(level)) {
+            playerData.setLevelBestResult(level, countdown.getTime(), stars);
             if (levelData.getNextLevelIdentifier() != null && !playerData.isLevelUnlocked(levelData.getNextLevelIdentifier())) playerData.unlockLevel(levelData.getNextLevelIdentifier());
             if (unlockedAbility) playerData.unlockAbility(levelData.getRewardAbility());
             try {

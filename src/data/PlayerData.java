@@ -35,9 +35,9 @@ public class PlayerData implements Serializable {
     /**
      * Class that holds dynamic (player-based) information about a level
      */
-    public record DynamicLevelEntry (int bestTime, int stars) implements Serializable {
+    public record DynamicLevelEntry (int bestTimeLeft, int stars) implements Serializable {
         public DynamicLevelEntry {
-            if (bestTime < 0) throw new GameLogicException("Illegal level completion time: " + bestTime);
+            if (bestTimeLeft < 0) throw new GameLogicException("Illegal time left: " + bestTimeLeft);
             if (stars < 1 || stars > 3) throw new GameLogicException("Illegal number of stars: " + stars);
         }
     }
@@ -74,12 +74,12 @@ public class PlayerData implements Serializable {
      * Sets a new best result for an unlocked level (overriding the previous result).
      *
      * @param level level identifier of the level
-     * @param time time the player spent to complete the level
+     * @param timeLeft time that was left until losing when player won
      * @param stars number of stars the player earned
      */
-    public void setLevelBestResult(LevelIdentifier level, int time, int stars) {
+    public void setLevelBestResult(LevelIdentifier level, int timeLeft, int stars) {
         if (!isLevelUnlocked(level)) throw new GameLogicException("Trying to change best result of a non-unlocked (locked or nonexistent) level " + level);
-        unlockedLevels.get(level.difficulty()).put(level.index(), new DynamicLevelEntry(time, stars));
+        unlockedLevels.get(level.difficulty()).put(level.index(), new DynamicLevelEntry(timeLeft, stars));
     }
 
     /**
@@ -88,9 +88,9 @@ public class PlayerData implements Serializable {
      * @param level level identifier
      * @return the time spent, or 0 if the level was not completed yet
      */
-    public int getLevelTimeSpent(LevelIdentifier level) {
+    public int getLevelTimeLeft(LevelIdentifier level) {
         if (!isLevelCompleted(level)) throw new GameLogicException("Trying to query results of an uncompleted level");
-        return unlockedLevels.get(level.difficulty()).get(level.index()).bestTime();
+        return unlockedLevels.get(level.difficulty()).get(level.index()).bestTimeLeft();
     }
 
     /**
