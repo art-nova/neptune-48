@@ -54,7 +54,7 @@ public class PlayerData implements Serializable {
      * Checks if a level is completed.
      *
      * @param level level identifier
-     * @return true if it is unlocked and has a non-null score entry
+     * @return true if it is unlocked and has a non-null best result entry
      */
     public boolean isLevelCompleted(LevelIdentifier level) {
         return isLevelUnlocked(level) && unlockedLevels.get(level.difficulty()).get(level.index()) != null;
@@ -64,10 +64,22 @@ public class PlayerData implements Serializable {
      * Puts level on the list of unlocked levels as if it was newly unlocked.
      *
      * @param level identifier of the level
+     * @throws GameLogicException if the level is already unlocked
      */
-    public void unlockLevel(LevelIdentifier level) {
+    public void unlockLevel(LevelIdentifier level) throws GameLogicException {
         if (isLevelUnlocked(level)) throw new GameLogicException("Trying to unlock an already unlocked level");
         unlockedLevels.get(level.difficulty()).put(level.index(), null);
+    }
+
+    /**
+     * Removes the level from the list of unlocked levels, erasing its best result. Does not remove the unlocked ability.
+     * <br>
+     * Not intended for normal game usage.
+     *
+     * @param level level identifier
+     */
+    public void clearUnlockedLevel(LevelIdentifier level) {
+        unlockedLevels.get(level.difficulty()).remove(level.index());
     }
 
     /**
@@ -83,10 +95,10 @@ public class PlayerData implements Serializable {
     }
 
     /**
-     * Returns best recorded time in which the level was completed.
+     * Returns best recorded time left after a level was completed.
      *
      * @param level level identifier
-     * @return the time spent, or 0 if the level was not completed yet
+     * @return the time left
      */
     public int getLevelTimeLeft(LevelIdentifier level) {
         if (!isLevelCompleted(level)) throw new GameLogicException("Trying to query results of an uncompleted level");
@@ -113,6 +125,15 @@ public class PlayerData implements Serializable {
      */
     public void unlockAbility(String nameID) {
         if (!unlockedAbilities.contains(nameID)) unlockedAbilities.add(nameID);
+    }
+
+    /**
+     * Removes given ability from the list of unlocked.
+     *
+     * @param nameID ability NameID
+     */
+    public void clearUnlockedAbility(String nameID) {
+        unlockedAbilities.remove(nameID);
     }
 
     public boolean isAbilityUnlocked(String nameID) {
@@ -155,7 +176,7 @@ public class PlayerData implements Serializable {
      * @param activeAbility2 ability's NameID
      */
     public void setActiveAbility2(String activeAbility2) {
-        if (!unlockedAbilities.contains(activeAbility1)) throw new GameLogicException("Trying to select an ability that is not unlocked: " + activeAbility1);
+        if (!unlockedAbilities.contains(activeAbility2)) throw new GameLogicException("Trying to select an ability that is not unlocked: " + activeAbility1);
         this.activeAbility2 = activeAbility2;
     }
 
@@ -171,7 +192,7 @@ public class PlayerData implements Serializable {
      * @param passiveAbility ability's NameID
      */
     public void setPassiveAbility(String passiveAbility) {
-        if (!unlockedAbilities.contains(activeAbility1)) throw new GameLogicException("Trying to select an ability that is not unlocked: " + activeAbility1);
+        if (!unlockedAbilities.contains(passiveAbility)) throw new GameLogicException("Trying to select an ability that is not unlocked: " + activeAbility1);
         this.passiveAbility = passiveAbility;
     }
 }
