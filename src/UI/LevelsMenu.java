@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.Dimension;
 import java.awt.Component;
 import java.io.File;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -18,11 +17,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import UI.BonusInfoPanel.Bonus;
-import UI.fragments.FilledBox;
+import UI.miscellaneous.FilledBox;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -37,7 +35,7 @@ public class LevelsMenu extends JFrame{
 
     public JLayeredPane overlayPane;
     JLayeredPane pane;
-
+    static int scrollSpeed = 8;
     int width, height;
     Polygon[] polygons = new Polygon[5];
     Color lightGray = new Color(225,225,225);
@@ -249,7 +247,7 @@ public class LevelsMenu extends JFrame{
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.setBounds(100,100,600,800);
         scroll.getVerticalScrollBar().setUI(new CustomScrollBarUI());
-
+        scroll.getVerticalScrollBar().setUnitIncrement(scrollSpeed);
 
         pane.add(scroll);
         try {
@@ -312,7 +310,7 @@ public class LevelsMenu extends JFrame{
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.setBounds(100,100,600,800);
         scroll.getVerticalScrollBar().setUI(new CustomScrollBarUI());
-
+        scroll.getVerticalScrollBar().setUnitIncrement(scrollSpeed);
 
         pane.add(scroll);
         try {

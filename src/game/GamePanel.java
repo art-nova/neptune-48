@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Set;
-import UI.UIManager;
 
 /**
  * Implementation of the panel in which the core game loop (2048 gameplay, attacking, triggering bonuses etc.) happens.
@@ -32,7 +31,6 @@ public class GamePanel extends JPanel implements Runnable {
     public GamePanel(int boardRows, int boardCols, Set<String> bonusNameIDs, Set<String> obstacleNameIDs, GamePanelGraphics graphicsManager) throws IOException {
         this.graphicsManager = graphicsManager;
         this.board = new Board(boardRows, boardCols, 1, this);
-        this.keyHandler = new KeyHandler(UIManager.getFrame());
         this.setDoubleBuffered(true);
         this.setFocusable(true);
         Thread gameThread = new Thread(this);
