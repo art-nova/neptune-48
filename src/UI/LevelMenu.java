@@ -7,6 +7,13 @@ import javax.swing.*;
 
 import UI.miscellaneous.FilledBox;
 import UI.miscellaneous.Utilities;
+import java.io.File;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class LevelMenu extends JFrame{
 
@@ -47,7 +54,7 @@ public class LevelMenu extends JFrame{
         pane.add(healhBarBack, 0);
 
         Healthbar healthBar = new Healthbar(1000);
-        //healthBar.setValue(400);
+        healthBar.setValue(400);
         pane.add(healthBar, 0);
 
         FilledBox enemy = new FilledBox(Utilities.randomColor());
@@ -62,27 +69,20 @@ public class LevelMenu extends JFrame{
         board.setBounds(160,365,480,480);
         pane.add(board, 0);
 
-        FilledBox bonus1 = new FilledBox(Utilities.randomColor());
+        Bonus bonus1 = new Bonus("level/attack.png", "a");
         bonus1.setBounds(40,480,110,110);
         pane.add(bonus1, 0);
 
-        FilledBox bonus1NumBack = new FilledBox(Utilities.randomColor());
-        bonus1NumBack.setBounds(110,550,55,55);
-        pane.add(bonus1NumBack, 0);
-
-        FilledBox bonus2 = new FilledBox(Utilities.randomColor());
+        Bonus bonus2 = new Bonus("level/attack.png", "b");
         bonus2.setBounds(40,625,110,110);
+        bonus2.setCover(14);
         pane.add(bonus2, 0);
 
-        FilledBox bonus2NumBack = new FilledBox(Utilities.randomColor());
-        bonus2NumBack.setBounds(110,695,55,55);
-        pane.add(bonus2NumBack, 0);
-
-        FilledBox attack = new FilledBox(Utilities.randomColor());
+        Bonus attack = new Bonus("level/attack.png", "attack");
         attack.setBounds(655,480,110,110);
         pane.add(attack, 0);
 
-        FilledBox passiveBonus = new FilledBox(Utilities.randomColor());
+        JLabel passiveBonus = new  JLabel(getIcon("level/attack.png", 110, 110));
         passiveBonus.setBounds(655,625,110,110);
         pane.add(passiveBonus, 0);
 
@@ -124,4 +124,78 @@ public class LevelMenu extends JFrame{
             setBounds(167,19,width,41);
         }
     }
+
+    class Bonus extends JLayeredPane{
+        String nameID;
+        JLabel icon;
+        JLabel highlight;
+        JLabel cover;
+        JLabel coverNumber;
+        int coverNum;
+
+        public Bonus(String path, String nameID){
+            super();
+            this.nameID = nameID;
+            coverNum = 0;
+            icon = new JLabel(LevelMenu.getIcon(path, 110,110));
+            icon.setBounds(0,0,110,110);
+            cover = new JLabel(LevelMenu.getIcon("level/cover.png", 110,110));
+            cover.setBounds(0,0,110,110);
+            highlight = new JLabel(LevelMenu.getIcon("level/highlight.png", 110,110));
+            highlight.setBounds(0,0,110,110);
+            coverNumber = new JLabel("" + coverNum, SwingConstants.CENTER);
+            coverNumber.setBounds(0,0,110,110);
+            coverNumber.setForeground(new Color(221,233,188));
+            coverNumber.setFont(new java.awt.Font("Lexend Deca", 0, 52));
+
+            add(icon, 0);
+            add(cover, 0);
+            add(highlight, 0);
+            add(coverNumber, 0);
+            icon.setVisible(true);
+            cover.setVisible(false);
+            highlight.setVisible(false);
+            coverNumber.setVisible(false);
+
+            icon.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    if(coverNum < 1)
+                        highlight.setVisible(true);
+                }
+            });
+
+            highlight.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    System.out.println("clicked " + nameID);
+                }
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    highlight.setVisible(false);
+                }
+            });
+        }
+
+        public void setCover(int num){
+            cover.setVisible(true);
+            coverNumber.setVisible(true);
+            coverNum = num;
+            coverNumber.setText("" + coverNum);
+        }
+
+
+    }
+
+    /**
+     * Returns an ImageIcon
+     * @param location in "folder/image.png" format
+     */
+    static ImageIcon getIcon(String location, int width, int height){
+        try {
+            return new ImageIcon(ImageIO.read(new File("resources/images/" + location)).getScaledInstance(width, height, 16));
+        } catch (Exception e) {System.err.println("LevelMenu -> getIcon("+location+") -> " + e.getMessage());}
+        return null;
+    }
+    
 }
