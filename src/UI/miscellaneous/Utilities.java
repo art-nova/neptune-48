@@ -19,8 +19,9 @@ public class Utilities {
         Color newColor = new Color(
                 (int)Math.round(Math.random() * 255),
                 (int)Math.round(Math.random() * 255),
-                (int)Math.round(Math.random() * 255),
-                (int)Math.round(Math.random() * 255));
+                (int)Math.round(Math.random() * 255)
+                //,(int)Math.round(Math.random() * 255)
+                );
         if (colorDistance(previousColor, newColor) < 250 || colorSaturation(newColor) < 150){
             previousColor = randomColor();
             return previousColor;

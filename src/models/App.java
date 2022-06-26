@@ -1,6 +1,7 @@
 package models;
 import UI.LevelsMenu;
 import UI.MainMenu;
+import UI.LevelMenu;
 
 /**
  * Main class of the game.
@@ -13,7 +14,8 @@ public class App {
     
     public static void main(String[] args) {
         //MainMenu m  = new MainMenu();
-        lm = new LevelsMenu();
+        //lm = new LevelsMenu();
+        LevelMenu level = new LevelMenu();
         
     }
 
