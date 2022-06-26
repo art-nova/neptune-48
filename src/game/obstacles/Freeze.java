@@ -23,7 +23,6 @@ public class Freeze extends Obstacle {
     private final Random random = new Random();
 
     private List<BoardCell> lastCheckCells = new ArrayList<>();
-    private int freezeCounter;
 
     public Freeze(GamePanel gp) {
         super(gp);
@@ -47,6 +46,8 @@ public class Freeze extends Obstacle {
                     board.removeStateListener(this);
                     tile.setVisuallyLocked(true);
                     board.addTurnListener(new TurnListener() {
+                        private int freezeCounter;
+
                         @Override
                         public void onTurn() {
                             if (tile.isLocked()) {
