@@ -74,11 +74,11 @@ public class LevelsMenu extends JFrame{
     
                     try {
                         for(int j = 0; j < polygons.length; j++){
-                            polygons[j].moveToOrigin();
+                            polygons[j].fadeOut();
                             pane.moveToFront(polygons[j]);
                         }
                         Polygon pol = polygons[getMostFrequent(getPolygons(pt.x, pt.y))];           
-                        pol.moveUp();
+                        pol.fadeIn();
                         pane.moveToFront(pol);
                     } catch (Exception ex) {}
                 }
@@ -198,7 +198,7 @@ public class LevelsMenu extends JFrame{
                         pane.add(overlayPane, 0);
                         
                         for(int j = 0; j < polygons.length; j++){
-                            polygons[j].moveToOrigin();
+                            polygons[j].fadeOut();
                         }
                         overlayPane.moveToFront(pane);
                     }
@@ -332,16 +332,12 @@ public class LevelsMenu extends JFrame{
         public int[] xs;
         public int[] ys;
         private Timer timer;
-        private double moveSize = 1;
-        int originX, originY;
+        int percentage = 100;
         Color colorBase, colorHighlight, colorFrom, colorTo;
-        Point from, to;
         boolean hasStroke;
         public Polygon(int x,int y, Color colorBase, Color colorHighlight, int[] xs, int[] ys, boolean hasStroke, Color baseStroke, Color highlightStroke){
             super();
-            timer = new Timer(17, this);
-            originX = x;
-            originY = y;
+            timer = new Timer(10, this);
             this.x = x;
             this.y = y;
             this.xs = xs;
@@ -362,6 +358,9 @@ public class LevelsMenu extends JFrame{
             setVisible(true);
             setBackground(new Color(0,0,0,0));
             setForeground(colorBase);
+            colorFrom = colorBase;
+            colorTo = colorBase;
+            timer.start();
         }
         
         public void paintComponent(Graphics g){
@@ -388,60 +387,30 @@ public class LevelsMenu extends JFrame{
             return lines;
         }
 
-        public void moveToOrigin(){
-            from = new Point(x,y);
-            to = new Point(originX, originY);
-            if(from.x == to.x && from.y == to.y){
-                return;
-            }
+        public void fadeOut(){
             colorFrom = colorHighlight;
             colorTo = colorBase;
-            timer.start();
+            percentage = 100 - percentage;
         }
 
-        public void moveUp(){
-            from = new Point(x,y);
-            to = new Point(originX + 10, originY - 10);
-            if(from.x == to.x && from.y == to.y){
-                return;
-            }
+        public void fadeIn(){
             colorFrom = colorBase;
             colorTo = colorHighlight;
-            timer.start();
+            percentage = 100 - percentage;
         }
 
         public void actionPerformed(ActionEvent e) {
-            Point end = to;
-            int percentage;
-            if(Math.abs(x - end.x) <= moveSize && Math.abs(y - end.y) <= moveSize){
-                x = end.x;
-                y = end.y;
-                //setLocation((int)x, (int)y); 
-                timer.stop();
-                percentage = 100;
-            }
-            else{
-                double deltaX = end.x - x;
-                double deltaY = end.y - y;
-                if(Math.abs(deltaX) > moveSize)
-                    x += (deltaX > 0) ? moveSize: -moveSize;
-                if(Math.abs(deltaY) > moveSize)
-                    y += (deltaY > 0) ? moveSize: -moveSize;
-                //setLocation((int)x, (int)y); 
-            }
-            percentage = 0;
-            try{
-                int pathLength = Math.abs(from.x - to.x);
-                int pathWalked = Math.abs(x - from.x);
-                percentage =(int)(pathWalked/(double)pathLength * 100);
-            }
-            catch (Exception e2){}
+            percentage+=5;
             if(percentage <= 100 && percentage >= 0) {
-                        setForeground(UI.miscellaneous.Utilities.colorBetween(colorFrom, colorTo, percentage));
+                setForeground(UI.miscellaneous.Utilities.colorBetween(colorFrom, colorTo, percentage));
             }
-        
             revalidate();
             repaint();
+            if(percentage >= 100){
+                setForeground(UI.miscellaneous.Utilities.colorBetween(colorFrom, colorTo, 100));
+                percentage = 0;
+                timer.stop();
+            }
         }
     }
 

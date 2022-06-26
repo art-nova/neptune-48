@@ -14,8 +14,8 @@ public class App {
     
     public static void main(String[] args) {
         //MainMenu m  = new MainMenu();
-        //lm = new LevelsMenu();
-        LevelMenu level = new LevelMenu();
+        lm = new LevelsMenu();
+        //LevelMenu level = new LevelMenu();
         
     }
 
