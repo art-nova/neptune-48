@@ -6,7 +6,6 @@ import game.UIDataHolder;
 import game.events.StateListener;
 import game.events.UIDataListener;
 import game.gameobjects.particles.ParticleManager;
-import game.gameobjects.particles.TextParticle;
 import game.utils.GamePanelGraphics;
 
 import java.awt.*;
@@ -21,7 +20,7 @@ import java.util.List;
  * @author Artem Novak
  */
 public class Entity extends GameObject implements UIDataHolder {
-    public static int IDLE = 0, ANIMATING = 1;
+    public static final int IDLE = 0, ANIMATING = 1;
 
     private final long maxHealth;
     private final long tolerance;
@@ -29,6 +28,7 @@ public class Entity extends GameObject implements UIDataHolder {
     private final List<StateListener> stateListeners = new ArrayList<>();
     private final int gameMode;
     private final ParticleManager particleManager;
+    private final long maxTileImpact;
 
     private long health;
     private int state;
@@ -51,6 +51,7 @@ public class Entity extends GameObject implements UIDataHolder {
         this.maxHealth = maxHealth;
         this.health = gameMode == GamePanel.GAME_MODE_REPAIR ? maxHealth / 10 : maxHealth;
         this.tolerance = tolerance;
+        this.maxTileImpact = (long)Math.pow(gp.getBaseTileDamage(), 11);
     }
 
     @Override
@@ -96,11 +97,14 @@ public class Entity extends GameObject implements UIDataHolder {
     public void animateDamage(long damage) {
         if (damage > 0) {
             animationImage = graphics.getTexture("entityDamaged");
+            String text;
             if (damage > tolerance) {
                 for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
-                particleManager.addHealthChangeParticle("-" + damage, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
+                if (damage > maxTileImpact) text = "-\u221E";
+                else text = "-" + damage;
             }
-            else particleManager.addHealthChangeParticle("NEGATED", new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
+            else text = "NEGATED";
+            particleManager.addHealthChangeParticle(text, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
             startAnimationCycle();
             addStateListener(new StateListener() {
                 @Override
@@ -117,11 +121,14 @@ public class Entity extends GameObject implements UIDataHolder {
     public void animateHealing(long healing) {
         if (healing > 0) {
             animationImage = graphics.getTexture("entityHealed");
+            String text;
             if (healing > tolerance) {
                 for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
-                particleManager.addHealthChangeParticle("+" + healing, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
+                if (healing > maxTileImpact) text = "+\u221E";
+                else text = "+" + healing;
             }
-            else particleManager.addHealthChangeParticle("NEGATED", new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
+            else text = "NEGATED";
+            particleManager.addHealthChangeParticle(text, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
             startAnimationCycle();
             addStateListener(new StateListener() {
                 @Override
