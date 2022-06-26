@@ -69,6 +69,15 @@ public class Utilities {
         int red = (int)Math.round(first.getRed() + (second.getRed() - first.getRed()) * percentage);
         int green = (int)Math.round(first.getGreen() + (second.getGreen() - first.getGreen()) * percentage);
         int blue = (int)Math.round(first.getBlue() + (second.getBlue() - first.getBlue()) * percentage);
+        if(red > 255){
+            red = 255;
+        }
+        if(green > 255){
+            green = 255;
+        }
+        if(blue > 255){
+            blue = 255;
+        }
         return new Color(red, green, blue);
     }
 }

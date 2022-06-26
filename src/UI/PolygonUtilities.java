@@ -12,12 +12,12 @@ public class PolygonUtilities {
         public int[] xs;
         public int[] ys;
         private Timer timer;
-        int percentage = 100;
-        Color colorBase, colorHighlight, colorFrom, colorTo;
+        Color colorBase, colorHighlight, colorFrom, colorTo, currentColor;
+        double colorDistance;
         boolean hasStroke;
         public Polygon(int x,int y, Color colorBase, Color colorHighlight, int[] xs, int[] ys, boolean hasStroke, Color baseStroke, Color highlightStroke){
             super();
-            timer = new Timer(10, this);
+            timer = new Timer(12 + (int)Math.round(Math.random() * 5), this);
             this.x = x;
             this.y = y;
             this.xs = xs;
@@ -40,6 +40,8 @@ public class PolygonUtilities {
             setForeground(colorBase);
             colorFrom = colorBase;
             colorTo = colorBase;
+            currentColor = colorBase;
+            colorDistance = UI.miscellaneous.Utilities.colorDistance(colorBase, colorHighlight);
             timer.start();
         }
         
@@ -54,8 +56,7 @@ public class PolygonUtilities {
                 Graphics2D g2 = (Graphics2D) g;            
                 g2.setStroke(new BasicStroke(10));
                 g2.drawPolygon(xs, ys, xs.length);
-            }
-            
+            } 
         }
 
         public Line[] toLines(){
@@ -68,28 +69,25 @@ public class PolygonUtilities {
         }
 
         public void fadeOut(){
-            colorFrom = colorHighlight;
+            colorFrom = currentColor;
             colorTo = colorBase;
-            percentage = 100 - percentage;
         }
 
         public void fadeIn(){
-            colorFrom = colorBase;
+            colorFrom = currentColor;
             colorTo = colorHighlight;
-            percentage = 100 - percentage;
         }
 
         public void actionPerformed(ActionEvent e) {
-            percentage+=5;
-            if(percentage <= 100 && percentage >= 0) {
-                setForeground(UI.miscellaneous.Utilities.colorBetween(colorFrom, colorTo, percentage));
+            int percentage = (int)Math.round((colorDistance - UI.miscellaneous.Utilities.colorDistance(colorTo, currentColor)) / colorDistance * 100);
+            //System.out.println(percentage);
+            if(percentage > 100){
+                percentage = 100;
             }
-            revalidate();
-            repaint();
-            if(percentage >= 100){
-                setForeground(UI.miscellaneous.Utilities.colorBetween(colorFrom, colorTo, 100));
-                percentage = 0;
-                timer.stop();
+            if(percentage <= 100 && percentage >= 0) {
+                currentColor = UI.miscellaneous.Utilities.colorBetween(colorFrom, colorTo, percentage+2);
+                setForeground(currentColor);
+                //System.out.println(UI.miscellaneous.Utilities.colorDistance(currentColor, colorTo));
             }
         }
     }

@@ -76,10 +76,11 @@ public class LevelsMenu extends JFrame{
                     try {
                         for(int j = 0; j < UI.PolygonUtilities.polygons.length; j++){
                             UI.PolygonUtilities.polygons[j].fadeOut();
-                            pane.moveToFront(UI.PolygonUtilities.polygons[j]);
+                            //pane.moveToFront(UI.PolygonUtilities.polygons[j]);
                         }
                         Polygon pol = UI.PolygonUtilities.polygons[UI.PolygonUtilities.getMostFrequent(UI.PolygonUtilities.getPolygons(pt.x, pt.y))];           
                         pol.fadeIn();
+                        System.out.println(UI.PolygonUtilities.getMostFrequent(UI.PolygonUtilities.getPolygons(pt.x, pt.y)));
                         pane.moveToFront(pol);
                     } catch (Exception ex) {}
                 }
