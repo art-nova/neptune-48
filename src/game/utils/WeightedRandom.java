@@ -1,5 +1,6 @@
 package game.utils;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 
@@ -16,9 +17,10 @@ public class WeightedRandom extends Random {
      * @return object chosen randomly based on weights, or null if no such object could be chosen
      */
     public <T> T weightedChoice (Map<T, Integer> weightMap) {
-        for (T key : weightMap.keySet()) {
+        for (T key : new HashSet<>(weightMap.keySet())) {
             if (weightMap.get(key) == null || weightMap.get(key) <= 0) weightMap.remove(key);
         }
+        if (weightMap.isEmpty()) return null;
         int num = nextInt(0, weightMap.values().stream().mapToInt(x -> x).sum());
         int upperBound = 0;
         for (T key : weightMap.keySet()) {

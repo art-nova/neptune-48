@@ -3,11 +3,13 @@ package UI.levelPieces;
 import javax.swing.JLayeredPane;
 
 import UI.LevelGraphics;
+import UI.UIManager;
 import game.GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import models.App;
@@ -31,12 +33,14 @@ public class CenterPanel extends JLayeredPane{
         add(new Enemy(0));
         add(Box.createRigidArea(new Dimension(level.sizes.boardSize, level.sizes.centerPanelOffset)));
         //add(new Board());
-        try
-	{
-	    add(new GamePanel(4, 4, new HashSet<>(), new HashSet<>(),
-                new GamePanelGraphics("resources/images/neptun")));
-	}
-	catch (IOException e){}
+//        try
+//	{
+//        HashMap<String, Integer> obstacleWeights = new HashMap<>();
+//	    add(new GamePanel(4, 4, null, null, null, obstacleWeights,
+//                new GamePanelGraphics("resources/images/default", 94, 5), UIManager.getFrame(), 5000, 0, 120, 5,
+//                10, 30, GamePanel.GAME_MODE_ATTACK));
+//	}
+//	catch (IOException e){e.printStackTrace();}
         add(new Attack());
     }
         

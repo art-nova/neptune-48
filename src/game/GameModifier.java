@@ -1,24 +1,49 @@
 package game;
 
-public interface GameModifier {
+/**
+ * Class that represents an abstract game modifier - an entity that is not displayed, but influences the game process in some way.
+ * <br>
+ * As a {@link UIDataHolder}, triggers corresponding event when modifier state is changed.
+ *
+ * @author Artem Novak
+ */
+public abstract class GameModifier {
+    // States
+    public static final int APPLICABLE = 0, UNAPPLICABLE = 1, APPLYING = 2;
+
+    protected GamePanel gp;
+    protected int state;
+
+    public GameModifier(GamePanel gp) {
+        this.gp = gp;
+    }
 
     /**
      * @return NameID of the modifier
      */
-    String getNameID();
+    public abstract String getNameID();
 
     /**
-     * @return true if modifier can be applied right now, false otherwise
+     * Starts application of this modifier. Depending on the modifier, it may or may not produce effect immediately.
      */
-    boolean isApplicable();
+    public abstract void startApplication();
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        if (state < 0 || state > 2) throw new IllegalArgumentException(getClass().getName() + " does not support state " + state);
+        this.state = state;
+    }
+
+    protected abstract boolean determineApplicability();
 
     /**
-     * Applies the modifier.
+     * Is meant to be run every time one of the applicability components changes, to determine whether that results in general applicability change.
      */
-    void apply();
-
-    /**
-     * @return true if modifier is applied actively (and needs visual cues for the player), false otherwise
-     */
-    boolean isActive();
+    public void updateApplicability() {
+        if (determineApplicability()) setState(APPLICABLE);
+        else setState(UNAPPLICABLE);
+    }
 }
