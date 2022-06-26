@@ -3,7 +3,7 @@ import java.awt.Dimension;
 
 import java.awt.Color;
 import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
+import javax.swing.*;
 
 import UI.miscellaneous.FilledBox;
 import UI.miscellaneous.Utilities;
@@ -16,6 +16,7 @@ public class LevelMenu extends JFrame{
     JLayeredPane pane;
     public LevelMenu() {
         super("Level");
+        loadSettings();
         this.width = 800;
         this.height = 900;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,8 +42,12 @@ public class LevelMenu extends JFrame{
         countdownBack.setBounds(660,12,125,55);
         pane.add(countdownBack, 0);
 
-        FilledBox healthBar = new FilledBox(Utilities.randomColor());
-        healthBar.setBounds(160,12,480,55);
+        FilledBox healhBarBack = new FilledBox(lightGreen);
+        healhBarBack.setBounds(160,12,480,55);
+        pane.add(healhBarBack, 0);
+
+        Healthbar healthBar = new Healthbar(1000);
+        //healthBar.setValue(400);
         pane.add(healthBar, 0);
 
         FilledBox enemy = new FilledBox(Utilities.randomColor());
@@ -56,7 +61,6 @@ public class LevelMenu extends JFrame{
         FilledBox board = new FilledBox(Utilities.randomColor());
         board.setBounds(160,365,480,480);
         pane.add(board, 0);
-
 
         FilledBox bonus1 = new FilledBox(Utilities.randomColor());
         bonus1.setBounds(40,480,110,110);
@@ -84,11 +88,40 @@ public class LevelMenu extends JFrame{
 
 
 
-
-
         add(pane);
         revalidate();
         repaint();
         setVisible(true);
+    }
+
+    private void loadSettings() {
+        // TODO Auto-generated method stub
+    }
+
+
+    class Healthbar extends JPanel{
+
+        Color color = new Color(240,54,42);
+        int maxValue, value;
+        public Healthbar(int maxValue){
+            super();
+            this.maxValue = maxValue;
+            this.value = maxValue;
+            setBounds(167,19,466,41);
+            setBackground(color);
+        }
+
+        public void setValue(int value){
+            if(value < 0 || value > maxValue){
+                throw new IllegalArgumentException("LevelMenu -> HealthBar -> setValue value must be between 0 and maxValue (" + maxValue + ")");
+            }
+            this.value = value;
+            resetWidth();
+        }
+
+        private void resetWidth(){
+            width = (int)((double)value / maxValue * 466);
+            setBounds(167,19,width,41);
+        }
     }
 }
