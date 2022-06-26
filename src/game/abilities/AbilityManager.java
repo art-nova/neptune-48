@@ -3,7 +3,7 @@ package game.abilities;
 import game.GameLogicException;
 import game.GameModifier;
 import game.GamePanel;
-import game.KeyHandler;
+import game.ActionHandler;
 import game.events.AbilityListener;
 import game.gameobjects.Board;
 
@@ -19,7 +19,7 @@ public class AbilityManager {
     private final ActiveAbility active2;
     private final PassiveAbility passive;
     private final GamePanel gp;
-    private final KeyHandler keyHandler;
+    private final ActionHandler actionHandler;
     private final Board board;
 
     /**
@@ -34,7 +34,7 @@ public class AbilityManager {
         if (active1 == null && active2 != null) throw new GameLogicException("Trying to pass an active ability into the second slot while the first is empty");
         this.gp = gp;
         this.board = gp.getBoard();
-        this.keyHandler = gp.getKeyHandler();
+        this.actionHandler = gp.getActionHandler();
         this.attack = new Attack(gp, this);
         this.active1 = registerActiveAbility(active1);
         this.active2 = registerActiveAbility(active2);
@@ -54,8 +54,8 @@ public class AbilityManager {
      * Monitors keyboard ability activation.
      */
     public void update() {
-        if (keyHandler.isKeyPressed()) {
-            switch (keyHandler.getLastPressKey()) {
+        if (actionHandler.anyActionScheduled()) {
+            switch (actionHandler.getPriorityAction()) {
                 case "attack" -> attemptAttack();
                 case "active1" -> attemptActive1();
                 case "active2" -> attemptActive2();
@@ -69,6 +69,7 @@ public class AbilityManager {
      * Preferred method for outside access.
      */
     public void attemptAttack() {
+        actionHandler.clearAction("attack");
         if (!board.isLocked() && attack.getState() == GameModifier.APPLICABLE) attack.startApplication();
     }
 
@@ -78,6 +79,7 @@ public class AbilityManager {
      * Preferred method for outside access.
      */
     public void attemptActive1() {
+        actionHandler.clearAction("active1");
         if (active1 != null && !board.isLocked() && active1.getState() == GameModifier.APPLICABLE) active1.startApplication();
     }
 
@@ -87,6 +89,7 @@ public class AbilityManager {
      * Preferred method for outside access.
      */
     public void attemptActive2() {
+        actionHandler.clearAction("active2");
         if (active2 != null && !board.isLocked() && active2.getState() == GameModifier.APPLICABLE) active2.startApplication();
     }
 

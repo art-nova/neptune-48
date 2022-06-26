@@ -2,8 +2,7 @@ package game.gameobjects;
 
 import game.GameLogicException;
 import game.GamePanel;
-import game.KeyHandler;
-import game.MouseHandler;
+import game.ActionHandler;
 import game.events.CellSelectionListener;
 import game.events.StateListener;
 import game.events.TurnListener;
@@ -43,8 +42,7 @@ public class Board extends GameObject {
     private final int preferredWidth;
     private final int preferredHeight;
     private final GamePanelGraphics graphics;
-    private final KeyHandler keyHandler;
-    private final MouseHandler mouseHandler;
+    private final ActionHandler actionHandler;
 
     private int state = IDLE;
     private int baseTileLevel;
@@ -62,8 +60,7 @@ public class Board extends GameObject {
             throw new IllegalArgumentException("Illegal base tile level: " + baseTileLevel);
         this.gp = gp;
         this.graphics = gp.getGameGraphics();
-        this.keyHandler = gp.getKeyHandler();
-        this.mouseHandler = gp.getMouseHandler();
+        this.actionHandler = gp.getActionHandler();
         this.rows = rows;
         this.cols = cols;
         this.baseTileLevel = baseTileLevel;
@@ -125,8 +122,8 @@ public class Board extends GameObject {
          */
         public void update() {
             if (predicate == null) throw new GameLogicException("Updating a selector without a selection predicate");
-            if (mouseHandler.isMouseOn() && mouseHandler.isMousePressed()) {
-                mouseHandler.resetMousePressed();
+            if (actionHandler.isPriorityAction("selectTile")) {
+                actionHandler.clearAction("selectTile");
                 BoardCell cell = cellByMouseLocation();
                 if (cell != null && predicate.test(cell)) {
                     if (selected.contains(cell)) {
@@ -145,7 +142,7 @@ public class Board extends GameObject {
                     }
                 }
             }
-            if (keyHandler.isKeyPressed() && keyHandler.getLastPressKey().equals("escape")) abortSelection();
+            if (actionHandler.isPriorityAction("abortSelection")) abortSelection();
         }
 
         /**
@@ -157,11 +154,9 @@ public class Board extends GameObject {
             if (predicate == null) throw new GameLogicException("Rendering a selector without a selection predicate");
             g2d.drawImage(overlay, (int)Board.this.x, (int)Board.this.y, null);
             for (BoardCell cell : selected) highlightCell(cell, g2d);
-            if (mouseHandler.isMouseOn()) {
-                BoardCell cell = cellByMouseLocation();
-                if (cell != null && predicate.test(cell)) {
-                    highlightCell(cell, g2d);
-                }
+            BoardCell cell = cellByMouseLocation();
+            if (cell != null && predicate.test(cell)) {
+                highlightCell(cell, g2d);
             }
         }
 
@@ -238,6 +233,7 @@ public class Board extends GameObject {
      */
     public void abortSelection() {
         if (state == SELECTING) {
+            actionHandler.clearAction("abortSelection");
             selectionHandler.selected = new ArrayList<>();
             selectionHandler.predicate = null;
             setState(IDLE);
@@ -603,29 +599,29 @@ public class Board extends GameObject {
     }
 
     private void handleTurnInput() {
-        if (keyHandler.isKeyPressed()) {
-            switch (keyHandler.getLastPressKey()) {
+        if (actionHandler.anyActionScheduled()) {
+            switch (actionHandler.getPriorityAction()) {
                 case "up" -> {
                     shiftUp();
-                    keyHandler.clearLastPress();
+                    actionHandler.clearAction("up");
                     moveDirection = UP;
                     moveInputFollowup();
                 }
                 case "down" -> {
                     shiftDown();
-                    keyHandler.clearLastPress();
+                    actionHandler.clearAction("down");
                     moveDirection = DOWN;
                     moveInputFollowup();
                 }
                 case "left" -> {
                     shiftLeft();
-                    keyHandler.clearLastPress();
+                    actionHandler.clearAction("left");
                     moveDirection = LEFT;
                     moveInputFollowup();
                 }
                 case "right" -> {
                     shiftRight();
-                    keyHandler.clearLastPress();
+                    actionHandler.clearAction("right");
                     moveDirection = RIGHT;
                     moveInputFollowup();
                 }

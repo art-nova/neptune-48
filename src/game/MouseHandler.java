@@ -1,32 +1,38 @@
 package game;
 
+import game.gameobjects.Board;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * Class that implements methods for registering mouse moving onto a component and left button presses.
+ * Class that implements methods for scheduling mouse-related game actions, namely tile selection.
  *
  * @author Artem Novak
  */
 public class MouseHandler extends MouseAdapter {
+    private final GamePanel gp;
+    private final Board board;
+    private final ActionHandler actionHandler;
+
     private boolean mouseOn;
-    private boolean mousePressed;
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
+    /**
+     * Constructs a MouseHandler.
+     *
+     * @param gp {@link GamePanel} which stores game-related information.
+     */
+    public MouseHandler(GamePanel gp) {
+        this.gp = gp;
+        this.board = gp.getBoard();
+        this.actionHandler = gp.getActionHandler();
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            mousePressed = true;
+        if (mouseOn && e.getButton() == MouseEvent.BUTTON1 && gp.getState() == GamePanel.PLAYING && board.getState() == Board.SELECTING) {
+            actionHandler.scheduleAction("selectTile");
         }
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) mousePressed = false;
     }
 
     @Override
@@ -39,18 +45,4 @@ public class MouseHandler extends MouseAdapter {
         mouseOn = false;
     }
 
-    public boolean isMouseOn() {
-        return mouseOn;
-    }
-
-    public boolean isMousePressed() {
-        return mousePressed;
-    }
-
-    /**
-     * Tells the handler that last mouse press has been resolved and does not need processing anymore.
-     */
-    public void resetMousePressed() {
-        this.mousePressed = false;
-    }
 }

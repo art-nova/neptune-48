@@ -15,7 +15,6 @@ import game.obstacles.ObstacleManager;
 import game.utils.GamePanelGraphics;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
@@ -37,8 +36,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final LevelData levelData;
     private final PlayerData playerData;
     private final GamePanelGraphics graphics;
-    private final KeyHandler keyHandler = new KeyHandler();
-    private final MouseHandler mouseHandler = new MouseHandler();
+    private final ActionHandler actionHandler = new ActionHandler();
     private final Thread gameThread = new Thread(this);
     private final Countdown countdown;
     private final Board board;
@@ -49,7 +47,6 @@ public class GamePanel extends JPanel implements Runnable {
     private final List<GameOverListener> gameOverListeners = new ArrayList<>();
     private final List<StateListener> stateListeners = new ArrayList<>();
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
-    private final List<UpdateListener> updateListeners = new ArrayList<>();
     private final int baseTileDamage;
     private final int gameMode;
 
@@ -74,8 +71,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.countdown = new Countdown(levelData.getTurns(), this);
         this.obstacleManager = new ObstacleManager(levelData.getObstacleWeights(), levelData.getMinObstacleInterval(), levelData.getMaxObstacleInterval(), this);
         this.abilityManager = new AbilityManager(playerData.getActiveAbility1(), playerData.getActiveAbility2(), playerData.getPassiveAbility(), this);
-        baseFrame.addKeyListener(keyHandler);
-        this.addMouseListener(mouseHandler);
+        baseFrame.addKeyListener(new KeyHandler(this));
+        this.addMouseListener(new MouseHandler(this));
         this.setDoubleBuffered(true);
         this.setFocusable(true);
         this.setPreferredSize(new Dimension(graphics.getEntityWidth(), board.getPreferredHeight() + graphics.getEntityBoardDistance() + graphics.getEntityHeight()));
@@ -122,14 +119,25 @@ public class GamePanel extends JPanel implements Runnable {
             delta += (currentTime - lastTime)/frameInterval;
             lastTime = currentTime;
 
-            if ((state == PLAYING || state == ENDING) && delta >= 1) {
-                for (int i = 0; i < (int)delta; i++) {
-                    update();
-                }
-                repaint();
-                delta -= (int)delta;
+            if (delta >= 1) {
+                if (state == PLAYING || state == ENDING) {
+                    for (int i = 0; i < (int)delta; i++) {
+                        update();
+                    }
+                    repaint();
+                    delta -= (int)delta;
 
-                if (state == ENDING && board.getState() == Board.IDLE && entity.getState() == Entity.IDLE && particleManager.getState() == ParticleManager.IDLE) state = ENDED;
+                    if (state == ENDING && board.getState() == Board.IDLE && entity.getState() == Entity.IDLE && particleManager.getState() == ParticleManager.IDLE) state = ENDED;
+                }
+
+                if ((state == PLAYING) && actionHandler.isPriorityAction("pause")) {
+                    setState(PAUSED);
+                    actionHandler.clearAction("pause");
+                }
+                else if (state == PAUSED && actionHandler.isPriorityAction("unpause")) {
+                    setState(PLAYING);
+                    actionHandler.clearAction("unpause");
+                }
             }
         }
     }
@@ -201,12 +209,8 @@ public class GamePanel extends JPanel implements Runnable {
         return graphics;
     }
 
-    public KeyHandler getKeyHandler() {
-        return keyHandler;
-    }
-
-    public MouseHandler getMouseHandler() {
-        return mouseHandler;
+    public ActionHandler getActionHandler() {
+        return actionHandler;
     }
 
     public Board getBoard() {
@@ -259,23 +263,6 @@ public class GamePanel extends JPanel implements Runnable {
         return gameMode;
     }
 
-    /**
-     * Schedules {@link UpdateListener#onUpdate()}'s application after only the next update's completion, disposing of it afterwards.
-     * <br>
-     * This is the preferred method of scheduling actions based on out-of-sync stimuli (such as player clicking a UI button).
-     * 
-     * @param scheduled implementation of {@link UpdateListener} that contains the scheduled sequence
-     */
-    public void scheduleAfterUpdate(UpdateListener scheduled) {
-        updateListeners.add(new UpdateListener() {
-            @Override
-            public void onUpdate() {
-                scheduled.onUpdate();
-                updateListeners.remove(this);
-            }
-        });
-    }
-
     public void addGameOverListener(GameOverListener listener) {
         gameOverListeners.add(listener);
     }
@@ -298,13 +285,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void removeUIDataListener(UIDataListener listener) {
         uiDataListeners.remove(listener);
-    }
-
-    public void addUpdateListener(UpdateListener listener) {
-        updateListeners.add(listener);
-    }
-    public void removeUpdateListener(UpdateListener listener) {
-        updateListeners.remove(listener);
     }
 
 }

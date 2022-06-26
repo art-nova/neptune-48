@@ -1,72 +1,73 @@
 package game;
 
+import game.gameobjects.Board;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
- * Class that implements methods for registering pressed keys by certain NameIDs.
+ * Class that implements methods for processing input keys for the game.
  *
  * @author Artem Novak
  */
 public class KeyHandler extends KeyAdapter {
-    private final LinkedList<String> pressedKeys = new LinkedList<>();
-    private boolean busy = false;
+    private final GamePanel gp;
+    private final Board board;
+    private final ActionHandler actionHandler;
+
+    /**
+     * Constructs a KeyHandler.
+     *
+     * @param gp {@link GamePanel} which stores game-related information.
+     */
+    public KeyHandler(GamePanel gp) {
+        this.gp = gp;
+        this.board = gp.getBoard();
+        this.actionHandler = gp.getActionHandler();
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        busy = true;
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) pressedKeys.add("up");
-        else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) pressedKeys.add("down");
-        else if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) pressedKeys.add("left");
-        else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) pressedKeys.add("right");
-        else if (key == KeyEvent.VK_SPACE) pressedKeys.add("attack");
-        else if (key == KeyEvent.VK_1) pressedKeys.add("active1");
-        else if (key == KeyEvent.VK_2) pressedKeys.add("active2");
-        else if (key == KeyEvent.VK_ESCAPE) pressedKeys.add("escape");
-        busy = false;
+        if (gp.getState() == GamePanel.PLAYING) {
+            if (board.getState() == Board.IDLE || board.getState() == Board.ANIMATING) {
+                if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) actionHandler.scheduleAction("up");
+                else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) actionHandler.scheduleAction("down");
+                else if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) actionHandler.scheduleAction("left");
+                else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) actionHandler.scheduleAction("right");
+                else if (key == KeyEvent.VK_SPACE) actionHandler.scheduleAction("attack");
+                else if (key == KeyEvent.VK_1) actionHandler.scheduleAction("active1");
+                else if (key == KeyEvent.VK_2) actionHandler.scheduleAction("active2");
+                else if (key == KeyEvent.VK_ESCAPE) actionHandler.scheduleAction("pause");
+            }
+            else if (board.getState() == Board.SELECTING) {
+                if (key == KeyEvent.VK_SPACE) actionHandler.scheduleAction("attack");
+                else if (key == KeyEvent.VK_1) actionHandler.scheduleAction("active1");
+                else if (key == KeyEvent.VK_2) actionHandler.scheduleAction("active2");
+                else if (key == KeyEvent.VK_ESCAPE) actionHandler.scheduleAction("abortSelection");
+            }
+        }
+        else if (gp.getState() == GamePanel.PAUSED && key == KeyEvent.VK_ESCAPE) actionHandler.scheduleAction("unpause");
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        busy = true;
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) pressedKeys.removeIf(x -> x.equals("up"));
-        else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) pressedKeys.removeIf(x -> x.equals("down"));
-        else if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) pressedKeys.removeIf(x -> x.equals("left"));
-        else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) pressedKeys.removeIf(x -> x.equals("right"));
-        else if (key == KeyEvent.VK_SPACE) pressedKeys.removeIf(x -> x.equals("attack"));
-        else if (key == KeyEvent.VK_1) pressedKeys.removeIf(x -> x.equals("active1"));
-        else if (key == KeyEvent.VK_2) pressedKeys.removeIf(x -> x.equals("active2"));
-        else if (key == KeyEvent.VK_ESCAPE) pressedKeys.removeIf(x -> x.equals("escape"));
-        busy = false;
-    }
-
-    /**
-     * Determines whether there are any registered pressed keys.
-     *
-     * @return true if there is at least one registered pressed key
-     */
-    public boolean isKeyPressed() {
-        return !busy && !pressedKeys.isEmpty();
-    }
-
-    /**
-     * Gets the latest registered pressed key
-     *
-     * @return last pressed key
-     */
-    public String getLastPressKey() {
-        if (busy) return null;
-        return pressedKeys.peekLast();
-    }
-
-    /**
-     * Removes last registered pressed key.
-     */
-    public void clearLastPress() {
-        pressedKeys.removeLast();
+        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) actionHandler.clearAction("up");
+        else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) actionHandler.clearAction("down");
+        else if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) actionHandler.clearAction("left");
+        else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) actionHandler.clearAction("right");
+        else if (key == KeyEvent.VK_SPACE) actionHandler.clearAction("attack");
+        else if (key == KeyEvent.VK_1) actionHandler.clearAction("active1");
+        else if (key == KeyEvent.VK_2) actionHandler.clearAction("active2");
+        else if (key == KeyEvent.VK_ESCAPE) actionHandler.clearAction("pause");
+        if (key == KeyEvent.VK_SPACE) actionHandler.clearAction("attack");
+        else if (key == KeyEvent.VK_1) actionHandler.clearAction("active1");
+        else if (key == KeyEvent.VK_2) actionHandler.clearAction("active2");
+        else if (key == KeyEvent.VK_ESCAPE) {
+            actionHandler.clearAction("abortSelection");
+            actionHandler.clearAction("pause");
+            actionHandler.clearAction("unpause");
+        }
     }
 }
