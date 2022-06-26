@@ -7,7 +7,9 @@ import data.PlayerData;
 import game.abilities.AbilityManager;
 import game.events.*;
 import game.gameobjects.Board;
+import game.gameobjects.BoardCell;
 import game.gameobjects.Entity;
+import game.gameobjects.Tile;
 import game.gameobjects.particles.ParticleManager;
 import game.obstacles.ObstacleManager;
 import game.utils.GamePanelGraphics;
@@ -78,6 +80,28 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
         this.setPreferredSize(new Dimension(graphics.getEntityWidth(), board.getPreferredHeight() + graphics.getEntityBoardDistance() + graphics.getEntityHeight()));
         board.setX((graphics.getEntityWidth() - board.getPreferredWidth())/2f);
+
+        // Tracking level 11 tiles and starting an attack with one as soon as it appears.
+        board.addTurnListener(() -> {
+            List<BoardCell> cells = board.getCellsByPredicate(x -> {
+                Tile tile = board.getTileInCell(x);
+                return tile != null && tile.getLevel() == 11;
+            });
+            if (!cells.isEmpty()) {
+                board.addStateListener(new StateListener() {
+                    @Override
+                    public void onStateChanged(int oldState, int newState) {
+                        if (oldState == Board.ANIMATING && newState == Board.IDLE) {
+                            // When there are actually no other scheduled animations left (if there are, they set board's state to ANIMATING).
+                            if (board.getState() == Board.IDLE) {
+                                board.removeStateListener(this);
+                                abilityManager.getAttack().startAttack(cells.get(0));
+                            }
+                        }
+                    }
+                });
+            }
+        });
 
         board.generateRandomTile();
         board.generateRandomTile();
@@ -153,7 +177,6 @@ public class GamePanel extends JPanel implements Runnable {
 
         LevelIdentifier level = levelData.getLevelIdentifier();
         boolean unlockedAbility;
-//        int timeSpent = countdown.getDedicatedTime() - countdown.getTime();
         int stars = 1;
         if (countdown.getTurns() >= levelData.getThreeStarThreshold()) stars = 3;
         else if (countdown.getTurns() >= levelData.getTwoStarThreshold()) stars = 2;

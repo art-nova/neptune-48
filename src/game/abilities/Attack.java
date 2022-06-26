@@ -79,11 +79,14 @@ public class Attack extends ActiveAbility {
 
     /**
      * Starts attack from given cell.
+     * <br>
+     * This method is only for specific scenarios where an attack from a particular cell is needed.
+     * For the general use method (one triggering the selection) see {@link Attack#startApplication()}
      *
      * @param cell cell to start attack from
      * @throws GameLogicException when trying to attack from empty cell
      */
-    private void startAttack(BoardCell cell) throws GameLogicException {
+    public void startAttack(BoardCell cell) throws GameLogicException {
         super.startApplication();
         Tile tile = board.getTileInCell(cell);
         if (tile == null) throw new GameLogicException("Trying to attack from empty cell");
