@@ -2,7 +2,9 @@ package UI;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 
+import javax.imageio.ImageIO;
 
 public class PolygonUtilities {
     static Polygon[] polygons = new Polygon[5];
@@ -15,25 +17,44 @@ public class PolygonUtilities {
         Color colorBase, colorHighlight, colorFrom, colorTo, currentColor;
         double colorDistance;
         boolean hasStroke;
-        public Polygon(int x,int y, Color colorBase, Color colorHighlight, int[] xs, int[] ys, boolean hasStroke, Color baseStroke, Color highlightStroke){
+        JLabel overlay;
+        public Polygon(int x,int y, Color colorBase, Color colorHighlight, int[] xs, int[] ys, boolean hasStroke, Color baseStroke, Color highlightStroke, int num, String overlayColor){
             super();
-            timer = new Timer(12 + (int)Math.round(Math.random() * 5), this);
+            timer = new Timer(27 + (int)Math.round(Math.random() * 5), this);
             this.x = x;
             this.y = y;
             this.xs = xs;
             this.hasStroke = hasStroke;
-            for (int i = 0; i < xs.length; i++) {
-                xs[i] += 2;
-            }
             this.ys = ys;
-            for (int i = 0; i < ys.length; i++) {
-                ys[i] += 2;
-            }
             this.colorBase = colorBase;
             this.colorHighlight = colorHighlight;
             if(hasStroke){
-                add(new Polygon(x, y, baseStroke, highlightStroke, xs, ys, false, null, null));
+                add(new Polygon(x, y, baseStroke, highlightStroke, xs, ys, false, null, null, num, ""));
             }
+            try {
+                if(overlayColor.equalsIgnoreCase("green") || overlayColor.equalsIgnoreCase("red")){
+                    overlay = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/"+ num + "overlay" + overlayColor + ".png"))));
+                    switch(num){
+                        case 0:
+                            overlay.setBounds(572,2,240,370);
+                            break;
+                        case 1:
+                            overlay.setBounds(121, -2, 505, 420);
+                            break;
+                        case 2:
+                            overlay.setBounds(0,34,480,495);
+                            break;
+                        case 3:
+                            overlay.setBounds(0,461,435,445);
+                            break;
+                        case 4:
+                            overlay.setBounds(337,728,70,85);
+                            break;
+                    }
+                    add(overlay);
+                }
+            } catch (Exception e) {}
+            
             setBounds(x,y,2000,2000);
             setVisible(true);
             setBackground(new Color(0,0,0,0));
@@ -54,7 +75,7 @@ public class PolygonUtilities {
             }
             else{
                 Graphics2D g2 = (Graphics2D) g;            
-                g2.setStroke(new BasicStroke(10));
+                g2.setStroke(new BasicStroke(6));
                 g2.drawPolygon(xs, ys, xs.length);
             } 
         }

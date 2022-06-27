@@ -102,8 +102,7 @@ public class InfoPanels{
                 }
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    App.getLevelsMenu().setBonusesPane();                    
-                    System.out.println("Next");
+                    App.loadLevel();                   
                 }
             });
             panel.add(image);
