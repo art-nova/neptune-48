@@ -237,7 +237,7 @@ public class LevelsMenu extends JFrame{
             //////
             centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/obstacles.png")))));
 
-            var obstacles = DataManager.loadLevelData(new LevelIdentifier(playMode, 2)).getObstacleWeights();
+            var obstacles = DataManager.loadLevelData(new LevelIdentifier(playMode, num)).getObstacleWeights();
             for (String obstacle : obstacles.keySet()) {
                 centerPanel.add(UI.InfoPanels.obstacle(obstacle));
             }
