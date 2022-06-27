@@ -21,6 +21,7 @@ public class LevelMenu extends JFrame{
     Color lightGreen = new Color(42,113,56);
     int width, height;
     JLayeredPane pane;
+    
     public LevelMenu() {
         super("Level");
         loadSettings();
@@ -97,7 +98,6 @@ public class LevelMenu extends JFrame{
     private void loadSettings() {
         // TODO Auto-generated method stub
     }
-
 
     class Healthbar extends JPanel{
 

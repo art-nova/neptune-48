@@ -7,7 +7,6 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -201,7 +200,6 @@ public class MainMenu extends JFrame{
                 light = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continueLight.png")));
                 normal = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continue.png")));
                 dark = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continueDark.png")));
-                System.out.println("continue button loaded");
                 PlayerData playerData = DataManager.loadPlayerData();  
                 if(playerData.isLevelCompleted(new LevelIdentifier("normal", 0))){
                     enabled = true;

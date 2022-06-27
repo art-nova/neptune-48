@@ -25,6 +25,11 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import UI.PolygonUtilities.Polygon;
+
+import data.DataManager;
+import data.LevelIdentifier;
+import data.PlayerData;
+
 /**
  *
  * @author Artemii Kolomiichuk
@@ -53,14 +58,29 @@ public class LevelsMenu extends JFrame{
 
     Color redStroke = new Color(156,0,0);
     Color greenStroke = new Color(27,116,47);
+    static String playMode;
 
     public LevelsMenu levelMenu(){
         return this;
     }
 
+    private void getCurrentPlayMode() {
+        try {
+            PlayerData playerData = DataManager.loadPlayerData();  
+            if(playerData.isLevelUnlocked(new LevelIdentifier("hard", 0))){
+                playMode = "hard";
+            }
+            else{
+                playMode = "normal";
+            }
+        } catch (Exception e) {
+            playMode = "normal";
+        }
+    }
+   
     public LevelsMenu() {
         super("Levels");
-
+        getCurrentPlayMode();
         this.width = 815;
         this.height = 1000;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -166,12 +186,13 @@ public class LevelsMenu extends JFrame{
                     pt.y -= e.getYOnScreen() + component.getLocation().y;
                     pt.x -= e.getXOnScreen() + component.getLocation().x; 
                     SwingUtilities.convertPointToScreen(pt, component);
-                    int num = UI.PolygonUtilities.getMostFrequent(UI.PolygonUtilities.getPolygons(pt.x, pt.y));           
-                    if(num == 0){
-                        System.out.println("Level 0");
-                        overlayPane = LevelsMenu.starsPane();
+                    int num = UI.PolygonUtilities.getMostFrequent(UI.PolygonUtilities.getPolygons(pt.x, pt.y));   
+
+                    PlayerData playerData = DataManager.loadPlayerData();  
+                    if(playerData.isLevelUnlocked(new LevelIdentifier(playMode, num))){
+                        overlayPane = LevelsMenu.starsPane(num);
                         overlayPane.setVisible(true);
-                        add(overlayPane);
+                        //add(overlayPane);
                         pane.getParent().add(overlayPane,0);
                         revalidate();
                         repaint();                        
@@ -201,30 +222,25 @@ public class LevelsMenu extends JFrame{
     }
 
     //level info panel with star and obstacles descriptions
-    public static JLayeredPane starsPane(){
+    public static JLayeredPane starsPane(int num){
         JLayeredPane pane = new JLayeredPane();
         pane.setBounds(0,0,800,1000);
 
         
         
-        
-
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         try {
             centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/stars.png")))));
-            //centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/time.png")))));
+            ///////
             centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/filledStar.png")))));
-            //centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/emptyStar.png")))));
-            //centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/emptyStar.png")))));
+            //////
             centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/obstacles.png")))));
-            centerPanel.add(UI.InfoPanels.obstacle("dispose"));
-            centerPanel.add(UI.InfoPanels.obstacle("downgrade"));
-            centerPanel.add(UI.InfoPanels.obstacle("freeze"));
-            centerPanel.add(UI.InfoPanels.obstacle("garbage"));
-            centerPanel.add(UI.InfoPanels.obstacle("scramble"));
-            centerPanel.add(UI.InfoPanels.obstacle("subtractTime"));
-            centerPanel.add(UI.InfoPanels.obstacle("swap"));
+
+            var obstacles = DataManager.loadLevelData(new LevelIdentifier(playMode, 2)).getObstacleWeights();
+            for (String obstacle : obstacles.keySet()) {
+                centerPanel.add(UI.InfoPanels.obstacle(obstacle));
+            }
             centerPanel.add(UI.InfoPanels.buttonNext());
         } catch (Exception e) {}
         

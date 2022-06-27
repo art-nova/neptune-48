@@ -8,7 +8,7 @@ import UI.LevelMenu;
  * @author Artemii Kolomiichuk
  */
 public class App {
-     
+
     private static LevelsMenu levels;
     private static MainMenu mainMenu;
     private static LevelMenu level;
