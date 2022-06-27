@@ -188,14 +188,15 @@ public class PolygonUtilities {
 
     //checks in which polygon points around the point are
     public static int[] getPolygons(int x, int y){
-        int[] polygon = new int[9];
+        int[] polygon = new int[5];
         int counter = 0;
-        for(int i =-1; i < 2; i++){
-            for(int j = -1; j < 2; j++){
-                int index = getPolygon(x + i, y + j);
-                polygon[counter] = index;
-                counter++;
-            }
+        for(int i =-1; i < 1; i++){
+            int index = getPolygon(x + i, y);
+            polygon[counter] = index;
+            counter++;
+            index = getPolygon(x, y + i);
+            polygon[counter] = index;
+            counter++;
         }
         return polygon;
     }

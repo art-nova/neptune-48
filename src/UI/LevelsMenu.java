@@ -149,11 +149,11 @@ public class LevelsMenu extends JFrame{
         UI.PolygonUtilities.polygons[4] = polygon4;
 
 
-        pane.add(polygon0, 0);
-        pane.add(polygon1, 0);
-        pane.add(polygon2, 0);
-        pane.add(polygon3, 0);
-        pane.add(polygon4 , 0);
+        pane.add(polygon0, new Integer(0));
+        pane.add(polygon1, new Integer(1));
+        pane.add(polygon2, new Integer(2));
+        pane.add(polygon3, new Integer(3));
+        pane.add(polygon4 , new Integer(4));
         
 
         pane.addMouseMotionListener(adapter);

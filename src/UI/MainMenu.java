@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -16,6 +17,10 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import data.DataManager;
+import data.LevelIdentifier;
+import data.PlayerData;
 
 /**
  * Main menu JFrame with parallax effect
@@ -85,19 +90,6 @@ public class MainMenu extends JFrame{
             layer = new Layer(-7,-7,655+20,655+20, new ImageIcon(ImageIO.read(new File(p + "grassTop.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
-
-            layer = new Layer(-7,-7,727,727, new ImageIcon(ImageIO.read(new File(p + "dirt.png"))));
-            //layers.add(layer);                
-            //pane.add(layer, 0);
-
-            layer = new Layer(0,5,765,765, new ImageIcon(ImageIO.read(new File(p + "stones.png"))));
-            //layers.add(layer);                
-            //pane.add(layer, 0);
-
-
-            layer = new Layer(-360,-355,717,717, new ImageIcon(ImageIO.read(new File(p + "grass.png"))));
-            //layers.add(layer);                
-            //pane.add(layer, 0);
 
             layer = new Layer(250,310,505+ 110,520+ 110, new ImageIcon(ImageIO.read(new File(p + "bush.png"))));
             layers.add(layer);                
@@ -175,16 +167,19 @@ public class MainMenu extends JFrame{
                 }
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    try {
+                        DataManager.newPlayerData();
+                    } catch (Exception ex) {}
                     models.App.loadLevelsMenu();
                 }
             });
             buttonLayerNew.addMouseMotionListener(moveAdapter);
             
 
-            layer = new Layer(185,185,400-115,400-115, new ImageIcon(ImageIO.read(new File(p + "/continueDark.png"))));
-            layers.add(layer);
-            pane.add(layer, 0);
-
+            ContinueButton continueButton = new ContinueButton();
+            continueButton.setBounds(185,400-115,414,81);
+            pane.add(continueButton, 0);
+            continueButton.addMouseMotionListener(moveAdapter);
 
         } catch (Exception e) {
             System.out.println("main menu error: " + e);
@@ -192,6 +187,61 @@ public class MainMenu extends JFrame{
         add(pane);
         pane.addMouseMotionListener(moveAdapter);
         setVisible(true);
+    }
+
+    private class ContinueButton extends JLabel{
+        boolean enabled;
+        ImageIcon light;
+        ImageIcon normal;
+        ImageIcon dark;
+
+        public ContinueButton(){
+            super();  
+            try {
+                light = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continueLight.png")));
+                normal = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continue.png")));
+                dark = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continueDark.png")));
+                System.out.println("continue button loaded");
+                PlayerData playerData = DataManager.loadPlayerData();  
+                if(playerData.isLevelCompleted(new LevelIdentifier("normal", 0))){
+                    enabled = true;
+                    setIcon(normal);
+                }else{
+                    enabled = false;
+                    setIcon(dark);
+                }
+            } catch (Exception e) {
+                try {
+                    setIcon(dark);
+                    enabled = false;
+                } catch (Exception ex) {}
+            }    
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    if(enabled){
+                        setIcon(light);
+                        revalidate();
+                        repaint();
+                    }
+                }
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    if(enabled){
+                        setIcon(normal);
+                        revalidate();
+                        repaint();
+                    }
+                }
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if(enabled){
+                        models.App.loadLevelsMenu();
+                    }
+                }
+            });
+            setVisible(true);
+        }
     }
 
     private class Layer extends JPanel{
