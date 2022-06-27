@@ -133,7 +133,7 @@ public class GamePanel extends JPanel implements Runnable {
                     repaint();
                     delta -= (int)delta;
 
-                    if (state == ENDING && board.getState() == Board.IDLE && entity.getState() == Entity.IDLE && particleManager.getState() == ParticleManager.IDLE) state = ENDED;
+                    if (state == ENDING && board.getState() == Board.IDLE && entity.getState() == Entity.IDLE && particleManager.getState() == ParticleManager.IDLE) setState(ENDED);
                 }
 
                 if ((state == PLAYING) && actionHandler.isPriorityAction("pause")) {
@@ -174,10 +174,15 @@ public class GamePanel extends JPanel implements Runnable {
      * Finishes the game without any changes to {@link PlayerData} object and triggers {@link GameOverListener#onLose()} methods.
      */
     public void loseLevel() {
-        state = ENDING;
+        setState(ENDING);
         if (board.getState() == Board.SELECTING) board.abortSelection();
         board.setLocked(true);
-        for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onLose();
+
+        addStateListener((oldState, newState) -> {
+            for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onLose();
+            audioManager.clearBG();
+            audioManager.playSFX("lose");
+        });
     }
 
     /**
@@ -185,7 +190,7 @@ public class GamePanel extends JPanel implements Runnable {
      * and triggers {@link GameOverListener#onWin(boolean)} methods.
      */
     public void winLevel() {
-        state = ENDING;
+        setState(ENDING);
         if (board.getState() == Board.SELECTING) board.abortSelection();
         board.setLocked(true);
 
@@ -208,7 +213,12 @@ public class GamePanel extends JPanel implements Runnable {
                 System.exit(1);
             }
         }
-        for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onWin(unlockedAbility);
+
+        addStateListener((oldState, newState) -> {
+            for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onWin(unlockedAbility);
+            audioManager.clearBG();
+            audioManager.playSFX("win");
+        });
     }
 
     public GamePanelGraphics getGameGraphics() {
