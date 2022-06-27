@@ -61,7 +61,7 @@ public class LevelsMenu extends JFrame{
     public LevelsMenu() {
         super("Levels");
 
-        this.width = 800;
+        this.width = 815;
         this.height = 1000;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(width, height);
@@ -100,7 +100,7 @@ public class LevelsMenu extends JFrame{
                             new int[]{0,0,    350,370,325,290,290,260,210,140,130,85,70},
                             true,
                             greenStroke,
-                            strokeHighlight,
+                            greenStroke,
                             0,
                             "Green"
         );
@@ -108,8 +108,8 @@ public class LevelsMenu extends JFrame{
                             new int[]{0,570,580,555,560, 590, 595,570,580,600,635,620,490,410,382,350,385,345,300,290,260,240,270,245,125,140,75,30},
                             new int[]{0, 0, 70,  85,130,  140,210,260,290,290,325,370,425,420,455,445,415,310,300,200,190,170,155,115, 85,50, 20,35},
                             true,
-                            strokeBase,
-                            strokeHighlight,
+                            greenStroke,
+                            greenStroke,
                             1,
                             "Green"
         );
@@ -117,8 +117,8 @@ public class LevelsMenu extends JFrame{
                             new int[]{0,0,  30,75,140,125,245,270,240,260,290,300,345,385,350,382,410,490,470,370,380,365,345,350,305,310,270,220,170,150,110,115,73,70},
                             new int[]{450,0,35,20,50,  85,115,155,170,190,200,300,310,415,445,455,420,425,520,530,555,570,560,530,525,495,490,525,515,535,535,500,500,460},
                             true,
-                            strokeBase,
-                            strokeHighlight,
+                            redStroke,
+                            redStroke,
                             2,
                             "Red"
         );
@@ -126,8 +126,8 @@ public class LevelsMenu extends JFrame{
                             new int[]{0,0,     70, 73,115, 110,150,170,220,270, 310,305,350,345,365,380, 370,470,440,373,370,330,320,330,310,340,380,395,425,435},
                             new int[]{900,450,460,500,500, 535,535,515,525,490, 495,525,530,560,570,555, 530,520,680,690,710,720,760,800,820,850,825,840,840,895},
                             true,
-                            strokeBase,
-                            strokeHighlight,
+                            redStroke,
+                            redStroke,
                             3,
                             "Red"
         );
@@ -135,70 +135,19 @@ public class LevelsMenu extends JFrame{
                             new int[]{440,425,395,380,340,310,330,320,330,370,373},
                             new int[]{680,840,840,825,850,820,800,760,720,710,690},
                             true,
-                            strokeBase,
-                            strokeHighlight,
+                            redStroke,
+                            redStroke,
                             4,
                             "Red"
         );
 
 
-        Polygon polygonPad0 = new Polygon(0,0, darkGreen, darkGreen,
-                            new int[]{570,800,800,620,635,600,580,570,595,590,560,555,580},
-                            new int[]{0,0,    350,370,325,290,290,260,210,140,130,85,70},
-                            true,
-                            darkGray,
-                            strokeHighlight,
-                            -1,
-                            ""
-        );
-        Polygon polygonPad1 = new Polygon(0,0, darkGreen, darkGreen,
-                            new int[]{0,570,580,555,560, 590, 595,570,580,600,635,620,490,410,382,350,385,345,300,290,260,240,270,245,125,140,75,30},
-                            new int[]{0, 0, 70,  85,130,  140,210,260,290,290,325,370,425,420,455,445,415,310,300,200,190,170,155,115, 85,50, 20,35},
-                            true,
-                            darkRed,
-                            strokeHighlight,
-                            -1,
-                            ""
-        );
-        Polygon polygonPad2 = new Polygon(0,0, darkRed, darkRed,
-                            new int[]{0,0,  30,75,140,125,245,270,240,260,290,300,345,385,350,382,410,490,470,370,380,365,345,350,305,310,270,220,170,150,110,115,73,70},
-                            new int[]{450,0,35,20,50,  85,115,155,170,190,200,300,310,415,445,455,420,425,520,530,555,570,560,530,525,495,490,525,515,535,535,500,500,460},
-                            true,
-                            darkRed,
-                            strokeHighlight,
-                            -1,
-                            ""
-        );
-        Polygon polygonPad3 = new Polygon(0,0, darkRed, darkRed,
-                            new int[]{0,0,     70, 73,115, 110,150,170,220,270, 310,305,350,345,365,380, 370,470,440,373,370,330,320,330,310,340,380,395,425,435},
-                            new int[]{900,450,460,500,500, 535,535,515,525,490, 495,525,530,560,570,555, 530,520,680,690,710,720,760,800,820,850,825,840,840,895},
-                            true,
-                            darkRed,
-                            strokeHighlight,
-                            -1,
-                            ""
-        );
-        Polygon polygonPad4 = new Polygon(0,0, darkRed, darkRed,
-                            new int[]{440,425,395,380,340,310,330,320,330,370,373},
-                            new int[]{680,840,840,825,850,820,800,760,720,710,690},
-                            true,
-                            darkRed,
-                            strokeHighlight,
-                            -1,
-                            ""
-        );
-        
         UI.PolygonUtilities.polygons[0] = polygon0;
         UI.PolygonUtilities.polygons[1] = polygon1;
         UI.PolygonUtilities.polygons[2] = polygon2;
         UI.PolygonUtilities.polygons[3] = polygon3;
         UI.PolygonUtilities.polygons[4] = polygon4;
 
-        pane.add(polygonPad0, 100);
-        pane.add(polygonPad1, 100);
-        pane.add(polygonPad2, 100);
-        pane.add(polygonPad3, 100);
-        pane.add(polygonPad4, 100);  
 
         pane.add(polygon0, 0);
         pane.add(polygon1, 0);
@@ -222,17 +171,31 @@ public class LevelsMenu extends JFrame{
                         System.out.println("Level 0");
                         overlayPane = LevelsMenu.starsPane();
                         overlayPane.setVisible(true);
-                        pane.add(overlayPane, 0);
-                        
+                        add(overlayPane);
+                        pane.getParent().add(overlayPane,0);
+                        revalidate();
+                        repaint();                        
                         for(int j = 0; j < UI.PolygonUtilities.polygons.length; j++){
                             UI.PolygonUtilities.polygons[j].fadeOut();
                         }
-                        overlayPane.moveToFront(pane);
                     }
                 } catch (Exception ex) {}
             }
         });
-            
+        
+        try {
+            //add(overlayPane);
+            //overlayPane.setVisible(false);
+            JLabel border = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/mapBorder.png"))));
+            border.setBounds(0,0,800,900);
+            add(border);
+            JLabel sea = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/water.png"))));
+            sea.setBounds(410,330,401,569);
+            add(sea);
+            FilledBox bottomBack = new FilledBox(Color.white);
+            bottomBack.setBounds(0,890,800,110);
+            add(bottomBack);
+        } catch (Exception e) {}
         add(pane);
         setVisible(true);
     }
