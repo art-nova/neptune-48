@@ -28,7 +28,7 @@ public class MainMenu extends JFrame{
     public MainMenu() {
         super("Menu");
         this.width = 800;
-        this.height = 925;
+        this.height = 900;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(width, height);
         
@@ -55,25 +55,6 @@ public class MainMenu extends JFrame{
             }
         };
         
-        
-        /* Layers:
-        * 00     background 
-        * 01     cloud4
-        * 02     cloud3
-        * 03     mount3
-        * 04     mount2
-        * 05     mount1
-        * 06     grassTop
-        * 07     dirt
-        * 08     stones
-        * 09     stoneButton
-        * 10     grass         
-        * 11     bush
-        * 12     bushes
-        * 13     cloud5
-        * 14     cloud2
-        * 15     cloud1
-        */
         try {
             String p = "resources/images/mainMenu/";
             
@@ -89,11 +70,11 @@ public class MainMenu extends JFrame{
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(144,151,106,111, new ImageIcon(ImageIO.read(new File(p + "mount3.png"))));
+            layer = new Layer(144,151,165,169, new ImageIcon(ImageIO.read(new File(p + "mount3.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(433,450,41,48, new ImageIcon(ImageIO.read(new File(p + "mount2.png"))));
+            layer = new Layer(433,450,41+20,48+20, new ImageIcon(ImageIO.read(new File(p + "mount2.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
@@ -101,53 +82,28 @@ public class MainMenu extends JFrame{
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(-7,-7,655,655, new ImageIcon(ImageIO.read(new File(p + "grassTop.png"))));
+            layer = new Layer(-7,-7,655+20,655+20, new ImageIcon(ImageIO.read(new File(p + "grassTop.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
             layer = new Layer(-7,-7,727,727, new ImageIcon(ImageIO.read(new File(p + "dirt.png"))));
-            layers.add(layer);                
-            pane.add(layer, 0);
+            //layers.add(layer);                
+            //pane.add(layer, 0);
 
             layer = new Layer(0,5,765,765, new ImageIcon(ImageIO.read(new File(p + "stones.png"))));
-            layers.add(layer);                
-            pane.add(layer, 0);
-
-
-
-            ImageIcon stoneStill = new ImageIcon(ImageIO.read(new File(p + "stoneButton.png")));
-            ImageIcon stoneCovered = new ImageIcon(ImageIO.read(new File(p + "stoneButtonCover.png")));
-            Layer layerStoneButton = new Layer(652,657,770,770, stoneStill);
-            layers.add(layerStoneButton);
-            pane.add(layerStoneButton, 1);
-
-            layerStoneButton.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    layerStoneButton.setImage(stoneCovered);
-                    revalidate();
-                    repaint();
-                }
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    layerStoneButton.setImage(stoneStill);
-                    revalidate();
-                    repaint();
-                }
-            });
-            layerStoneButton.addMouseMotionListener(moveAdapter);
-
+            //layers.add(layer);                
+            //pane.add(layer, 0);
 
 
             layer = new Layer(-360,-355,717,717, new ImageIcon(ImageIO.read(new File(p + "grass.png"))));
+            //layers.add(layer);                
+            //pane.add(layer, 0);
+
+            layer = new Layer(250,310,505+ 110,520+ 110, new ImageIcon(ImageIO.read(new File(p + "bush.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(250,310,505,520, new ImageIcon(ImageIO.read(new File(p + "bush.png"))));
-            layers.add(layer);                
-            pane.add(layer, 0);
-
-            layer = new Layer(-102,3,477,498, new ImageIcon(ImageIO.read(new File(p + "bushes.png"))));
+            layer = new Layer(-102,3,477+ 110,498+ 110, new ImageIcon(ImageIO.read(new File(p + "bushes.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
@@ -162,7 +118,74 @@ public class MainMenu extends JFrame{
             layer = new Layer(-20,185,25,72, new ImageIcon(ImageIO.read(new File(p + "cloud1.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
+
+            layer = new Layer(90,90,55,55, new ImageIcon(ImageIO.read(new File("resources/images/logoGame_invert.png")).getScaledInstance(620,105, 16)));
+            layers.add(layer);
+            pane.add(layer, 0);
+
+
+            ImageIcon basicExit = new ImageIcon(ImageIO.read(new File(p + "exit.png")));
+            ImageIcon highlightExit = new ImageIcon(ImageIO.read(new File(p + "exitLight.png")));
+            Layer buttonLayerExit = new Layer(185,185,515,515, basicExit);
+
+            layers.add(buttonLayerExit);
+            pane.add(buttonLayerExit, 1);
+
+            buttonLayerExit.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    buttonLayerExit.setImage(highlightExit);
+                    revalidate();
+                    repaint();
+                }
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    buttonLayerExit.setImage(basicExit);
+                    revalidate();
+                    repaint();
+                }
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    System.exit(0);
+                }
+            });
+            buttonLayerExit.addMouseMotionListener(moveAdapter);
+
+
+
+            ImageIcon basicNew = new ImageIcon(ImageIO.read(new File(p + "newGame.png")));
+            ImageIcon highlightNew = new ImageIcon(ImageIO.read(new File(p + "newGameLight.png")));
+            Layer buttonLayerNew = new Layer(185,185,400,400, basicNew);
+
+            layers.add(buttonLayerNew);
+            pane.add(buttonLayerNew, 1);
+
+            buttonLayerNew.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    buttonLayerNew.setImage(highlightNew);
+                    revalidate();
+                    repaint();
+                }
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    buttonLayerNew.setImage(basicNew);
+                    revalidate();
+                    repaint();
+                }
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    models.App.loadLevelsMenu();
+                }
+            });
+            buttonLayerNew.addMouseMotionListener(moveAdapter);
             
+
+            layer = new Layer(185,185,400-115,400-115, new ImageIcon(ImageIO.read(new File(p + "/continueDark.png"))));
+            layers.add(layer);
+            pane.add(layer, 0);
+
+
         } catch (Exception e) {
             System.out.println("main menu error: " + e);
         }
@@ -187,7 +210,7 @@ public class MainMenu extends JFrame{
             this.minX = minX;
             this.maxX = minX + (int)((maxX - minX)/1.4);
             this.minY = minY;
-            this.maxY = minY + ((maxY - minY)/5);
+            this.maxY = minY + (int)((maxY - minY)/3.2);
             label = new JLabel();
             label.setIcon(image);
             setBackground(new Color(0,0,0,0));

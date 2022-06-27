@@ -54,7 +54,7 @@ public class LevelsMenu extends JFrame{
     public LevelsMenu() {
         super("Levels");
 
-        this.width = 827;
+        this.width = 800;
         this.height = 1000;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(width, height);
