@@ -8,6 +8,7 @@ import game.events.StateListener;
 import game.events.TurnListener;
 import game.utils.GamePanelGraphics;
 import game.utils.WeightedRandom;
+import misc.AudioManager;
 
 import java.awt.*;
 import java.awt.geom.Area;
@@ -43,6 +44,7 @@ public class Board extends GameObject {
     private final int preferredHeight;
     private final GamePanelGraphics graphics;
     private final ActionHandler actionHandler;
+    private final AudioManager audioManager;
 
     private int state = IDLE;
     private int baseTileLevel;
@@ -61,6 +63,7 @@ public class Board extends GameObject {
         this.gp = gp;
         this.graphics = gp.getGameGraphics();
         this.actionHandler = gp.getActionHandler();
+        this.audioManager = gp.getAudioManager();
         this.rows = rows;
         this.cols = cols;
         this.baseTileLevel = baseTileLevel;
@@ -221,6 +224,7 @@ public class Board extends GameObject {
     public void initSelection(Predicate<BoardCell> predicate, int maxSelection) {
         if (maxSelection > rows*cols) throw new GameLogicException("Specified max number of selectable cells is larger than overall number of cells");
         abortSelection();
+        audioManager.playSFX("selectionStart");
         selectionHandler.predicate = predicate;
         selectionHandler.maxSelection = maxSelection;
         selectionHandler.resetOverlay();

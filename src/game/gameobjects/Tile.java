@@ -200,6 +200,7 @@ public class Tile extends GameObject {
      * Initiates outward pulse animation and lets tile display its true level.
      */
     public void upgradeAnimation() {
+        gp.getAudioManager().playSFX("upgrade");
         pulse(0, -graphics.getTilePulseOffset());
     }
 

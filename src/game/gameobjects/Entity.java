@@ -7,6 +7,7 @@ import game.events.StateListener;
 import game.events.UIDataListener;
 import game.gameobjects.particles.ParticleManager;
 import game.utils.GamePanelGraphics;
+import misc.AudioManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -28,6 +29,7 @@ public class Entity extends GameObject implements UIDataHolder {
     private final List<StateListener> stateListeners = new ArrayList<>();
     private final int gameMode;
     private final ParticleManager particleManager;
+    private final AudioManager audioManager;
     private final long maxTileImpact;
 
     private long health;
@@ -48,6 +50,7 @@ public class Entity extends GameObject implements UIDataHolder {
         super(x, y, gp);
         this.gameMode = gp.getGameMode();
         this.particleManager = gp.getParticleManager();
+        this.audioManager = gp.getAudioManager();
         this.maxHealth = maxHealth;
         this.health = gameMode == GamePanel.GAME_MODE_REPAIR ? maxHealth / 10 : maxHealth;
         this.tolerance = tolerance;
@@ -102,8 +105,12 @@ public class Entity extends GameObject implements UIDataHolder {
                 for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
                 if (damage > maxTileImpact) text = "-\u221E";
                 else text = "-" + damage;
+                audioManager.playSFX("damage");
             }
-            else text = "NEGATED";
+            else {
+                text = "NEGATED";
+                audioManager.playSFX("negate");
+            }
             particleManager.addHealthChangeParticle(text, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
             startAnimationCycle();
             addStateListener(new StateListener() {
@@ -126,8 +133,12 @@ public class Entity extends GameObject implements UIDataHolder {
                 for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
                 if (healing > maxTileImpact) text = "+\u221E";
                 else text = "+" + healing;
+                audioManager.playSFX("heal");
             }
-            else text = "NEGATED";
+            else {
+                text = "NEGATED";
+                audioManager.playSFX("negate");
+            }
             particleManager.addHealthChangeParticle(text, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
             startAnimationCycle();
             addStateListener(new StateListener() {
