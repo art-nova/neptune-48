@@ -93,18 +93,20 @@ public class LevelsMenu extends JFrame{
                     pt.y -= e.getYOnScreen() + component.getLocation().y;
                     pt.x -= e.getXOnScreen() + component.getLocation().x; 
                     SwingUtilities.convertPointToScreen(pt, component);
-    
-                    try {
-                        for(int j = 0; j < UI.PolygonUtilities.polygons.length; j++){
-                            UI.PolygonUtilities.polygons[j].fadeOut();
-                            //pane.moveToFront(UI.PolygonUtilities.polygons[j]);
-                        }
-                        Polygon pol = UI.PolygonUtilities.polygons[UI.PolygonUtilities.getMostFrequent(UI.PolygonUtilities.getPolygons(pt.x, pt.y))];           
-                        pol.fadeIn();
-                        //System.out.println(UI.PolygonUtilities.getMostFrequent(UI.PolygonUtilities.getPolygons(pt.x, pt.y)));
-                        pane.moveToFront(pol);
-                    } catch (Exception ex) {}
-                }
+                        try {
+                            for(int j = 0; j < UI.PolygonUtilities.polygons.length; j++){
+                                UI.PolygonUtilities.polygons[j].fadeOut();
+                                //pane.moveToFront(UI.PolygonUtilities.polygons[j]);
+                            }
+                            if(pt.y < -155){
+                            Polygon pol = UI.PolygonUtilities.polygons[UI.PolygonUtilities.getMostFrequent(UI.PolygonUtilities.getPolygons(pt.x, pt.y))];           
+                            pol.fadeIn();
+                            //System.out.println(UI.PolygonUtilities.getMostFrequent(UI.PolygonUtilities.getPolygons(pt.x, pt.y)));
+                            pane.moveToFront(pol);
+                            }
+                        } catch (Exception ex) {}
+                    
+                    }
                 }
                 
         };
@@ -286,19 +288,22 @@ public class LevelsMenu extends JFrame{
                     pt.x -= e.getXOnScreen() + component.getLocation().x; 
                     SwingUtilities.convertPointToScreen(pt, component);
                     int num = UI.PolygonUtilities.getMostFrequent(UI.PolygonUtilities.getPolygons(pt.x, pt.y));   
-
-                    PlayerData playerData = DataManager.loadPlayerData();  
-                    if(playerData.isLevelUnlocked(new LevelIdentifier(playMode, num))){
-                        overlayPane = LevelsMenu.starsPane(num);
-                        overlayPane.setVisible(true);
-                        //add(overlayPane);
-                        pane.getParent().add(overlayPane,0);
-                        revalidate();
-                        repaint();                        
-                        for(int j = 0; j < UI.PolygonUtilities.polygons.length; j++){
-                            UI.PolygonUtilities.polygons[j].fadeOut();
+                    
+                    if(pt.y < -155){
+                        PlayerData playerData = DataManager.loadPlayerData();  
+                        if(playerData.isLevelUnlocked(new LevelIdentifier(playMode, num))){
+                            overlayPane = LevelsMenu.starsPane(num);
+                            overlayPane.setVisible(true);
+                            //add(overlayPane);
+                            pane.getParent().add(overlayPane,0);
+                            revalidate();
+                            repaint();                        
+                            for(int j = 0; j < UI.PolygonUtilities.polygons.length; j++){
+                                UI.PolygonUtilities.polygons[j].fadeOut();
+                            }
                         }
                     }
+                    
                 } catch (Exception ex) {}
             }
         });
@@ -307,19 +312,26 @@ public class LevelsMenu extends JFrame{
             //add(overlayPane);
             //overlayPane.setVisible(false);
             JLabel border = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/mapBorder.png"))));
-            border.setBounds(0,62,800,900);
+            border.setBounds(0,138,800,824);
             add(border);
 
             JLabel sea = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/water.png"))));
             sea.setBounds(410,330+80,401,569);
             add(sea);
 
-            FilledBox bottomBack = new FilledBox(Color.white);
-            bottomBack.setBounds(0,0,800,110);
-            add(bottomBack);
+            add(topPanel());
         } catch (Exception e) {}
         add(pane);
         setVisible(true);
+    }
+
+    public static JLayeredPane topPanel(){
+        JLayeredPane pane = new JLayeredPane();
+        pane.setBounds(0,0,800,157);
+        pane.setBackground(new Color(23,63,31));
+        pane.setOpaque(true);
+        pane.setVisible(true);
+        return pane;
     }
 
     //level info panel with star and obstacles descriptions
