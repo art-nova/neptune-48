@@ -29,6 +29,7 @@ import UI.PolygonUtilities.Polygon;
 import data.DataManager;
 import data.LevelIdentifier;
 import data.PlayerData;
+import models.App;
 
 /**
  *
@@ -352,14 +353,14 @@ public class LevelsMenu extends JFrame{
         scroll.setBorder(BorderFactory.createEmptyBorder());
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scroll.setBounds(100,100,600,800);
+        scroll.setBounds(100,80,600,800);
         scroll.getVerticalScrollBar().setUI(new CustomScrollBarUI());
         scroll.getVerticalScrollBar().setUnitIncrement(scrollSpeed);
 
         pane.add(scroll);
         try {
             JLabel image = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/panel.png"))));
-            image.setBounds(90,90,622,822);
+            image.setBounds(90,70,622,822);
             pane.add(image);
         } catch (Exception e) {System.out.println(e);}
         FilledBox back = new FilledBox(new Color(0,0,0,103));
@@ -370,6 +371,8 @@ public class LevelsMenu extends JFrame{
             public void mouseClicked(MouseEvent e) {
                 pane.getParent().remove(overlayPane);
                 overlayPane = null;
+                App.getLevelsMenu().revalidate();
+                App.getLevelsMenu().repaint();
             }
         });
         pane.setVisible(true);

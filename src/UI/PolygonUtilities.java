@@ -30,7 +30,7 @@ public class PolygonUtilities {
             for (int i = 0; i < ys.length; i++) {
                 ys[i] += yOffset;
             }
-            yOffset = 80;
+            yOffset = 92;
             this.colorBase = colorBase;
             this.colorHighlight = colorHighlight;
             if(hasStroke){
