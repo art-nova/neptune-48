@@ -40,16 +40,8 @@ public class LevelsMenu extends JFrame{
     JLayeredPane pane;
     static int scrollSpeed = 11;
     int width, height;
-    
-    Color lightGray = new Color(225,225,225);
-    Color darkGray = new Color(148,148,148);
 
     static Color darkGreen = new Color(23, 63, 31);
-    
-
-    boolean[] levelsUnlockedEasy = new boolean[5];
-    boolean[] levelsUnlockedHard = new boolean[5];
-    
 
     Color lightlightGreen = new Color(98,237,130);
     Color lightGreen = new Color(68,198,98);
@@ -314,13 +306,15 @@ public class LevelsMenu extends JFrame{
             //add(overlayPane);
             //overlayPane.setVisible(false);
             JLabel border = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/mapBorder.png"))));
-            border.setBounds(0,0,800,900);
+            border.setBounds(0,62,800,900);
             add(border);
+
             JLabel sea = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/water.png"))));
-            sea.setBounds(410,330,401,569);
+            sea.setBounds(410,330+80,401,569);
             add(sea);
+
             FilledBox bottomBack = new FilledBox(Color.white);
-            bottomBack.setBounds(0,890,800,110);
+            bottomBack.setBounds(0,0,800,110);
             add(bottomBack);
         } catch (Exception e) {}
         add(pane);

@@ -26,6 +26,11 @@ public class PolygonUtilities {
             this.xs = xs;
             this.hasStroke = hasStroke;
             this.ys = ys;
+            int yOffset = 45;
+            for (int i = 0; i < ys.length; i++) {
+                ys[i] += yOffset;
+            }
+            yOffset = 80;
             this.colorBase = colorBase;
             this.colorHighlight = colorHighlight;
             if(hasStroke){
@@ -36,19 +41,19 @@ public class PolygonUtilities {
                     overlay = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/"+ num + "overlay" + overlayColor + ".png"))));
                     switch(num){
                         case 0:
-                            overlay.setBounds(572,2,240,370);
+                            overlay.setBounds(572,2 + yOffset,240,370);
                             break;
                         case 1:
-                            overlay.setBounds(121, -2, 505, 420);
+                            overlay.setBounds(121, -2 + yOffset, 505, 420);
                             break;
                         case 2:
-                            overlay.setBounds(0,34,480,495);
+                            overlay.setBounds(0,34 + yOffset,480,495);
                             break;
                         case 3:
-                            overlay.setBounds(0,461,435,445);
+                            overlay.setBounds(0,461 + yOffset,435,445);
                             break;
                         case 4:
-                            overlay.setBounds(337,728,70,85);
+                            overlay.setBounds(337,728 + yOffset,70,85);
                             break;
                     }
                     add(overlay);
