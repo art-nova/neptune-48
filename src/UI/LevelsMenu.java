@@ -429,7 +429,9 @@ public class LevelsMenu extends JFrame{
                 }
             });
             
-
+            JLabel bonusesPlacement = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/bonusesPlacement.png"))));
+            bonusesPlacement.setBounds(189,21,370,104);
+            pane.add(bonusesPlacement);
             pane.add(normalButton);
             pane.add(hardButton);
         } catch (Exception ex) {}
@@ -439,6 +441,8 @@ public class LevelsMenu extends JFrame{
         return pane;
     }
 
+
+    //TODO
     //level info panel with star and obstacles descriptions
     public static JLayeredPane starsPane(int num){
         JLayeredPane pane = new JLayeredPane();
