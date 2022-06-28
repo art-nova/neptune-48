@@ -25,8 +25,8 @@ public class LevelMenu extends JFrame{
     public LevelMenu() {
         super("Level");
         loadSettings();
-        this.width = 800;
-        this.height = 900;
+        this.width = 815;
+        this.height = 1000;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(width + 15, height + 15);
 

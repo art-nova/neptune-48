@@ -36,7 +36,7 @@ import data.PlayerData;
  */
 public class LevelsMenu extends JFrame{    
 
-    public JLayeredPane overlayPane;
+    public static JLayeredPane overlayPane;
     JLayeredPane pane;
     static int scrollSpeed = 11;
     int width, height;
@@ -336,6 +336,7 @@ public class LevelsMenu extends JFrame{
         
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setBackground(new Color(23,63,31));
         try {
             centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/stars.png")))));
             ///////TODO
@@ -370,6 +371,13 @@ public class LevelsMenu extends JFrame{
         FilledBox back = new FilledBox(new Color(0,0,0,103));
         back.setBounds(0,0,800,1000);
         pane.add(back);
+        back.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                pane.getParent().remove(overlayPane);
+                overlayPane = null;
+            }
+        });
         pane.setVisible(true);
         return pane;
     }

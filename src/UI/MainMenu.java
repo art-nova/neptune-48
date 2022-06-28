@@ -31,8 +31,8 @@ public class MainMenu extends JFrame{
     
     public MainMenu() {
         super("Menu");
-        this.width = 800;
-        this.height = 900;
+        this.width = 815;
+        this.height = 1000;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(width, height);
         
