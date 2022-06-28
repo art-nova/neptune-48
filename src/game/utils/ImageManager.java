@@ -38,21 +38,19 @@ public abstract class ImageManager {
     public static BufferedImage getScaledImage(BufferedImage image, int width, int height) {
         BufferedImage scaledImage = image;
         int tempWidth = image.getWidth(), tempHeight = image.getHeight();
-        if (width < image.getWidth() || height <= image.getHeight()) {
-            do {
-                tempWidth /= 2;
-                tempHeight /= 2;
-                if (tempWidth < width) tempWidth = width;
-                if (tempHeight < height) tempHeight = height;
-                BufferedImage tmp = new BufferedImage(tempWidth, tempHeight, image.getType());
-                Graphics2D g2d = (Graphics2D) tmp.getGraphics();
-                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                g2d.drawImage(scaledImage, 0, 0, tempWidth, tempHeight, null);
-                g2d.dispose();
+        do {
+            tempWidth /= 2;
+            tempHeight /= 2;
+            if (tempWidth < width) tempWidth = width;
+            if (tempHeight < height) tempHeight = height;
+            BufferedImage tmp = new BufferedImage(tempWidth, tempHeight, image.getType());
+            Graphics2D g2d = (Graphics2D) tmp.getGraphics();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.drawImage(scaledImage, 0, 0, tempWidth, tempHeight, null);
+            g2d.dispose();
 
-                scaledImage = tmp;
-            } while (tempWidth != width || tempHeight != height);
-        }
+            scaledImage = tmp;
+        } while (tempWidth != width || tempHeight != height);
         return scaledImage;
     }
 

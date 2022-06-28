@@ -71,7 +71,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.gameMode = levelData.getGameMode();
         this.particleManager = new ParticleManager(this);
         this.entity = new Entity(0, 0, levelData.getEntityHealth(), levelData.getEntityTolerance(), this);
-        this.board = new Board(0, graphics.getEntityHeight() + graphics.getEntityBoardDistance(), levelData.getBoardSize(), levelData.getBoardSize(), 1, this);
+        this.board = new Board(0, GamePanelGraphics.ENTITY_HEIGHT + GamePanelGraphics.ENTITY_BOARD_DISTANCE, levelData.getBoardSize(), levelData.getBoardSize(), 1, this);
         this.countdown = new Countdown(levelData.getTurns(), this);
         this.obstacleManager = new ObstacleManager(levelData.getObstacleWeights(), levelData.getMinObstacleInterval(), levelData.getMaxObstacleInterval(), this);
         this.abilityManager = new AbilityManager(playerData.getActiveAbility1(), playerData.getActiveAbility2(), playerData.getPassiveAbility(), this);
@@ -79,8 +79,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.addMouseListener(new MouseHandler(this));
         this.setDoubleBuffered(true);
         this.setFocusable(true);
-        this.setPreferredSize(new Dimension(graphics.getEntityWidth(), board.getPreferredHeight() + graphics.getEntityBoardDistance() + graphics.getEntityHeight()));
-        board.setX((graphics.getEntityWidth() - board.getPreferredWidth())/2f);
+        this.setPreferredSize(new Dimension(GamePanelGraphics.ENTITY_WIDTH, board.getPreferredHeight() + GamePanelGraphics.ENTITY_BOARD_DISTANCE + GamePanelGraphics.ENTITY_HEIGHT));
+        board.setX((GamePanelGraphics.ENTITY_WIDTH - board.getPreferredWidth())/2f);
 
         // Tracking level 11 tiles and starting an attack with one as soon as it appears.
         board.addTurnListener(() -> {

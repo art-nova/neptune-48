@@ -34,8 +34,8 @@ public class Attack extends ActiveAbility {
         this.board = gp.getBoard();
         this.entity = gp.getEntity();
         GamePanelGraphics graphics = gp.getGameGraphics();
-        int targetX = (int)(gp.getEntity().getX() + (graphics.getEntityWidth() - graphics.getTileSize())/2f);
-        int targetY = (int)(gp.getEntity().getY() + (graphics.getEntityHeight() - graphics.getTileSize())/2f);
+        int targetX = (int)(gp.getEntity().getX() + (GamePanelGraphics.ENTITY_WIDTH - graphics.getTileSize())/2f);
+        int targetY = (int)(gp.getEntity().getY() + (GamePanelGraphics.ENTITY_HEIGHT - graphics.getTileSize())/2f);
         targetPoint = new Point(targetX, targetY);
     }
 

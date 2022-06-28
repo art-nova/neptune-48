@@ -18,18 +18,16 @@ public class GamePanelGraphics extends ImageManager {
 
     // How many frames a single animation takes (1 second == 60 frames)
     public static final int ANIMATION_CYCLE = 10;
+
+    // Entity (one being attacked / repaired)
+    public static final int ENTITY_WIDTH = 500;
+    public static final int ENTITY_HEIGHT = 200;
+    public static final int ENTITY_BOARD_DISTANCE = 20;
     
     // Board
     private final int tileSize;
     private final int tileOffset;
     private final int tilePulseOffset;
-
-    // Entity (one being attacked / repaired)
-    private final int entityWidth;
-    private final int entityHeight;
-
-    // General
-    private final int entityBoardDistance;
 
     private final HashMap<String, Color> palette = new HashMap<>();
 
@@ -68,9 +66,6 @@ public class GamePanelGraphics extends ImageManager {
         this.tileSize = tileSize;
         this.tileOffset = tileOffset;
         tilePulseOffset = tileOffset / 2;
-        entityWidth = tileSize * 5 + tileOffset * 6;
-        entityHeight = tileSize * 2;
-        entityBoardDistance = tileSize / 5;
 
         // Loading
         loadBoard(boardRows, boardCols, gameMode);
@@ -123,7 +118,7 @@ public class GamePanelGraphics extends ImageManager {
     }
 
     private void loadEntity(int entityIndex) throws IOException {
-        BufferedImage entity = getScaledImage(getImage("resources/images/entities/entity" + entityIndex + ".png"), entityWidth, entityHeight);
+        BufferedImage entity = getScaledImage(getImage("resources/images/entities/entity" + entityIndex + ".png"), ENTITY_WIDTH, ENTITY_HEIGHT);
         textures.put("entity", entity);
         textures.put("entityDamaged", addColorOverlay(entity, palette.get("damageOverlay")));
         textures.put("entityHealed", addColorOverlay(entity, palette.get("healOverlay")));
@@ -139,18 +134,6 @@ public class GamePanelGraphics extends ImageManager {
 
     public int getTilePulseOffset() {
         return tilePulseOffset;
-    }
-
-    public int getEntityWidth() {
-        return entityWidth;
-    }
-
-    public int getEntityHeight() {
-        return entityHeight;
-    }
-
-    public int getEntityBoardDistance() {
-        return entityBoardDistance;
     }
 
     public Font getFont() {
