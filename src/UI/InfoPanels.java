@@ -102,7 +102,7 @@ public class InfoPanels{
                 }
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    App.loadLevel();                   
+                    App.loadLevelFromLevels();                   
                 }
             });
             panel.add(image);

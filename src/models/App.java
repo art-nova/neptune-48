@@ -17,16 +17,28 @@ public class App {
         mainMenu  = new MainMenu();
     }
 
-    public static void loadLevelsMenu(){
-        levels = new LevelsMenu();
+    public static void loadMainMenuFromLevels() {
+        mainMenu = new MainMenu();
+        mainMenu.setLocation(levels.getLocation());
+        levels.dispose();
+    }
+
+    public static void loadLevelsMenuFromMain(){
+        levels = new LevelsMenu("app");
         levels.setLocation(mainMenu.getLocation());
         mainMenu.dispose();
     }
 
-    public static void loadLevel(){
+    public static void loadLevelFromLevels(){
         level = new LevelMenu();
         level.setLocation(levels.getLocation());
         levels.dispose();
+    }
+
+    public static void loadLevelsMenuFromLevels(String hardness){
+        var position = levels.getLocation();
+        levels = new LevelsMenu(hardness);
+        levels.setLocation(position);
     }
 
     public static LevelsMenu getLevelsMenu(){
