@@ -169,7 +169,7 @@ public class MainMenu extends JFrame{
                     try {
                         DataManager.newPlayerData();
                     } catch (Exception ex) {}
-                    models.App.loadLevelsMenu();
+                    models.App.loadLevelsMenuFromMain();
                 }
             });
             buttonLayerNew.addMouseMotionListener(moveAdapter);
@@ -234,7 +234,7 @@ public class MainMenu extends JFrame{
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if(enabled){
-                        models.App.loadLevelsMenu();
+                        models.App.loadLevelsMenuFromMain();
                     }
                 }
             });

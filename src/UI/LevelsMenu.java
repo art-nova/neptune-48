@@ -58,23 +58,28 @@ public class LevelsMenu extends JFrame{
         return this;
     }
 
-    private void getCurrentPlayMode() {
-        try {
-            PlayerData playerData = DataManager.loadPlayerData();  
-            if(playerData.isLevelUnlocked(new LevelIdentifier("hard", 0))){
-                playMode = "hard";
-            }
-            else{
+    private void getCurrentPlayMode(String hardness) {
+        if(hardness.equals("hard") || hardness.equals("normal")){
+            playMode = hardness;
+        }
+        else{
+            try {
+                PlayerData playerData = DataManager.loadPlayerData();  
+                if(playerData.isLevelUnlocked(new LevelIdentifier("hard", 0))){
+                    playMode = "hard";
+                }
+                else{
+                    playMode = "normal";
+                }
+            } catch (Exception e) {
                 playMode = "normal";
             }
-        } catch (Exception e) {
-            playMode = "normal";
         }
     }
    
-    public LevelsMenu() {
+    public LevelsMenu(String hardness) {
         super("Levels");
-        getCurrentPlayMode();
+        getCurrentPlayMode(hardness);
         this.width = 815;
         this.height = 1000;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -98,7 +103,7 @@ public class LevelsMenu extends JFrame{
                                 UI.PolygonUtilities.polygons[j].fadeOut();
                                 //pane.moveToFront(UI.PolygonUtilities.polygons[j]);
                             }
-                            if(pt.y < -155){
+                            if(pt.y < -145){
                             Polygon pol = UI.PolygonUtilities.polygons[UI.PolygonUtilities.getMostFrequent(UI.PolygonUtilities.getPolygons(pt.x, pt.y))];           
                             pol.fadeIn();
                             //System.out.println(UI.PolygonUtilities.getMostFrequent(UI.PolygonUtilities.getPolygons(pt.x, pt.y)));
@@ -289,7 +294,7 @@ public class LevelsMenu extends JFrame{
                     SwingUtilities.convertPointToScreen(pt, component);
                     int num = UI.PolygonUtilities.getMostFrequent(UI.PolygonUtilities.getPolygons(pt.x, pt.y));   
                     
-                    if(pt.y < -155){
+                    if(pt.y < -145){
                         PlayerData playerData = DataManager.loadPlayerData();  
                         if(playerData.isLevelUnlocked(new LevelIdentifier(playMode, num))){
                             overlayPane = LevelsMenu.starsPane(num);
@@ -327,7 +332,107 @@ public class LevelsMenu extends JFrame{
 
     public static JLayeredPane topPanel(){
         JLayeredPane pane = new JLayeredPane();
-        pane.setBounds(0,0,800,157);
+        pane.setBounds(0,0,800,145);
+        try {
+            ImageIcon back = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/back.png")));
+            ImageIcon backLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/backLight.png")));
+            JLabel backButton = new JLabel(back);
+            backButton.setBounds(33,13,122,112);
+            backButton.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseEntered(MouseEvent e){
+                    backButton.setIcon(backLight);
+                }
+                @Override
+                public void mouseExited(MouseEvent e){
+                    backButton.setIcon(back);
+                }
+                @Override
+                public void mouseClicked(MouseEvent e){
+                    App.loadMainMenuFromLevels();
+                }
+            });
+            pane.add(backButton);
+
+            PlayerData playerData = DataManager.loadPlayerData();  
+            boolean hardModeUnlocked = playerData.isLevelUnlocked(new LevelIdentifier("hard", 0));
+
+
+            ImageIcon normal = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/normal.png")));
+            ImageIcon normalLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/normalLight.png")));
+
+            ImageIcon hard = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/hard.png")));
+            ImageIcon hardLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/hardLight.png")));
+            ImageIcon hardDark = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/hardDark.png")));
+
+            JLabel normalButton = new JLabel(normal);
+            JLabel hardButton = new JLabel(hard);
+            normalButton.setBounds(583,14,202,53);
+            hardButton.setBounds(583,78,202,53);
+
+            if(playMode.equals("normal")){
+                normalButton.setIcon(normalLight);
+            }
+            if(hardModeUnlocked){
+                if(playMode.equals("hard")){
+                    hardButton.setIcon(hardLight);
+                }
+            }
+            else{
+                hardButton.setIcon(hardDark);
+            }
+            normalButton.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseEntered(MouseEvent e){
+                    if(playMode.equals("hard")){
+                        normalButton.setIcon(normalLight);
+                    }
+                }
+                @Override
+                public void mouseExited(MouseEvent e){
+                    if(playMode.equals("hard")){
+                        normalButton.setIcon(normal);
+                    }
+                }
+                @Override
+                public void mouseClicked(MouseEvent e){
+                    if(playMode.equals("hard")){
+                        App.loadLevelsMenuFromLevels("normal");
+                    }
+                }
+            });
+
+            hardButton.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseEntered(MouseEvent e){
+                    if(hardModeUnlocked){
+                        if(playMode.equals("normal")){
+                            hardButton.setIcon(hardLight);
+                        }
+                    }
+                }
+                @Override
+                public void mouseExited(MouseEvent e){
+                    if(hardModeUnlocked){
+                        if(playMode.equals("normal")){
+                            hardButton.setIcon(hard);
+                        }
+                    }
+                }
+                @Override
+                public void mouseClicked(MouseEvent e){
+                    if(hardModeUnlocked){
+                        if(playMode.equals("normal")){
+                            App.loadLevelsMenuFromLevels("hard");
+                        }
+                    }
+                }
+            });
+            
+
+            pane.add(normalButton);
+            pane.add(hardButton);
+        } catch (Exception ex) {}
         pane.setBackground(new Color(23,63,31));
         pane.setOpaque(true);
         pane.setVisible(true);
