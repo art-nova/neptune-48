@@ -6,6 +6,7 @@ import game.events.ObstacleEvent;
 import game.events.ObstacleListener;
 import game.events.UIDataListener;
 import game.utils.WeightedRandom;
+import misc.AudioManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ public class ObstacleManager implements UIDataHolder {
     private final List<ObstacleListener> obstacleListeners = new ArrayList<>();
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
     private final GamePanel gp;
+    private final AudioManager audioManager;
 
     private int turnsElapsed = 0;
     private Obstacle latestObstacle;
@@ -44,6 +46,7 @@ public class ObstacleManager implements UIDataHolder {
      */
     public ObstacleManager(Map<String, Integer> obstacleWeights, int minInterval, int maxInterval, GamePanel gp) {
         this.gp = gp;
+        this.audioManager = gp.getAudioManager();
         for (String nameID : obstacleWeights.keySet()) {
             Integer weight = obstacleWeights.get(nameID);
             this.obstacleWeights.put(registerObstacle(nameID), weight);
@@ -88,7 +91,11 @@ public class ObstacleManager implements UIDataHolder {
                 ObstacleEvent e = new ObstacleEvent(obstacle);
                 for (ObstacleListener listener : new ArrayList<>(obstacleListeners)) listener.onObstacleSelected(e);
                 latestObstacle = e.getObstacle();
-                if (latestObstacle != null) latestObstacle.startApplication();
+                if (latestObstacle != null) {
+                    latestObstacle.startApplication();
+                    audioManager.playSFX("obstacle");
+                }
+                else audioManager.playSFX("obstacleBlocked");
                 turnsElapsed = 0;
                 for (UIDataListener listener : uiDataListeners) listener.onUIDataChanged();
             }
