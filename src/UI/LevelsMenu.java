@@ -18,7 +18,8 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
-import UI.AbilityInfoPanel.Ability;
+import UI.AbilityInfoPanel.AbilityBar;
+import UI.LevelMenu.Ability;
 import UI.miscellaneous.FilledBox;
 
 import java.awt.Point;
@@ -53,7 +54,7 @@ public class LevelsMenu extends JFrame{
     Color redStroke = new Color(156,0,0);
     Color greenStroke = new Color(27,116,47);
     static String playMode;
-
+    static public TopPanel topPanel;
     public LevelsMenu levelMenu(){
         return this;
     }
@@ -287,7 +288,8 @@ public class LevelsMenu extends JFrame{
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    Component component = e.getComponent();
+                    if(overlayPane == null){
+                        Component component = e.getComponent();
                     Point pt = new Point();
                     pt.y -= e.getYOnScreen() + component.getLocation().y;
                     pt.x -= e.getXOnScreen() + component.getLocation().x; 
@@ -308,7 +310,7 @@ public class LevelsMenu extends JFrame{
                             }
                         }
                     }
-                    
+                    }                    
                 } catch (Exception ex) {}
             }
         });
@@ -323,26 +325,64 @@ public class LevelsMenu extends JFrame{
             JLabel sea = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/water.png"))));
             sea.setBounds(410,330+80,401,569);
             add(sea);
-
-            add(topPanel());
+            topPanel = new TopPanel();
+            add(topPanel);
         } catch (Exception e) {}
         add(pane);
         setVisible(true);
     }
 
-    public static JLayeredPane topPanel(){
-        JLayeredPane pane = new JLayeredPane();
-        pane.setBounds(0,0,800,145);
-        try {
-            ImageIcon back = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/back.png")));
-            ImageIcon backLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/backLight.png")));
-            JLabel backButton = new JLabel(back);
-            backButton.setBounds(33,13,122,112);
-            backButton.addMouseListener(new MouseAdapter(){
-                @Override
-                public void mouseEntered(MouseEvent e){
-                    backButton.setIcon(backLight);
+    public static class TopPanel extends JLayeredPane{
+
+        JLabel abilityFirst;
+        JLabel abilitySecond;
+        JLabel abilityThird;
+        public TopPanel(){
+            super();
+            setBounds(0,0,800,145);
+            try {
+                ImageIcon back = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/back.png")));
+                ImageIcon backLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/backLight.png")));
+                JLabel backButton = new JLabel(back);
+                backButton.setBounds(33,13,122,112);
+                backButton.addMouseListener(new MouseAdapter(){
+                    @Override
+                    public void mouseEntered(MouseEvent e){
+                        backButton.setIcon(backLight);
+                    }
+                    @Override
+                    public void mouseExited(MouseEvent e){
+                        backButton.setIcon(back);
+                    }
+                    @Override
+                    public void mouseClicked(MouseEvent e){
+                        App.loadMainMenuFromLevels();
+                    }
+                });
+                add(backButton);
+
+                PlayerData playerData = DataManager.loadPlayerData();  
+                boolean hardModeUnlocked = playerData.isLevelUnlocked(new LevelIdentifier("hard", 0));
+
+
+                ImageIcon normal = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/normal.png")));
+                ImageIcon normalLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/normalLight.png")));
+
+                ImageIcon hard = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/hard.png")));
+                ImageIcon hardLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/hardLight.png")));
+                ImageIcon hardDark = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/hardDark.png")));
+
+                JLabel normalButton = new JLabel(normal);
+                JLabel hardButton = new JLabel(hard);
+                normalButton.setBounds(583,14,202,53);
+                hardButton.setBounds(583,78,202,53);
+
+                if(playMode.equals("normal")){
+                    normalButton.setIcon(normalLight);
                 }
+<<<<<<< HEAD
+                if(hardModeUnlocked){
+=======
                 @Override
                 public void mouseExited(MouseEvent e){
                     backButton.setIcon(back);
@@ -385,61 +425,133 @@ public class LevelsMenu extends JFrame{
             normalButton.addMouseListener(new MouseAdapter(){
                 @Override
                 public void mouseEntered(MouseEvent e){
+>>>>>>> 43e224352e988d5562b64ec881ce97597ea78dd0
                     if(playMode.equals("hard")){
-                        normalButton.setIcon(normalLight);
+                        hardButton.setIcon(hardLight);
                     }
                 }
-                @Override
-                public void mouseExited(MouseEvent e){
-                    if(playMode.equals("hard")){
-                        normalButton.setIcon(normal);
-                    }
+                else{
+                    hardButton.setIcon(hardDark);
                 }
-                @Override
-                public void mouseClicked(MouseEvent e){
-                    if(playMode.equals("hard")){
-                        App.loadLevelsMenuFromLevels("normal");
+                normalButton.addMouseListener(new MouseAdapter(){
+                    @Override
+                    public void mouseEntered(MouseEvent e){
+                        if(playMode.equals("hard")){
+                            normalButton.setIcon(normalLight);
+                        }
                     }
-                }
-            });
+                    @Override
+                    public void mouseExited(MouseEvent e){
+                        if(playMode.equals("hard")){
+                            normalButton.setIcon(normal);
+                        }
+                    }
+                    @Override
+                    public void mouseClicked(MouseEvent e){
+                        if(playMode.equals("hard")){
+                            App.loadLevelsMenuFromLevels("normal");
+                        }
+                    }
+                });
 
-            hardButton.addMouseListener(new MouseAdapter(){
-                @Override
-                public void mouseEntered(MouseEvent e){
-                    if(hardModeUnlocked){
-                        if(playMode.equals("normal")){
-                            hardButton.setIcon(hardLight);
+                hardButton.addMouseListener(new MouseAdapter(){
+                    @Override
+                    public void mouseEntered(MouseEvent e){
+                        if(hardModeUnlocked){
+                            if(playMode.equals("normal")){
+                                hardButton.setIcon(hardLight);
+                            }
                         }
                     }
-                }
-                @Override
-                public void mouseExited(MouseEvent e){
-                    if(hardModeUnlocked){
-                        if(playMode.equals("normal")){
-                            hardButton.setIcon(hard);
+                    @Override
+                    public void mouseExited(MouseEvent e){
+                        if(hardModeUnlocked){
+                            if(playMode.equals("normal")){
+                                hardButton.setIcon(hard);
+                            }
                         }
                     }
-                }
-                @Override
-                public void mouseClicked(MouseEvent e){
-                    if(hardModeUnlocked){
-                        if(playMode.equals("normal")){
-                            App.loadLevelsMenuFromLevels("hard");
+                    @Override
+                    public void mouseClicked(MouseEvent e){
+                        if(hardModeUnlocked){
+                            if(playMode.equals("normal")){
+                                App.loadLevelsMenuFromLevels("hard");
+                            }
                         }
                     }
-                }
-            });
-            
-            JLabel abilitiesPlacement = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilitiesPlacement.png"))));
-            abilitiesPlacement.setBounds(189,21,370,104);
-            pane.add(abilitiesPlacement);
-            pane.add(normalButton);
-            pane.add(hardButton);
-        } catch (Exception ex) {}
-        pane.setBackground(new Color(23,63,31));
-        pane.setOpaque(true);
-        pane.setVisible(true);
-        return pane;
+                });
+                
+                JLabel abilitiesPlacement = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilitiesPlacement.png"))));
+                abilitiesPlacement.setBounds(189,21,370,104);
+                abilityFirst = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/level/attack.png")).getScaledInstance(106,106, Image.SCALE_SMOOTH)));
+                abilityFirst.setBounds(188,21,106,106);
+                add(abilityFirst);
+                abilityFirst.setVisible(false);
+                abilitySecond = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/level/attack.png")).getScaledInstance(106,106, Image.SCALE_SMOOTH)));
+                abilitySecond.setBounds(320,21,106,106);
+                add(abilitySecond);
+                abilitySecond.setVisible(false);
+                abilityThird = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/freeze.png")).getScaledInstance(110,110, Image.SCALE_SMOOTH)));
+                abilityThird.setBounds(450,18,110,110);
+                add(abilityThird);
+                abilityThird.setVisible(false);
+                add(abilitiesPlacement);
+                add(normalButton);
+                add(hardButton);
+
+                FilledBox abilitiesClickTrecker = new FilledBox(new Color(23,63,31));
+                abilitiesClickTrecker.setBounds(170,0,400,145);
+                abilitiesClickTrecker.addMouseListener(new MouseAdapter(){
+                    @Override
+                    public void mouseClicked(MouseEvent e){
+                        if(overlayPane == null){
+                            System.out.println("abilities");
+                            overlayPane = AbilityInfoPanel.getAbilitiesPanel();
+                            overlayPane.setVisible(true);
+                            //add(overlayPane);
+                            getParent().add(overlayPane,0);
+                            revalidate();
+                            repaint();  
+                        }
+                    }
+                });
+                add(abilitiesClickTrecker);
+            } catch (Exception ex) {}
+            init();
+            setBackground(new Color(23,63,31));
+            setOpaque(true);
+            setVisible(true);
+        }
+
+        private void init(){
+            //TODO read DATA
+        }
+
+        public void setAbility(int ability, ImageIcon icon){
+            if(ability == 1){
+                abilityFirst.setVisible(true);
+                abilityFirst.setIcon(new ImageIcon(icon.getImage().getScaledInstance(106,106, Image.SCALE_SMOOTH)));
+            }
+            else if(ability == 2){
+                abilitySecond.setVisible(true);
+                abilitySecond.setIcon(new ImageIcon(icon.getImage().getScaledInstance(106,106, Image.SCALE_SMOOTH)));
+            }
+            else if(ability == 3){
+                abilityThird.setVisible(true);
+                abilityThird.setIcon(new ImageIcon(icon.getImage().getScaledInstance(110,110, Image.SCALE_SMOOTH)));
+            }
+        }
+        public void removeAbility(int ability){
+            if(ability == 1){
+                abilityFirst.setVisible(false);
+            }
+            else if(ability == 2){
+                abilitySecond.setVisible(false);
+            }
+            else if(ability == 3){
+                abilityThird.setVisible(false);
+            }
+        }
     }
 
 
@@ -500,73 +612,6 @@ public class LevelsMenu extends JFrame{
         pane.setVisible(true);
         return pane;
     }
-    
-    public void setAbilitiesPane(){
-        pane.remove(overlayPane);
-        overlayPane = abilitiesPane();
-        pane.add(overlayPane,0);
-        overlayPane.moveToFront(pane);
-        revalidate();
-        repaint();
-    }
-    public static JLayeredPane abilitiesPane(){
-        JLayeredPane pane = new JLayeredPane();
-        pane.setBounds(0,0,800,1000);
-
-        AbilityInfoPanel abilityInfoPanel = new AbilityInfoPanel();
-        abilityInfoPanel.passive[0] = abilityInfoPanel.new Ability("betterBaseLevel", true);
-        abilityInfoPanel.passive[1] = abilityInfoPanel.new Ability("bonusDamage", true);
-        abilityInfoPanel.passive[2] = abilityInfoPanel.new Ability("bonusTime", true);
-        abilityInfoPanel.passive[3] = abilityInfoPanel.new Ability("cooldown", true);
-        abilityInfoPanel.passive[4] = abilityInfoPanel.new Ability("resistance", true);
-
-        abilityInfoPanel.active[0] = abilityInfoPanel.new Ability("crit", false);
-        abilityInfoPanel.active[1] = abilityInfoPanel.new Ability("dispose", false);
-        abilityInfoPanel.active[2] = abilityInfoPanel.new Ability("merge", false);
-        abilityInfoPanel.active[3] = abilityInfoPanel.new Ability("safeAttack", false);
-        abilityInfoPanel.active[4] = abilityInfoPanel.new Ability("scramble", false);
-        abilityInfoPanel.active[5] = abilityInfoPanel.new Ability("swap", false);
-        abilityInfoPanel.active[6] = abilityInfoPanel.new Ability("upgrade", false);
-
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        try {
-            for (Ability ability : abilityInfoPanel.passive) {
-                centerPanel.add(ability);
-            }
-            for (Ability ability : abilityInfoPanel.active) {
-                centerPanel.add(ability);
-            }
-            //centerPanel.add(UI.InfoPanels.buttonNext());
-        } catch (Exception e) {}
-        
-        
-        
-
-        JScrollPane scroll = new JScrollPane(centerPanel);
-        scroll.setBorder(BorderFactory.createEmptyBorder());
-        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scroll.setBounds(100,100,600,800);
-        scroll.getVerticalScrollBar().setUI(new CustomScrollBarUI());
-        scroll.getVerticalScrollBar().setUnitIncrement(scrollSpeed);
-
-        pane.add(scroll);
-        try {
-            JLabel image = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/panel.png"))));
-            image.setBounds(90,90,622,822);
-            pane.add(image);
-        } catch (Exception e) {System.out.println(e);}
-        FilledBox back = new FilledBox(new Color(0,0,0,103));
-        back.setBounds(0,0,800,1000);
-        pane.add(back);
-        pane.setVisible(true);
-        return pane;
-    }
-
-
-    
-
 
     static class CustomScrollBarUI extends BasicScrollBarUI {
 
