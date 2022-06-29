@@ -438,15 +438,15 @@ public class LevelsMenu extends JFrame{
                 
                 JLabel abilitiesPlacement = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilitiesPlacement.png"))));
                 abilitiesPlacement.setBounds(189,21,370,104);
-                abilityFirst = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/level/attack.png")).getScaledInstance(106,106, Image.SCALE_SMOOTH)));
+                abilityFirst = new JLabel();
                 abilityFirst.setBounds(188,21,106,106);
                 add(abilityFirst);
                 abilityFirst.setVisible(false);
-                abilitySecond = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/level/attack.png")).getScaledInstance(106,106, Image.SCALE_SMOOTH)));
+                abilitySecond = new JLabel();
                 abilitySecond.setBounds(320,21,106,106);
                 add(abilitySecond);
                 abilitySecond.setVisible(false);
-                abilityThird = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/freeze.png")).getScaledInstance(110,110, Image.SCALE_SMOOTH)));
+                abilityThird = new JLabel();
                 abilityThird.setBounds(450,18,110,110);
                 add(abilityThird);
                 abilityThird.setVisible(false);
