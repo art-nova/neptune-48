@@ -355,7 +355,8 @@ public class LevelsMenu extends JFrame{
             pane.add(backButton);
 
             PlayerData playerData = DataManager.loadPlayerData();  
-            boolean hardModeUnlocked = playerData.isLevelUnlocked(new LevelIdentifier("hard", 0));
+            boolean hardModeUnlocked = playerData.isHardModeUnlocked();
+
 
 
             ImageIcon normal = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/normal.png")));
