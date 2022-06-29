@@ -380,52 +380,7 @@ public class LevelsMenu extends JFrame{
                 if(playMode.equals("normal")){
                     normalButton.setIcon(normalLight);
                 }
-<<<<<<< HEAD
                 if(hardModeUnlocked){
-=======
-                @Override
-                public void mouseExited(MouseEvent e){
-                    backButton.setIcon(back);
-                }
-                @Override
-                public void mouseClicked(MouseEvent e){
-                    App.loadMainMenuFromLevels();
-                }
-            });
-            pane.add(backButton);
-
-            PlayerData playerData = DataManager.loadPlayerData();  
-            boolean hardModeUnlocked = playerData.isHardModeUnlocked();
-
-
-
-            ImageIcon normal = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/normal.png")));
-            ImageIcon normalLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/normalLight.png")));
-
-            ImageIcon hard = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/hard.png")));
-            ImageIcon hardLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/hardLight.png")));
-            ImageIcon hardDark = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/hardDark.png")));
-
-            JLabel normalButton = new JLabel(normal);
-            JLabel hardButton = new JLabel(hard);
-            normalButton.setBounds(583,14,202,53);
-            hardButton.setBounds(583,78,202,53);
-
-            if(playMode.equals("normal")){
-                normalButton.setIcon(normalLight);
-            }
-            if(hardModeUnlocked){
-                if(playMode.equals("hard")){
-                    hardButton.setIcon(hardLight);
-                }
-            }
-            else{
-                hardButton.setIcon(hardDark);
-            }
-            normalButton.addMouseListener(new MouseAdapter(){
-                @Override
-                public void mouseEntered(MouseEvent e){
->>>>>>> 43e224352e988d5562b64ec881ce97597ea78dd0
                     if(playMode.equals("hard")){
                         hardButton.setIcon(hardLight);
                     }
