@@ -18,7 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
-import UI.BonusInfoPanel.Bonus;
+import UI.AbilityInfoPanel.Ability;
 import UI.miscellaneous.FilledBox;
 
 import java.awt.Point;
@@ -429,9 +429,9 @@ public class LevelsMenu extends JFrame{
                 }
             });
             
-            JLabel bonusesPlacement = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/bonusesPlacement.png"))));
-            bonusesPlacement.setBounds(189,21,370,104);
-            pane.add(bonusesPlacement);
+            JLabel abilitiesPlacement = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilitiesPlacement.png"))));
+            abilitiesPlacement.setBounds(189,21,370,104);
+            pane.add(abilitiesPlacement);
             pane.add(normalButton);
             pane.add(hardButton);
         } catch (Exception ex) {}
@@ -500,41 +500,41 @@ public class LevelsMenu extends JFrame{
         return pane;
     }
     
-    public void setBonusesPane(){
+    public void setAbilitiesPane(){
         pane.remove(overlayPane);
-        overlayPane = bonusesPane();
+        overlayPane = abilitiesPane();
         pane.add(overlayPane,0);
         overlayPane.moveToFront(pane);
         revalidate();
         repaint();
     }
-    public static JLayeredPane bonusesPane(){
+    public static JLayeredPane abilitiesPane(){
         JLayeredPane pane = new JLayeredPane();
         pane.setBounds(0,0,800,1000);
 
-        BonusInfoPanel bonusInfoPanel = new BonusInfoPanel();
-        bonusInfoPanel.passive[0] = bonusInfoPanel.new Bonus("betterBaseLevel", true);
-        bonusInfoPanel.passive[1] = bonusInfoPanel.new Bonus("bonusDamage", true);
-        bonusInfoPanel.passive[2] = bonusInfoPanel.new Bonus("bonusTime", true);
-        bonusInfoPanel.passive[3] = bonusInfoPanel.new Bonus("cooldown", true);
-        bonusInfoPanel.passive[4] = bonusInfoPanel.new Bonus("resistance", true);
+        AbilityInfoPanel abilityInfoPanel = new AbilityInfoPanel();
+        abilityInfoPanel.passive[0] = abilityInfoPanel.new Ability("betterBaseLevel", true);
+        abilityInfoPanel.passive[1] = abilityInfoPanel.new Ability("bonusDamage", true);
+        abilityInfoPanel.passive[2] = abilityInfoPanel.new Ability("bonusTime", true);
+        abilityInfoPanel.passive[3] = abilityInfoPanel.new Ability("cooldown", true);
+        abilityInfoPanel.passive[4] = abilityInfoPanel.new Ability("resistance", true);
 
-        bonusInfoPanel.active[0] = bonusInfoPanel.new Bonus("crit", false);
-        bonusInfoPanel.active[1] = bonusInfoPanel.new Bonus("dispose", false);
-        bonusInfoPanel.active[2] = bonusInfoPanel.new Bonus("merge", false);
-        bonusInfoPanel.active[3] = bonusInfoPanel.new Bonus("safeAttack", false);
-        bonusInfoPanel.active[4] = bonusInfoPanel.new Bonus("scramble", false);
-        bonusInfoPanel.active[5] = bonusInfoPanel.new Bonus("swap", false);
-        bonusInfoPanel.active[6] = bonusInfoPanel.new Bonus("upgrade", false);
+        abilityInfoPanel.active[0] = abilityInfoPanel.new Ability("crit", false);
+        abilityInfoPanel.active[1] = abilityInfoPanel.new Ability("dispose", false);
+        abilityInfoPanel.active[2] = abilityInfoPanel.new Ability("merge", false);
+        abilityInfoPanel.active[3] = abilityInfoPanel.new Ability("safeAttack", false);
+        abilityInfoPanel.active[4] = abilityInfoPanel.new Ability("scramble", false);
+        abilityInfoPanel.active[5] = abilityInfoPanel.new Ability("swap", false);
+        abilityInfoPanel.active[6] = abilityInfoPanel.new Ability("upgrade", false);
 
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         try {
-            for (Bonus bonus : bonusInfoPanel.passive) {
-                centerPanel.add(bonus);
+            for (Ability ability : abilityInfoPanel.passive) {
+                centerPanel.add(ability);
             }
-            for (Bonus bonus : bonusInfoPanel.active) {
-                centerPanel.add(bonus);
+            for (Ability ability : abilityInfoPanel.active) {
+                centerPanel.add(ability);
             }
             //centerPanel.add(UI.InfoPanels.buttonNext());
         } catch (Exception e) {}

@@ -10,8 +10,6 @@ import UI.miscellaneous.Utilities;
 import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -70,22 +68,22 @@ public class LevelMenu extends JFrame{
         board.setBounds(160,365,480,480);
         pane.add(board, 0);
 
-        Bonus bonus1 = new Bonus("level/attack.png", "a");
-        bonus1.setBounds(40,480,110,110);
-        pane.add(bonus1, 0);
+        Ability ability1 = new Ability("level/attack.png", "a");
+        ability1.setBounds(40,480,110,110);
+        pane.add(ability1, 0);
 
-        Bonus bonus2 = new Bonus("level/attack.png", "b");
-        bonus2.setBounds(40,625,110,110);
-        bonus2.setCover(14);
-        pane.add(bonus2, 0);
+        Ability ability2 = new Ability("level/attack.png", "b");
+        ability2.setBounds(40,625,110,110);
+        ability2.setCover(14);
+        pane.add(ability2, 0);
 
-        Bonus attack = new Bonus("level/attack.png", "attack");
+        Ability attack = new Ability("level/attack.png", "attack");
         attack.setBounds(655,480,110,110);
         pane.add(attack, 0);
 
-        JLabel passiveBonus = new  JLabel(getIcon("level/attack.png", 110, 110));
-        passiveBonus.setBounds(655,625,110,110);
-        pane.add(passiveBonus, 0);
+        JLabel passiveAbility = new  JLabel(getIcon("level/attack.png", 110, 110));
+        passiveAbility.setBounds(655,625,110,110);
+        pane.add(passiveAbility, 0);
 
 
 
@@ -125,7 +123,7 @@ public class LevelMenu extends JFrame{
         }
     }
 
-    class Bonus extends JLayeredPane{
+    class Ability extends JLayeredPane{
         String nameID;
         JLabel icon;
         JLabel highlight;
@@ -133,7 +131,7 @@ public class LevelMenu extends JFrame{
         JLabel coverNumber;
         int coverNum;
 
-        public Bonus(String path, String nameID){
+        public Ability(String path, String nameID){
             super();
             this.nameID = nameID;
             coverNum = 0;

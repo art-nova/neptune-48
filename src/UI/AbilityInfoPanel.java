@@ -6,29 +6,23 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
 
-import models.App;
-
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class BonusInfoPanel{
-    public Bonus[] passive = new Bonus[5];
-    public Bonus[] active = new Bonus[7];
+public class AbilityInfoPanel {
+    public Ability[] passive = new Ability[5];
+    public Ability[] active = new Ability[7];
 
 
-    public class Bonus extends JLayeredPane{
+    public class Ability extends JLayeredPane{
         ImageIcon light;
         ImageIcon normal;
         ImageIcon dark;
         JLabel image;
 
-        public Bonus(String title, boolean isPassive){
+        public Ability(String title, boolean isPassive){
             setPreferredSize(new Dimension(600,131));
             if(isPassive){
                 title = "passive/" + title;
@@ -37,9 +31,9 @@ public class BonusInfoPanel{
             }
 
             try {
-                light = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/bonuses/" + title + "Light.png")));
-                normal = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/bonuses/" + title + ".png")));
-                dark = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/bonuses/" + title + "Dark.png")));
+                light = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilities/" + title + "Light.png")));
+                normal = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilities/" + title + ".png")));
+                dark = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilities/" + title + "Dark.png")));
 
                 image = new JLabel(normal);
                 image.setVisible(true);
@@ -60,9 +54,9 @@ public class BonusInfoPanel{
                 //TODO
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    Bonus[] set = isPassive ? passive : active;
-                    for (Bonus bonus : set) {
-                        bonus.makeDark();
+                    Ability[] set = isPassive ? passive : active;
+                    for (Ability ability : set) {
+                        ability.makeDark();
                     }
                     makeLight();
                 }
