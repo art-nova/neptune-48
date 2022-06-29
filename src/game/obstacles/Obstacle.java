@@ -26,4 +26,9 @@ public abstract class Obstacle extends GameModifier {
         }
         return false;
     }
+
+    @Override
+    protected boolean determineApplicability() {
+         return gp.getState() != GamePanel.ENDING;
+    }
 }

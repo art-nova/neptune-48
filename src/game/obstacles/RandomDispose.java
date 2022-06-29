@@ -56,6 +56,6 @@ public class RandomDispose extends Obstacle {
             Tile tile = board.getTileInCell(x);
             return tile != null && tile.getLevel() > 0  && !tile.isLocked();
         });
-        return !lastCheckCells.isEmpty();
+        return super.determineApplicability() && !lastCheckCells.isEmpty();
     }
 }

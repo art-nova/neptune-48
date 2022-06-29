@@ -75,6 +75,6 @@ public class Freeze extends Obstacle {
             Tile tile = board.getTileInCell(x);
             return tile != null && !tile.isLocked();
         });
-        return !lastCheckCells.isEmpty();
+        return super.determineApplicability() && !lastCheckCells.isEmpty();
     }
 }

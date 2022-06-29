@@ -14,6 +14,7 @@ import java.util.List;
 public class Countdown implements UIDataHolder {
     public static final int IDLE = 0, TICKING = 1;
 
+    private final GamePanel gp;
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
 
     private int dedicatedTurns;
@@ -24,13 +25,12 @@ public class Countdown implements UIDataHolder {
      * Constructs a countdown from given turn number to zero.
      *
      * @param turns number of turns dedicated for the level
+     * @param gp base GamePanel
      */
     public Countdown(int turns, GamePanel gp) {
         this.dedicatedTurns = turns;
         this.turns = turns;
-        gp.getBoard().addTurnListener(() -> {
-            if (state == TICKING) offsetTurns(-1);
-        });
+        this.gp = gp;
     }
 
     /**
@@ -69,6 +69,10 @@ public class Countdown implements UIDataHolder {
      */
     public void start() {
         state = TICKING;
+        gp.getBoard().addTurnListener(() -> {
+            if (state == TICKING) offsetTurns(-1);
+            if (turns <= 0 && gp.getState() != GamePanel.ENDING) gp.loseLevel();
+        });
     }
 
     public void addUIDataListener(UIDataListener listener) {

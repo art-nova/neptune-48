@@ -84,23 +84,26 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Tracking level 11 tiles and starting an attack with one as soon as it appears.
         board.addTurnListener(() -> {
-            List<BoardCell> cells = board.getCellsByPredicate(x -> {
-                Tile tile = board.getTileInCell(x);
-                return tile != null && tile.getLevel() == 11;
-            });
-            if (!cells.isEmpty()) {
-                board.addStateListener(new StateListener() {
-                    @Override
-                    public void onStateChanged(int oldState, int newState) {
-                        if (oldState == Board.ANIMATING && newState == Board.IDLE) {
-                            // When there are actually no other scheduled animations left (if there are, they set board's state to ANIMATING).
-                            if (board.getState() == Board.IDLE) {
-                                board.removeStateListener(this);
-                                abilityManager.getAttack().startAttack(cells.get(0));
+            if (state != ENDING) {
+                List<BoardCell> cells = board.getCellsByPredicate(x -> {
+                    Tile tile = board.getTileInCell(x);
+                    return tile != null && tile.getLevel() == 11;
+                });
+                if (!cells.isEmpty()) {
+                    setState(ENDING);
+                    board.addStateListener(new StateListener() {
+                        @Override
+                        public void onStateChanged(int oldState, int newState) {
+                            if (oldState == Board.ANIMATING && newState == Board.IDLE) {
+                                // When there are actually no other scheduled animations left (if there are, they set board's state to ANIMATING).
+                                if (board.getState() == Board.IDLE) {
+                                    board.removeStateListener(this);
+                                    abilityManager.getAttack().startAttack(cells.get(0));
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
 
@@ -117,7 +120,6 @@ public class GamePanel extends JPanel implements Runnable {
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
-        countdown.addUIDataListener(() -> {if (countdown.getTurns() <= 0) loseLevel();});
         countdown.start();
 
         while (state != ENDED) {

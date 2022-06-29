@@ -56,6 +56,6 @@ public class Downgrade extends Obstacle{
             Tile tile = board.getTileInCell(x);
             return tile != null && tile.getLevel() > 1 && !tile.isLocked();
         });
-        return !lastCheckCells.isEmpty();
+        return super.determineApplicability() && !lastCheckCells.isEmpty();
     }
 }

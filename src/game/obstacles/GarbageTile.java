@@ -38,6 +38,6 @@ public class GarbageTile extends Obstacle {
     @Override
     protected boolean determineApplicability() {
         lastCheckCells = board.getCellsByPredicate(x -> board.getTileInCell(x) == null);
-        return !lastCheckCells.isEmpty();
+        return super.determineApplicability() && !lastCheckCells.isEmpty();
     }
 }

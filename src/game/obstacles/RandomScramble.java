@@ -88,6 +88,6 @@ public class RandomScramble extends Obstacle {
             Tile tile = board.getTileInCell(x);
             return tile != null && !tile.isLocked();
         });
-        return lastCheckCells.size() > 3;
+        return super.determineApplicability() && lastCheckCells.size() > 3;
     }
 }

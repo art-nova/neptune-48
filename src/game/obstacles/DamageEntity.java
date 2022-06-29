@@ -32,9 +32,4 @@ public class DamageEntity extends Obstacle {
         entity.takeDamage(damage);
         entity.animateDamage(damage);
     }
-
-    @Override
-    protected boolean determineApplicability() {
-        return true;
-    }
 }

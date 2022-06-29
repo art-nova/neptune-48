@@ -29,9 +29,4 @@ public class SubtractTurns extends Obstacle {
     public void startApplication() {
         countdown.offsetTurns(-turnsSubtracted);
     }
-
-    @Override
-    protected boolean determineApplicability() {
-        return true;
-    }
 }

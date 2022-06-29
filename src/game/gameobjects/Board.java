@@ -769,7 +769,7 @@ public class Board extends GameObject {
      * @return true if the player has no turns and false if they still do
      */
     private boolean checkForLoseCondition() {
-        if (tileCount == rows * cols) {
+        if (tileCount == rows * cols && gp.getState() != GamePanel.ENDING) {
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
                     if ((j < cols - 1 && board[i][j].getLevel() == board[i][j + 1].getLevel() && !board[i][j].isLocked() && !board[i][j + 1].isLocked()) ||

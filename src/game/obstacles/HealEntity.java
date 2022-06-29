@@ -33,6 +33,6 @@ public class HealEntity extends Obstacle {
 
     @Override
     protected boolean determineApplicability() {
-        return entity.getHealth() < entity.getMaxHealth();
+        return super.determineApplicability() && entity.getHealth() < entity.getMaxHealth();
     }
 }

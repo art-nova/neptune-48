@@ -61,6 +61,6 @@ public class RandomSwap extends Obstacle {
             Tile tile = board.getTileInCell(x);
             return tile != null && tile.getLevel() > 0  && !tile.isLocked();
         });
-        return lastCheckCells.size() > 1;
+        return super.determineApplicability() && lastCheckCells.size() > 1;
     }
 }
