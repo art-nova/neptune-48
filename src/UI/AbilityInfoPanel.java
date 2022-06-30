@@ -4,6 +4,8 @@ import java.io.File;
 import java.awt.*;
 import UI.LevelsMenu.TopPanel;
 import UI.miscellaneous.*;
+import data.DataManager;
+import data.PlayerData;
 import models.App;
 
 import javax.imageio.ImageIO;
@@ -130,12 +132,14 @@ public class AbilityInfoPanel {
          */
         public String state;
         JLabel overlay;
-
+        String title;
        
 
 
         public AbilityBar(String title, boolean isPassive){
             String folder;
+            this.title = title;
+            init();
             setPreferredSize(new Dimension(600,131));
             if(isPassive){
                 title = "passive/" + title;
@@ -187,6 +191,15 @@ public class AbilityInfoPanel {
                 }
             });
         }
+        void init(){
+            try {
+                PlayerData playerData = DataManager.loadPlayerData();
+                playerData.isAbilityUnlocked(title);
+            } catch (Exception e) {}
+            
+
+            state = "";
+        }
 
         public void makeLight(){
             image.setIcon(light);
@@ -210,6 +223,18 @@ public class AbilityInfoPanel {
             state = "chosen";
             overlay.setIcon(checked);
             makeLight();
+        }
+
+        public void makeByState(){
+            if(state.equals("unavailable")){
+                makeDark();
+            }else if(state.equals("selectable")){
+                makeNormal();
+            }else if(state.equals("chosen")){
+                makeChecked();
+            }else if(state.equals("locked")){
+                makeLock();
+            }
         }
     }
 
