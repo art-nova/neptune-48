@@ -3,6 +3,7 @@ import java.awt.Dimension;
 
 import java.awt.Color;
 import javax.swing.JFrame;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.*;
 
 import UI.miscellaneous.FilledBox;
@@ -19,6 +20,42 @@ public class LevelMenu extends JFrame{
     Color lightGreen = new Color(42,113,56);
     int width, height;
     JLayeredPane pane;
+    JLabel turnsLeftCounter;
+    static Healthbar healthBar;
+
+
+
+    void init(){
+        setHealthbarMaxValue(1000);
+        setHealthbarValue(500);
+        setTurnsLeft(125);
+    }
+
+
+    /**
+     * Sets max malue of the healthbar
+     * @param maxValue
+     */
+    public static void setHealthbarMaxValue(int maxValue){
+        healthBar.setMaxValue(maxValue);
+        healthBar.setVisible(true);
+    }
+
+    /**
+     * Sets the value of the healthbar
+     * @param value
+     */
+    public static void setHealthbarValue(int value){
+        healthBar.setValue(value);
+    }
+
+    /**
+     * Sets the value of the turns left counter
+     * @param value
+     */
+    public void setTurnsLeft(int value){
+        turnsLeftCounter.setText(String.valueOf(value));
+    }
     
     public LevelMenu() {
         super("Level");
@@ -48,13 +85,20 @@ public class LevelMenu extends JFrame{
         countdownBack.setBounds(660,12,125,55);
         pane.add(countdownBack, 0);
 
+        turnsLeftCounter = new JLabel("999");
+        turnsLeftCounter.setHorizontalAlignment(SwingConstants.CENTER);
+        turnsLeftCounter.setForeground(new Color(23,62,31));
+        turnsLeftCounter.setFont(new java.awt.Font("Lexend Deca", 0, 60));
+        turnsLeftCounter.setBounds(668,14,106,47);
+        pane.add(turnsLeftCounter, 0);
+
         FilledBox healhBarBack = new FilledBox(lightGreen);
         healhBarBack.setBounds(160,12,480,55);
         pane.add(healhBarBack, 0);
 
-        Healthbar healthBar = new Healthbar(1000);
-        healthBar.setValue(400);
-        pane.add(healthBar, 0);
+        healthBar = new Healthbar(1000);
+        healthBar.setValue(100);
+        pane.add(healthBar, Integer.valueOf(100));
 
         FilledBox enemy = new FilledBox(Utilities.randomColor());
         enemy.setBounds(160,125,480,200);
@@ -91,24 +135,46 @@ public class LevelMenu extends JFrame{
         revalidate();
         repaint();
         setVisible(true);
+        init();
     }
 
     private void loadSettings() {
         // TODO Auto-generated method stub
     }
 
-    class Healthbar extends JPanel{
-
+    static class Healthbar extends JPanel{
+        static int width;
         Color color = new Color(240,54,42);
         int maxValue, value;
+        JLabel healthLeft;
+        FilledBox healthBack;
+
         public Healthbar(int maxValue){
             super();
             this.maxValue = maxValue;
             this.value = maxValue;
             setBounds(167,19,466,41);
-            setBackground(color);
+            setLayout(null);
+            setBackground(new Color(23,62,31));
+            healthBack = new FilledBox(color);
+            healthBack.setBounds(0,0,466,41);
+            healthLeft = new JLabel("" + maxValue);
+            healthLeft.setBounds(15,-5,232,48);
+            healthLeft.setForeground(new Color(240,248,217));
+            healthLeft.setFont(new java.awt.Font("Lexend Deca", 0, 40));
+            add(healthLeft);
+            add(healthBack);
+           
         }
 
+        public void setMaxValue(int value){
+            this.maxValue = value;
+        }
+
+        /**
+         * Sets the value of the healthbar
+         * @param value
+         */
         public void setValue(int value){
             if(value < 0 || value > maxValue){
                 throw new IllegalArgumentException("LevelMenu -> HealthBar -> setValue value must be between 0 and maxValue (" + maxValue + ")");
@@ -119,7 +185,8 @@ public class LevelMenu extends JFrame{
 
         private void resetWidth(){
             width = (int)((double)value / maxValue * 466);
-            setBounds(167,19,width,41);
+            healthBack.setBounds(0,0,width,41);
+            healthLeft.setText("" + value);
         }
     }
 
