@@ -334,9 +334,9 @@ public class LevelsMenu extends JFrame{
 
     public static class TopPanel extends JLayeredPane{
 
-        JLabel abilityFirst;
-        JLabel abilitySecond;
-        JLabel abilityThird;
+        public JLabel abilityFirst;
+        public JLabel abilitySecond;
+        public JLabel abilityThird;
         public TopPanel(){
             super();
             setBounds(0,0,800,145);
@@ -499,6 +499,11 @@ public class LevelsMenu extends JFrame{
         public void removeAbility(int ability){
             if(ability == 1){
                 abilityFirst.setVisible(false);
+                if(abilitySecond.isVisible()){
+                    abilityFirst.setIcon(abilitySecond.getIcon());
+                    abilitySecond.setVisible(false);
+                    abilityFirst.setVisible(true);
+                }
             }
             else if(ability == 2){
                 abilitySecond.setVisible(false);
