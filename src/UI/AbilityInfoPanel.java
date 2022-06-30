@@ -23,6 +23,8 @@ public class AbilityInfoPanel {
     public TopPanel topPanel = LevelsMenu.topPanel;
     public static JLayeredPane pane;
 
+    
+
     public static JLayeredPane getAbilitiesPanel(){
 
         pane = new JLayeredPane();
@@ -123,6 +125,7 @@ public class AbilityInfoPanel {
         ImageIcon dark;
         ImageIcon lock;
         ImageIcon checked;
+        ImageIcon iconForTopPanel;
         JLabel image;
         /*
          * unavailable
@@ -137,9 +140,19 @@ public class AbilityInfoPanel {
 
 
         public AbilityBar(String title, boolean isPassive){
+            try {
+                PlayerData playerData = DataManager.loadPlayerData();
+                for (String string : playerData.getUnlockedAbilities()) {
+                    System.out.println("unlocked2: " + string);
+                }
+            } catch (Exception e) {System.out.println(e);}
+
+
             String folder;
             this.title = title;
-            init();
+            try {     
+                iconForTopPanel = new ImageIcon(ImageIO.read(new File("resources/images/level/" + title + ".png")));
+            } catch (Exception ex) { }
             setPreferredSize(new Dimension(600,131));
             if(isPassive){
                 title = "passive/" + title;
@@ -156,7 +169,7 @@ public class AbilityInfoPanel {
 
                 lock = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilities/" + folder + "lock.png")).getScaledInstance(104, 104, Image.SCALE_SMOOTH));
                 checked = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilities/" + folder + "checkED.png")).getScaledInstance(104, 104, Image.SCALE_SMOOTH));
-
+                
                 overlay = new JLabel();
                 overlay.setBounds(26,14,104,104);
                 image = new JLabel(normal);
@@ -183,22 +196,54 @@ public class AbilityInfoPanel {
                 //TODO
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    AbilityBar[] set = isPassive ? passive : active;
-                    for (AbilityBar abilityBar : set) {
-                        abilityBar.makeDark();
+                    if(state.equals("selectable")){
+                        AbilityBar[] set = isPassive ? passive : active;
+                        if(isPassive){
+                            for (AbilityBar abilityBar : set) {
+                                if(abilityBar.state.equals("selectable")){
+                                    abilityBar.makeDark();
+                                    abilityBar.state = "unavailable";
+                                }
+                            }
+                            makeChecked();
+                            try {
+                                topPanel.setAbility(3, iconForTopPanel);
+                            } catch (Exception ex) {}
+                        }
+                    }else if(state.equals("chosen")){
+                        if(isPassive){
+                            state = "selectable";
+                            makeNormal();
+                            for (AbilityBar abilityBar : passive) {
+                                if(abilityBar.state.equals("unavailable")){
+                                    abilityBar.state = "selectable";
+                                    abilityBar.makeNormal();
+                                }
+                            }
+                            topPanel.removeAbility(3);
+                        }
                     }
-                    makeLight();
                 }
             });
+            init();
         }
         void init(){
             try {
                 PlayerData playerData = DataManager.loadPlayerData();
-                playerData.isAbilityUnlocked(title);
-            } catch (Exception e) {}
-            
-
-            state = "";
+                if(playerData.isAbilityUnlocked(title)){
+                    if(playerData.getActiveAbility1().equals(title) || playerData.getActiveAbility2().equals(title) || playerData.getPassiveAbility().equals(title)){
+                        state = "chosen";
+                    }
+                    else{
+                        state = "selectable";
+                    }
+                }
+                else{
+                    System.out.println("locked: " + title);
+                    state = "locked";
+                }
+                makeByState();
+            } catch (Exception e) {System.out.println(e);}
         }
 
         public void makeLight(){

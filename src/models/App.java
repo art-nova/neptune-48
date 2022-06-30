@@ -1,6 +1,8 @@
 package models;
 import UI.LevelsMenu;
 import UI.MainMenu;
+import data.DataManager;
+import data.PlayerData;
 import UI.LevelMenu;
 
 /**
@@ -14,6 +16,29 @@ public class App {
     private static LevelMenu level;
 
     public static void main(String[] args) {
+        try {
+            DataManager.newPlayerData();
+            PlayerData playerData = DataManager.loadPlayerData();
+            playerData.unlockAbility("bonusTime");
+            playerData.unlockAbility("resistance");
+            playerData.unlockAbility("betterBaseLevel");
+            playerData.unlockAbility("cooldownReduction");
+            playerData.unlockAbility("swap");
+            playerData.unlockAbility("merge");
+            playerData.unlockAbility("dispose");
+            playerData.unlockAbility("crit");
+            playerData.unlockAbility("safeAttack");
+            DataManager.savePlayerData(playerData);
+        } catch (Exception e) {
+            System.out.println("Error while loading player data:" + e);
+        }
+        
+        try {
+            PlayerData playerData = DataManager.loadPlayerData();
+            for (String string : playerData.getUnlockedAbilities()) {
+                System.out.println("unlocked1: " + string);
+            }
+        } catch (Exception e) {System.out.println(e);}
         mainMenu  = new MainMenu();
     }
 
