@@ -195,4 +195,8 @@ public class PlayerData implements Serializable {
         if (!unlockedAbilities.contains(passiveAbility)) throw new GameLogicException("Trying to select an ability that is not unlocked: " + activeAbility1);
         this.passiveAbility = passiveAbility;
     }
+
+    public void removePassiveAbility() {
+        passiveAbility = null;
+    }
 }

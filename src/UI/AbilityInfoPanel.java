@@ -95,10 +95,11 @@ public class AbilityInfoPanel {
         }
         if(fadePassive){
             for (AbilityBar abilityBar : passive) {
-                if(!abilityBar.state.equals("chosen")){
+                if(abilityBar.state.equals("selectable")){
                     abilityBar.state = "unavailable";
                     abilityBar.makeDark();
                 }
+                
             }
         }
     }
@@ -233,9 +234,9 @@ public class AbilityInfoPanel {
                             makeNormal();
                             try {
                                 PlayerData playerData = DataManager.loadPlayerData();
-                                playerData.setPassiveAbility(null);
+                                playerData.removePassiveAbility();
                                 DataManager.savePlayerData(playerData);
-                            } catch (Exception ex) {}
+                            } catch (Exception ex) {System.out.println(ex);}
                             for (AbilityBar abilityBar : passive) {
                                 if(abilityBar.state.equals("unavailable")){
                                     abilityBar.state = "selectable";
