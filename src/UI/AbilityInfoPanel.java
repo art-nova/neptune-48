@@ -18,8 +18,8 @@ import java.awt.event.MouseEvent;
 
 public class AbilityInfoPanel {
 
-    public AbilityBar[] passive = new AbilityBar[5];
-    public AbilityBar[] active = new AbilityBar[7];
+    public static AbilityBar[] passive = new AbilityBar[5];
+    public static AbilityBar[] active = new AbilityBar[7];
     public TopPanel topPanel = LevelsMenu.topPanel;
     public static JLayeredPane pane;
 
@@ -54,7 +54,7 @@ public class AbilityInfoPanel {
         abilityInfoPanel.active[5] = abilityInfoPanel.new AbilityBar("upgrade", false);
         abilityInfoPanel.active[6] = abilityInfoPanel.new AbilityBar("scramble", false);
         
-
+        revalidate();
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.add(saveButton());
@@ -83,6 +83,24 @@ public class AbilityInfoPanel {
         pane.add(scroll, new Integer(3));
         pane.setVisible(true);
         return pane;
+    }
+
+    static void revalidate(){
+        boolean fadePassive = false;
+        for (AbilityBar abilityBar : passive) {
+            if(abilityBar.state.equals("chosen")){
+                fadePassive = true;
+                break;
+            }
+        }
+        if(fadePassive){
+            for (AbilityBar abilityBar : passive) {
+                if(!abilityBar.state.equals("chosen")){
+                    abilityBar.state = "unavailable";
+                    abilityBar.makeDark();
+                }
+            }
+        }
     }
 
     public static JLayeredPane saveButton(){
@@ -140,16 +158,9 @@ public class AbilityInfoPanel {
 
 
         public AbilityBar(String title, boolean isPassive){
-            try {
-                PlayerData playerData = DataManager.loadPlayerData();
-                for (String string : playerData.getUnlockedAbilities()) {
-                    System.out.println("unlocked2: " + string);
-                }
-            } catch (Exception e) {System.out.println(e);}
-
-
             String folder;
             this.title = title;
+            String nameID = title;
             try {     
                 iconForTopPanel = new ImageIcon(ImageIO.read(new File("resources/images/level/" + title + ".png")));
             } catch (Exception ex) { }
@@ -207,6 +218,12 @@ public class AbilityInfoPanel {
                             }
                             makeChecked();
                             try {
+                                PlayerData playerData = DataManager.loadPlayerData();
+                                playerData.setPassiveAbility(nameID);
+                                DataManager.savePlayerData(playerData);
+                            } catch (Exception ex) {}
+                            
+                            try {
                                 topPanel.setAbility(3, iconForTopPanel);
                             } catch (Exception ex) {}
                         }
@@ -214,6 +231,11 @@ public class AbilityInfoPanel {
                         if(isPassive){
                             state = "selectable";
                             makeNormal();
+                            try {
+                                PlayerData playerData = DataManager.loadPlayerData();
+                                playerData.setPassiveAbility(null);
+                                DataManager.savePlayerData(playerData);
+                            } catch (Exception ex) {}
                             for (AbilityBar abilityBar : passive) {
                                 if(abilityBar.state.equals("unavailable")){
                                     abilityBar.state = "selectable";
@@ -231,7 +253,21 @@ public class AbilityInfoPanel {
             try {
                 PlayerData playerData = DataManager.loadPlayerData();
                 if(playerData.isAbilityUnlocked(title)){
-                    if(playerData.getActiveAbility1().equals(title) || playerData.getActiveAbility2().equals(title) || playerData.getPassiveAbility().equals(title)){
+                    String ab1 = "";
+                    String ab2 = "";
+                    String ab3 = "";
+                    try {
+                        if(playerData.getActiveAbility1() != null){
+                            ab1 = playerData.getActiveAbility1();
+                        }
+                        if(playerData.getActiveAbility2() != null){
+                            ab2 = playerData.getActiveAbility2();
+                        }
+                        if(playerData.getPassiveAbility() != null){
+                            ab3 = playerData.getPassiveAbility();
+                        }
+                    } catch (Exception e) {}
+                    if(ab1.equals(title) || ab2.equals(title) || ab3.equals(title)){
                         state = "chosen";
                     }
                     else{
@@ -239,7 +275,6 @@ public class AbilityInfoPanel {
                     }
                 }
                 else{
-                    System.out.println("locked: " + title);
                     state = "locked";
                 }
                 makeByState();
@@ -256,6 +291,7 @@ public class AbilityInfoPanel {
 
         public void makeNormal(){
             image.setIcon(normal);
+            overlay.setIcon(null);
         }
 
         public void makeLock(){
