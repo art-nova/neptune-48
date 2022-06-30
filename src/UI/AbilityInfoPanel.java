@@ -130,6 +130,16 @@ public class AbilityInfoPanel {
             }
         }
         try {
+            if(DataManager.loadPlayerData().getActiveAbility1() != null){
+                for (AbilityBar abilityBar : active) {
+                    if(abilityBar.nameID.equals(DataManager.loadPlayerData().getActiveAbility1())){
+                        abilityBar.state = "chosen";
+                        abilityBar.makeByState();
+                    }
+                }
+            }
+        } catch (Exception e) { }
+        try {
             if(DataManager.loadPlayerData().getActiveAbility2() == null){
                 for (AbilityBar abilityBar : active) {
                     if(abilityBar.state.equals("unavailable")){
@@ -145,6 +155,16 @@ public class AbilityInfoPanel {
                     if(abilityBar.state.equals("unavailable")){
                         abilityBar.state = "selectable";
                         abilityBar.makeNormal();
+                    }
+                }
+            }
+        } catch (Exception e) { }
+        try {
+            if(DataManager.loadPlayerData().getPassiveAbility() != null){
+                for (AbilityBar abilityBar : passive) {
+                    if(abilityBar.nameID.equals(DataManager.loadPlayerData().getPassiveAbility())){
+                        abilityBar.state = "chosen";
+                        abilityBar.makeByState();
                     }
                 }
             }

@@ -470,6 +470,13 @@ public class LevelsMenu extends JFrame{
                             revalidate();
                             repaint();  
                         }
+                        else{
+                            overlayPane.setVisible(false);
+                            getParent().remove(overlayPane);
+                            overlayPane = null;
+                            revalidate();
+                            repaint();
+                        }
                     }
                 });
                 add(abilitiesClickTrecker);
