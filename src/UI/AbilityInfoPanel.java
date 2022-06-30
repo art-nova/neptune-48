@@ -10,6 +10,7 @@ import models.App;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.xml.crypto.Data;
 import javax.swing.*;
 
 import java.awt.Dimension;
@@ -22,7 +23,8 @@ public class AbilityInfoPanel {
     public static AbilityBar[] active = new AbilityBar[7];
     public TopPanel topPanel = LevelsMenu.topPanel;
     public static JLayeredPane pane;
-
+    static boolean fadeThird = false;
+    static boolean fadeSecond = false;
     
 
     public static JLayeredPane getAbilitiesPanel(){
@@ -40,29 +42,36 @@ public class AbilityInfoPanel {
 
         AbilityInfoPanel abilityInfoPanel = new AbilityInfoPanel();
 
-        abilityInfoPanel.passive[0] = abilityInfoPanel.new AbilityBar("bonusTime", true);
-        abilityInfoPanel.passive[1] = abilityInfoPanel.new AbilityBar("resistance", true);
-        abilityInfoPanel.passive[2] = abilityInfoPanel.new AbilityBar("betterBaseLevel", true);
-        abilityInfoPanel.passive[3] = abilityInfoPanel.new AbilityBar("cooldownReduction", true);
-        abilityInfoPanel.passive[4] = abilityInfoPanel.new AbilityBar("bonusDamage", true);
+        passive[0] = abilityInfoPanel.new AbilityBar("bonusTime", true);
+        passive[1] = abilityInfoPanel.new AbilityBar("resistance", true);
+        passive[2] = abilityInfoPanel.new AbilityBar("betterBaseLevel", true);
+        passive[3] = abilityInfoPanel.new AbilityBar("cooldownReduction", true);
+        passive[4] = abilityInfoPanel.new AbilityBar("bonusDamage", true);
         
-        abilityInfoPanel.active[0] = abilityInfoPanel.new AbilityBar("swap", false);
-        abilityInfoPanel.active[1] = abilityInfoPanel.new AbilityBar("crit", false);
-        abilityInfoPanel.active[2] = abilityInfoPanel.new AbilityBar("merge", false);
-        abilityInfoPanel.active[3] = abilityInfoPanel.new AbilityBar("dispose", false);
-        abilityInfoPanel.active[4] = abilityInfoPanel.new AbilityBar("safeAttack", false);
-        abilityInfoPanel.active[5] = abilityInfoPanel.new AbilityBar("upgrade", false);
-        abilityInfoPanel.active[6] = abilityInfoPanel.new AbilityBar("scramble", false);
+        active[0] = abilityInfoPanel.new AbilityBar("swap", false);
+        active[1] = abilityInfoPanel.new AbilityBar("crit", false);
+        active[2] = abilityInfoPanel.new AbilityBar("merge", false);
+        active[3] = abilityInfoPanel.new AbilityBar("dispose", false);
+        active[4] = abilityInfoPanel.new AbilityBar("safeAttack", false);
+        active[5] = abilityInfoPanel.new AbilityBar("upgrade", false);
+        active[6] = abilityInfoPanel.new AbilityBar("scramble", false);
         
         revalidate();
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.add(saveButton());
+        
         try {
-            for (AbilityBar ability : abilityInfoPanel.passive) {
+            JLabel passiveLabel = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/passive.png"))));  
+            passiveLabel.setPreferredSize(new Dimension(707,42));
+            centerPanel.add(passiveLabel);
+            for (AbilityBar ability : passive) {
                 centerPanel.add(ability);
             }
-            for (AbilityBar ability : abilityInfoPanel.active) {
+            JLabel activeLabel = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/active.png"))));
+            activeLabel.setPreferredSize(new Dimension(707,70));
+            centerPanel.add(activeLabel);
+            for (AbilityBar ability : active) {
                 centerPanel.add(ability);
             }
             //centerPanel.add(UI.InfoPanels.buttonNext());
@@ -82,7 +91,64 @@ public class AbilityInfoPanel {
 
         pane.add(scroll, new Integer(3));
         pane.setVisible(true);
+        secondInit();
         return pane;
+    }
+        
+
+    private static void secondInit() {
+        if(fadeThird){
+            for (AbilityBar abilityBar : passive) {
+                if(abilityBar.state.equals("selectable")){
+                    abilityBar.state = "unavailable";
+                    abilityBar.makeDark();
+                }
+            }
+        }
+        if(fadeSecond){
+            for (AbilityBar abilityBar : active) {
+                try {
+                    if(abilityBar.nameID.equals(DataManager.loadPlayerData().getActiveAbility1())){
+                        abilityBar.state = "chosen";
+                        abilityBar.makeByState();
+                    }
+                } catch (Exception e) {}
+            }
+            for (AbilityBar abilityBar : active) {
+                try {
+                    if(abilityBar.nameID.equals(DataManager.loadPlayerData().getActiveAbility2())){
+                        abilityBar.state = "chosen";
+                        abilityBar.makeByState();
+                    }
+                } catch (Exception e) {}
+            }
+            for (AbilityBar abilityBar : active) {
+                if(abilityBar.state.equals("selectable")){
+                    abilityBar.state = "unavailable";
+                    abilityBar.makeDark();
+                }
+            }
+        }
+        try {
+            if(DataManager.loadPlayerData().getActiveAbility2() == null){
+                for (AbilityBar abilityBar : active) {
+                    if(abilityBar.state.equals("unavailable")){
+                        abilityBar.state = "selectable";
+                        abilityBar.makeNormal();
+                    }
+                }
+            }
+        } catch (Exception e) { }
+        try {
+            if(DataManager.loadPlayerData().getPassiveAbility() == null){
+                for (AbilityBar abilityBar : passive) {
+                    if(abilityBar.state.equals("unavailable")){
+                        abilityBar.state = "selectable";
+                        abilityBar.makeNormal();
+                    }
+                }
+            }
+        } catch (Exception e) { }
     }
 
     static void revalidate(){
@@ -155,13 +221,13 @@ public class AbilityInfoPanel {
         public String state;
         JLabel overlay;
         String title;
-       
+        String nameID;
 
 
         public AbilityBar(String title, boolean isPassive){
             String folder;
             this.title = title;
-            String nameID = title;
+            nameID = title;
             try {     
                 iconForTopPanel = new ImageIcon(ImageIO.read(new File("resources/images/level/" + title + ".png")));
             } catch (Exception ex) { }
@@ -228,7 +294,34 @@ public class AbilityInfoPanel {
                                 topPanel.setAbility(3, iconForTopPanel);
                             } catch (Exception ex) {}
                         }
-                    }else if(state.equals("chosen")){
+                        else{//is active
+                            //is second
+                            if(topPanel.abilityFirst.isVisible()){
+                                for (AbilityBar abilityBar : set) {
+                                    if(abilityBar.state.equals("selectable")){
+                                        abilityBar.makeDark();
+                                        abilityBar.state = "unavailable";
+                                    }
+                                }
+                                makeChecked();
+                                try {
+                                    PlayerData playerData = DataManager.loadPlayerData();
+                                    playerData.setActiveAbility2(nameID);
+                                    DataManager.savePlayerData(playerData);
+                                } catch (Exception ex) {}
+                                topPanel.setAbility(2, iconForTopPanel);
+                            }
+                            else{//first chosen
+                                makeChecked();
+                                try {
+                                    PlayerData playerData = DataManager.loadPlayerData();
+                                    playerData.setActiveAbility1(nameID);
+                                    DataManager.savePlayerData(playerData);
+                                } catch (Exception ex) {}
+                                topPanel.setAbility(1, iconForTopPanel);
+                            }
+                        }
+                    }else if(state.equals("chosen")){//unchecking
                         if(isPassive){
                             state = "selectable";
                             makeNormal();
@@ -245,31 +338,89 @@ public class AbilityInfoPanel {
                             }
                             topPanel.removeAbility(3);
                         }
+                        else{
+                            //active, two chosen unchecking
+                            if(topPanel.abilitySecond.isVisible()){
+                                try {
+                                    state = "selectable";
+                                    makeNormal();
+                                    PlayerData playerData = DataManager.loadPlayerData();
+                                    boolean isFirst = nameID.equals(playerData.getActiveAbility1());
+
+                                    if(isFirst){                             
+                                        playerData.setActiveAbility1(playerData.getActiveAbility2());
+                                        playerData.removeActiveAbility2();
+                                        DataManager.savePlayerData(playerData);
+                                        for (AbilityBar abilityBar : active) {
+                                            if(abilityBar.state.equals("unavailable")){
+                                                abilityBar.state = "selectable";
+                                                abilityBar.makeNormal();
+                                            }
+                                        }
+                                        topPanel.removeAbility(1);
+                                    }
+                                    else{
+                                        for (AbilityBar abilityBar : active) {
+                                            if(abilityBar.state.equals("unavailable")){
+                                                abilityBar.state = "selectable";
+                                                abilityBar.makeNormal();
+                                            }
+                                        }
+                                        playerData.removeActiveAbility2();
+                                        DataManager.savePlayerData(playerData);
+                                        topPanel.removeAbility(2);
+                                    }
+
+                                } catch (Exception ex) {System.out.println("309: " + ex);}
+                            }
+                            else{//one chosen (this)
+                                state = "selectable";
+                                makeNormal();
+                                try {
+                                    PlayerData playerData = DataManager.loadPlayerData();
+                                    playerData.removeActiveAbility1();
+                                    DataManager.savePlayerData(playerData);
+                                } catch (Exception ex) {System.out.println(ex);}
+                                topPanel.removeAbility(1);
+                            }
+                        }
                     }
                 }
             });
             init();
         }
-        void init(){
+        public void init(){
             try {
                 PlayerData playerData = DataManager.loadPlayerData();
                 if(playerData.isAbilityUnlocked(title)){
                     String ab1 = "";
                     String ab2 = "";
                     String ab3 = "";
-                    try {
-                        if(playerData.getActiveAbility1() != null){
-                            ab1 = playerData.getActiveAbility1();
-                        }
-                        if(playerData.getActiveAbility2() != null){
-                            ab2 = playerData.getActiveAbility2();
-                        }
-                        if(playerData.getPassiveAbility() != null){
-                            ab3 = playerData.getPassiveAbility();
-                        }
-                    } catch (Exception e) {}
-                    if(ab1.equals(title) || ab2.equals(title) || ab3.equals(title)){
+                    if(playerData.getActiveAbility1() != null){
+                        ab1 = playerData.getActiveAbility1();
+                    }
+                    if(playerData.getActiveAbility2() != null){
+                        ab2 = playerData.getActiveAbility2();
+                    }
+                    if(playerData.getPassiveAbility() != null){
+                        ab3 = playerData.getPassiveAbility();
+                    }
+                    if(ab1.equals(title) ){
                         state = "chosen";
+                        makeChecked();
+                        topPanel.setAbility(1, iconForTopPanel);
+                    }
+                    if(ab2.equals(title)){
+                        state = "chosen";
+                        makeChecked();
+                        topPanel.setAbility(2, iconForTopPanel);
+                        fadeSecond = true;
+                        System.out.println(title + " " + state);
+                    }
+                    if (ab3.equals(title)){
+                        state = "chosen";
+                        topPanel.setAbility(3, iconForTopPanel);
+                        fadeThird = true;
                     }
                     else{
                         state = "selectable";
@@ -279,7 +430,7 @@ public class AbilityInfoPanel {
                     state = "locked";
                 }
                 makeByState();
-            } catch (Exception e) {System.out.println(e);}
+            } catch (Exception e) {System.out.println("376: " + e);}
         }
 
         public void makeLight(){

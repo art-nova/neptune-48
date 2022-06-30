@@ -39,7 +39,7 @@ import models.App;
 public class LevelsMenu extends JFrame{    
 
     public static JLayeredPane overlayPane;
-    JLayeredPane pane;
+    static JLayeredPane pane;
     static int scrollSpeed = 11;
     int width, height;
 
@@ -328,8 +328,10 @@ public class LevelsMenu extends JFrame{
             topPanel = new TopPanel();
             add(topPanel);
         } catch (Exception e) {}
+        init();
         add(pane);
         setVisible(true);
+        
     }
 
     public static class TopPanel extends JLayeredPane{
@@ -472,15 +474,11 @@ public class LevelsMenu extends JFrame{
                 });
                 add(abilitiesClickTrecker);
             } catch (Exception ex) {}
-            init();
             setBackground(new Color(23,63,31));
             setOpaque(true);
             setVisible(true);
         }
 
-        private void init(){
-            //TODO read DATA
-        }
 
         public void setAbility(int ability, ImageIcon icon){
             if(ability == 1){
@@ -488,8 +486,13 @@ public class LevelsMenu extends JFrame{
                 abilityFirst.setIcon(new ImageIcon(icon.getImage().getScaledInstance(106,106, Image.SCALE_SMOOTH)));
             }
             else if(ability == 2){
-                abilitySecond.setVisible(true);
-                abilitySecond.setIcon(new ImageIcon(icon.getImage().getScaledInstance(106,106, Image.SCALE_SMOOTH)));
+                if(!abilityFirst.isVisible()){
+                    setAbility(1, icon);
+                }
+                else{
+                    abilitySecond.setVisible(true);
+                    abilitySecond.setIcon(new ImageIcon(icon.getImage().getScaledInstance(106,106, Image.SCALE_SMOOTH)));
+                }
             }
             else if(ability == 3){
                 abilityThird.setVisible(true);
@@ -514,6 +517,20 @@ public class LevelsMenu extends JFrame{
         }
     }
 
+    private void init(){
+        try {
+            overlayPane = AbilityInfoPanel.getAbilitiesPanel();
+            overlayPane = null;
+            try {
+                if(DataManager.loadPlayerData().getActiveAbility2() != null){
+                    topPanel.setAbility(2, new ImageIcon(ImageIO.read(new File("resources/images/level/" + DataManager.loadPlayerData().getActiveAbility2() + ".png"))));
+                }
+
+            } catch (Exception e) {}
+        } catch (Exception e) {
+            System.out.println("error:" + e);
+        }
+    }
 
     //TODO
     //level info panel with star and obstacles descriptions
