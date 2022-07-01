@@ -167,7 +167,7 @@ public class MainMenu extends JFrame{
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     try {
-                        //DataManager.newPlayerData();//TODO
+                        DataManager.newPlayerData();
                     } catch (Exception ex) {}
                     models.App.loadLevelsMenuFromMain();
                 }

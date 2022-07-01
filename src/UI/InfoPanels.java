@@ -6,10 +6,15 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.SwingConstants;
 
+import data.DataManager;
+import data.LevelData;
 import data.LevelIdentifier;
+import data.PlayerData;
 import models.App;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -73,6 +78,90 @@ public class InfoPanels{
             panel.add(image);
             panel.add(imageLight);
         } catch (Exception e) {}
+        
+        return panel;
+    }
+
+    public static JLayeredPane starsPanel(LevelIdentifier levelIdentifier){
+        JLayeredPane panel = new JLayeredPane();
+
+        panel.setPreferredSize(new Dimension(600,290));
+        try {
+            LevelData levelData = DataManager.loadLevelData(levelIdentifier);
+            PlayerData playerData = DataManager.loadPlayerData();
+
+            ImageIcon starHollow = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/starHollow.png")));
+            ImageIcon starFull = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/starFull.png")));
+            JLabel star1 = new JLabel(starHollow);
+            star1.setBounds(37,16,170,162);
+            JLabel star2 = new JLabel(starHollow);
+            star2.setBounds(215,16,170,162);
+            JLabel star3 = new JLabel(starHollow);
+            star3.setBounds(394,16,170,162);
+
+            JLabel star2Text = new JLabel("null", SwingConstants.CENTER);   
+            star2Text.setForeground(new Color(23,63,31));
+            star2Text.setFont(new java.awt.Font("Lexend Deca", 0, 50));
+            star2Text.setBounds(254,57+16,93,53);
+            JLabel star3Text = new JLabel("null", SwingConstants.CENTER);
+            star3Text.setForeground(new Color(23,63,31));
+            star3Text.setFont(new java.awt.Font("Lexend Deca", 0, 50));
+            star3Text.setBounds(432,57+16,93,53);
+
+            JLabel overall = new JLabel("Всього ходів: " + levelData.getTurns());
+            overall.setForeground(new Color(56,151,74));
+            overall.setFont(new java.awt.Font("Exo 2", 1, 40));
+            overall.setBounds(36,190,435,47);
+            JLabel best;
+            try {
+                best = new JLabel("Найкращий результат: " + playerData.getLevelTurnsLeft(levelIdentifier));
+            } catch (Exception e) {
+                best = new JLabel("Найкращий результат: -");
+            }
+            best.setForeground(new Color(56,151,74));
+            best.setFont(new java.awt.Font("Exo 2", 1, 40));
+            best.setBounds(36,235,555,47);
+
+            switch(playerData.getLevelStars(levelIdentifier)){
+                case 0:
+                    star1.setIcon(starHollow);
+                    star2.setIcon(starHollow);
+                    star3.setIcon(starHollow);
+                    star2Text.setText("" + levelData.getTwoStarThreshold());
+                    star3Text.setText("" + levelData.getThreeStarThreshold());
+                    break;
+                case 1:
+                    star1.setIcon(starFull);
+                    star2.setIcon(starHollow);
+                    star3.setIcon(starHollow);
+                    star2Text.setText("" + levelData.getTwoStarThreshold());
+                    star3Text.setText("" + levelData.getThreeStarThreshold());
+                    break;
+                case 2:
+                    star1.setIcon(starFull);
+                    star2.setIcon(starFull);
+                    star3.setIcon(starHollow);
+                    star3Text.setText("" + levelData.getThreeStarThreshold());
+                    break;
+                case 3:
+                    star1.setIcon(starFull);
+                    star2.setIcon(starFull);
+                    star3.setIcon(starFull);
+                    break;
+            }
+            if(!star2Text.getText().equals("null")){
+                panel.add(star2Text);
+            }
+            if(!star3Text.getText().equals("null")){
+                panel.add(star3Text);
+            }
+            panel.add(overall);
+            panel.add(best);
+            panel.add(star1);
+            panel.add(star2);
+            panel.add(star3);
+            
+        } catch (Exception e) {System.out.println("InfoPanels Stars: " + e.getMessage());}
         
         return panel;
     }

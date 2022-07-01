@@ -299,7 +299,7 @@ public class LevelsMenu extends JFrame{
                     if(pt.y < -145){
                         PlayerData playerData = DataManager.loadPlayerData();  
                         if(playerData.isLevelUnlocked(new LevelIdentifier(playMode, num))){
-                            overlayPane = LevelsMenu.starsPane(num);
+                            overlayPane = LevelsMenu.starsPane(num, new LevelIdentifier(playMode, num));
                             overlayPane.setVisible(true);
                             //add(overlayPane);
                             pane.getParent().add(overlayPane,0);
@@ -541,7 +541,7 @@ public class LevelsMenu extends JFrame{
 
     //TODO
     //level info panel with star and obstacles descriptions
-    public static JLayeredPane starsPane(int num){
+    public static JLayeredPane starsPane(int num, LevelIdentifier levelIdentifier){
         JLayeredPane pane = new JLayeredPane();
         pane.setBounds(0,0,800,1000);
 
@@ -551,9 +551,7 @@ public class LevelsMenu extends JFrame{
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setBackground(new Color(23,63,31));
         try {
-            centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/stars.png")))));
-            ///////TODO
-            centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/filledStar.png")))));
+            centerPanel.add(InfoPanels.starsPanel(levelIdentifier));
             //////
             centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/obstacles.png")))));
 

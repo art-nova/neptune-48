@@ -112,7 +112,7 @@ public class PlayerData implements Serializable {
      * @return the stars earned, or 0 if the level was not completed yet
      */
     public int getLevelStars(LevelIdentifier level) {
-        if (!isLevelCompleted(level)) throw new GameLogicException("Trying to query results of an uncompleted level");
+        if (!isLevelCompleted(level)) return 0;
         return unlockedLevels.get(level.difficulty()).get(level.index()).stars();
     }
 
