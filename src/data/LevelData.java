@@ -69,11 +69,11 @@ public class LevelData implements Serializable {
         int tileSize;
         int tileOffset;
         if (levelIdentifier.difficulty().equals("normal")) {
-            tileSize = 94;
+            tileSize = 90;
             tileOffset = 5;
         }
         else {
-            tileSize = 115;
+            tileSize = 110;
             tileOffset = 8;
         }
         return new GamePanelGraphics(tileSize, tileOffset, getBoardSize(), getBoardSize(), gameMode, levelIdentifier.index());
