@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @author Artem Novak
  */
 public class CooldownReduction extends PassiveAbility {
-    public static int REDUCTION_PERCENTAGE = 30;
+    public static int REDUCTION_PERCENTAGE = 40;
 
     public CooldownReduction(GamePanel gp, AbilityManager abilityManager) {
         super(gp, abilityManager);

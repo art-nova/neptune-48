@@ -16,7 +16,7 @@ import java.util.function.Predicate;
  * @author Artem Novak
  */
 public class Merge extends ActiveAbility {
-    public static final int DEFAULT_COOLDOWN = 25;
+    public static final int DEFAULT_COOLDOWN = 15;
 
     public Merge(GamePanel gp, AbilityManager abilityManager) {
         super(gp, abilityManager, DEFAULT_COOLDOWN);

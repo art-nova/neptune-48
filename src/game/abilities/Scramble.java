@@ -16,7 +16,7 @@ import java.util.function.Predicate;
  * @author Artem Novak
  */
 public class Scramble extends ActiveAbility {
-    public static final int DEFAULT_COOLDOWN = 30;
+    public static final int DEFAULT_COOLDOWN = 10;
 
     private final Random random = new Random();
 
