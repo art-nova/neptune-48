@@ -85,7 +85,7 @@ public class InfoPanels{
     public static JLayeredPane starsPanel(LevelIdentifier levelIdentifier){
         JLayeredPane panel = new JLayeredPane();
 
-        panel.setPreferredSize(new Dimension(600,290));
+        panel.setPreferredSize(new Dimension(600,300));
         try {
             LevelData levelData = DataManager.loadLevelData(levelIdentifier);
             PlayerData playerData = DataManager.loadPlayerData();
@@ -106,7 +106,7 @@ public class InfoPanels{
             JLabel star3Text = new JLabel("null", SwingConstants.CENTER);
             star3Text.setForeground(new Color(23,63,31));
             star3Text.setFont(new java.awt.Font("Lexend Deca", 0, 50));
-            star3Text.setBounds(432,57+16,93,53);
+            star3Text.setBounds(433,57+16,93,53);
 
             JLabel overall = new JLabel("Всього ходів: " + levelData.getTurns());
             overall.setForeground(new Color(56,151,74));
