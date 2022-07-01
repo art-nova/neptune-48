@@ -3,17 +3,25 @@ import java.awt.Dimension;
 
 import java.awt.Color;
 import javax.swing.JFrame;
-import javax.swing.plaf.ColorUIResource;
 import javax.swing.*;
 
 import UI.miscellaneous.FilledBox;
-import UI.miscellaneous.Utilities;
+import data.DataManager;
+import data.LevelData;
+import data.LevelIdentifier;
+import data.PlayerData;
+import models.App;
+
 import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+
+/**
+ * @see models.App#getLevelMenu
+ */
 public class LevelMenu extends JFrame{
 
     Color darkGreen = new Color(23,62,31);
@@ -22,31 +30,58 @@ public class LevelMenu extends JFrame{
     JLayeredPane pane;
     JLabel turnsLeftCounter;
     static Healthbar healthBar;
+    static JLabel enemy;
+    /**
+     * Cover over JFrame
+     * @see #isVisible
+     */
+    static JLayeredPane cover;
 
+    static Ability activeAbility1;
+    static Ability activeAbility2;
+    static Ability attack;
+    static JLabel passiveAbility;
 
+//TODO
+    void init(LevelIdentifier levelIdentifier){
+        try {
+            PlayerData playerData = DataManager.loadPlayerData();
+            LevelData levelData = DataManager.loadLevelData(levelIdentifier);
+            setHealthbarMaxValue((int)levelData.getEntityHealth());
+            setHealthbarValue((int)levelData.getEntityHealth());
+            setTurnsLeft(levelData.getTurns());
 
-    void init(){
-        setHealthbarMaxValue(1000);
-        setHealthbarValue(500);
-        setTurnsLeft(125);
+            //TODO enemy's icon
+            setEnemyIcon("level/attack.png");
+
+            passiveAbility.setIcon(getIcon("level/coverPassive.png", 110,110));
+            if(playerData.getActiveAbility1() != null){
+                activeAbility1.setAbility("level/" + playerData.getActiveAbility1() + ".png", playerData.getActiveAbility1());
+            }
+            if(playerData.getActiveAbility2() != null){
+                activeAbility2.setAbility("level/" + playerData.getActiveAbility2() + ".png", playerData.getActiveAbility2());
+            }
+            if(playerData.getPassiveAbility() != null){
+                passiveAbility.setIcon(getIcon("level/" + playerData.getPassiveAbility() + ".png", 110,110));
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading level data: " + e.getMessage());
+        }
+        //TODO overlays
+        /*
+        cover = looseOverlay();
+        add(cover,0);
+        revalidate();
+        repaint();
+        */
     }
 
-
     /**
-     * Sets max malue of the healthbar
-     * @param maxValue
+     * Sets enemy's icon (480x200)
+     * @param location in "folder/image.png" format
      */
-    public static void setHealthbarMaxValue(int maxValue){
-        healthBar.setMaxValue(maxValue);
-        healthBar.setVisible(true);
-    }
-
-    /**
-     * Sets the value of the healthbar
-     * @param value
-     */
-    public static void setHealthbarValue(int value){
-        healthBar.setValue(value);
+    public void setEnemyIcon(String location){
+        enemy.setIcon(getIcon(location, 480,200));
     }
 
     /**
@@ -56,10 +91,25 @@ public class LevelMenu extends JFrame{
     public void setTurnsLeft(int value){
         turnsLeftCounter.setText(String.valueOf(value));
     }
+    /**
+     * Sets the value of the healthbar
+     * @param value
+     */
+    public static void setHealthbarValue(int value){
+        healthBar.setValue(value);
+    }
+
+    /**
+     * Sets max malue of the healthbar
+     * @param maxValue
+     */
+    public static void setHealthbarMaxValue(int maxValue){
+        healthBar.setMaxValue(maxValue);
+        healthBar.setVisible(true);
+    }
     
-    public LevelMenu() {
+    public LevelMenu(LevelIdentifier levelIdentifier) {
         super("Level");
-        loadSettings();
         this.width = 815;
         this.height = 1000;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -96,11 +146,10 @@ public class LevelMenu extends JFrame{
         healhBarBack.setBounds(160,12,480,55);
         pane.add(healhBarBack, 0);
 
-        healthBar = new Healthbar(1000);
-        healthBar.setValue(100);
+        healthBar = new Healthbar(350);
         pane.add(healthBar, Integer.valueOf(100));
 
-        FilledBox enemy = new FilledBox(Utilities.randomColor());
+        enemy = new JLabel();
         enemy.setBounds(160,125,480,200);
         pane.add(enemy, 0);
 
@@ -108,38 +157,33 @@ public class LevelMenu extends JFrame{
         boardBack.setBounds(25,458,755,300);
         pane.add(boardBack, 0);
 
-        FilledBox board = new FilledBox(Utilities.randomColor());
+        //TODO board
+        FilledBox board = new FilledBox(new Color(102,0,153));
         board.setBounds(160,365,480,480);
         pane.add(board, 0);
 
-        Ability ability1 = new Ability("level/attack.png", "a");
-        ability1.setBounds(40,480,110,110);
-        pane.add(ability1, 0);
 
-        Ability ability2 = new Ability("level/attack.png", "b");
-        ability2.setBounds(40,625,110,110);
-        ability2.setCover(14);
-        pane.add(ability2, 0);
+        activeAbility1 = new Ability("level/cover.png", "empty");
+        activeAbility1.setBounds(40,480,110,110);
+        pane.add(activeAbility1, 0);
 
-        Ability attack = new Ability("level/attack.png", "attack");
+        activeAbility2 = new Ability("level/cover.png", "empty");
+        activeAbility2.setBounds(40,625,110,110);
+        pane.add(activeAbility2, 0);
+
+        attack = new Ability("level/attack.png", "attack");
         attack.setBounds(655,480,110,110);
         pane.add(attack, 0);
 
-        JLabel passiveAbility = new  JLabel(getIcon("level/attack.png", 110, 110));
+        passiveAbility = new  JLabel(getIcon("level/attack.png", 110, 110));
         passiveAbility.setBounds(655,625,110,110);
         pane.add(passiveAbility, 0);
-
-
 
         add(pane);
         revalidate();
         repaint();
         setVisible(true);
-        init();
-    }
-
-    private void loadSettings() {
-        // TODO Auto-generated method stub
+        init(levelIdentifier);
     }
 
     static class Healthbar extends JPanel{
@@ -190,6 +234,9 @@ public class LevelMenu extends JFrame{
         }
     }
 
+    /**
+     * Active ability or attack button with cover and number over it
+     */
     class Ability extends JLayeredPane{
         String nameID;
         JLabel icon;
@@ -197,10 +244,12 @@ public class LevelMenu extends JFrame{
         JLabel cover;
         JLabel coverNumber;
         int coverNum;
+        boolean isEmpty;
 
-        public Ability(String path, String nameID){
+        public Ability(String path, String nameIDentifier){
             super();
-            this.nameID = nameID;
+            nameID = nameIDentifier;
+            isEmpty = nameID.equals("empty");
             coverNum = 0;
             icon = new JLabel(LevelMenu.getIcon(path, 110,110));
             icon.setBounds(0,0,110,110);
@@ -225,14 +274,17 @@ public class LevelMenu extends JFrame{
             icon.addMouseListener(new MouseAdapter(){
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    if(coverNum < 1)
+                    if(!isEmpty){
+                        if(coverNum < 1)
                         highlight.setVisible(true);
+                    }
                 }
             });
 
             highlight.addMouseListener(new MouseAdapter(){
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    //TODO  
                     System.out.println("clicked " + nameID);
                 }
                 @Override
@@ -242,13 +294,36 @@ public class LevelMenu extends JFrame{
             });
         }
 
+        /**
+         * Sets ability to not empty
+         * @param path in "folder/file.png" format
+         * @param nameID
+         */
+        public void setAbility(String path, String nameID){
+            isEmpty = nameID.equals("empty");
+            coverNum = 0;
+            this.nameID = nameID;
+            icon.setIcon(getIcon(path, 110,110));
+        }
+
+        /**
+         * Sets the cover of the ability
+         * @param num number on the cover
+         */
         public void setCover(int num){
             cover.setVisible(true);
             coverNumber.setVisible(true);
             coverNum = num;
             coverNumber.setText("" + coverNum);
         }
-
+        /**
+         * Removes the cover on the ability
+         */
+        public void removeCover(){
+            cover.setVisible(false);
+            coverNumber.setVisible(false);
+            coverNum = 0;
+        }
 
     }
 
@@ -261,6 +336,214 @@ public class LevelMenu extends JFrame{
             return new ImageIcon(ImageIO.read(new File("resources/images/" + location)).getScaledInstance(width, height, 16));
         } catch (Exception e) {System.err.println("LevelMenu -> getIcon("+location+") -> " + e.getMessage());}
         return null;
+    }
+
+
+    public static JLayeredPane pauseOverlay(){
+        JLayeredPane pane = new JLayeredPane();
+        try {
+            pane.setBounds(0,0,815,1000);
+            JPanel centerPanel = new JPanel();
+            centerPanel.setLayout(null);
+            centerPanel.setBackground(new Color(23,63,31));
+            centerPanel.setBounds(100,360,600,280);
+            
+            ImageIcon back = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenu.png")));
+            ImageIcon backLight = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenuLight.png")));
+            JLabel backButton = new JLabel(back);
+            backButton.setBounds(24,161,551,81);
+            backButton.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseEntered(MouseEvent e){
+                    backButton.setIcon(backLight);
+                }
+                @Override
+                public void mouseExited(MouseEvent e){
+                    backButton.setIcon(back);
+                }
+                @Override
+                public void mouseClicked(MouseEvent e){
+                    //TODO
+                    System.out.println("clicked back");
+                }
+            });
+
+            ImageIcon restart = new ImageIcon(ImageIO.read(new File("resources/images/level/restart.png")));
+            ImageIcon restartLight = new ImageIcon(ImageIO.read(new File("resources/images/level/restartLight.png")));
+            JLabel restartButton = new JLabel(restart);
+            restartButton.setBounds(24,38,551,81);
+            restartButton.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseEntered(MouseEvent e){
+                    restartButton.setIcon(restartLight);
+                }
+                @Override
+                public void mouseExited(MouseEvent e){
+                    restartButton.setIcon(restart);
+                }
+                @Override
+                public void mouseClicked(MouseEvent e){
+                    //TODO
+                    System.out.println("clicked restart");
+                }
+            });
+
+            centerPanel.add(restartButton);
+            centerPanel.add(backButton);
+            pane.add(centerPanel);
+            FilledBox outline = new FilledBox(new Color(42,113,56));
+            outline.setBounds(90,350,620,300);
+            pane.add(outline);
+
+            FilledBox backGroundDark = new FilledBox(new Color(0,0,0,103));
+            backGroundDark.setBounds(0,0,815,1000);
+            pane.add(backGroundDark);
+            backGroundDark.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    pane.getParent().remove(cover);
+                    cover = null;
+                    App.getLevelMenu().revalidate();
+                    App.getLevelMenu().repaint();
+                }
+            });
+            pane.setVisible(true);
+        } catch (Exception e) {System.err.println("LevelMenu -> pauseOverlay() -> " + e.getMessage());}
+        return pane;
+    }
+
+    public static JLayeredPane winOverlay(){
+        JLayeredPane pane = new JLayeredPane();
+        try {
+            pane.setBounds(0,0,815,1000);
+            JPanel centerPanel = new JPanel();
+            centerPanel.setLayout(null);
+            centerPanel.setBackground(new Color(23,63,31));
+            centerPanel.setBounds(100,160,600,680);
+            
+            ImageIcon back = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenu.png")));
+            ImageIcon backLight = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenuLight.png")));
+            JLabel backButton = new JLabel(back);
+            backButton.setBounds(24,611 - 35,551,81);
+            backButton.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseEntered(MouseEvent e){
+                    backButton.setIcon(backLight);
+                }
+                @Override
+                public void mouseExited(MouseEvent e){
+                    backButton.setIcon(back);
+                }
+                @Override
+                public void mouseClicked(MouseEvent e){
+                    //TODO
+                    System.out.println("clicked back");
+                }
+            });
+
+            ImageIcon restart = new ImageIcon(ImageIO.read(new File("resources/images/level/restart.png")));
+            ImageIcon restartLight = new ImageIcon(ImageIO.read(new File("resources/images/level/restartLight.png")));
+            JLabel restartButton = new JLabel(restart);
+            restartButton.setBounds(24,538- 50 - 20,551,81);
+            restartButton.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseEntered(MouseEvent e){
+                    restartButton.setIcon(restartLight);
+                }
+                @Override
+                public void mouseExited(MouseEvent e){
+                    restartButton.setIcon(restart);
+                }
+                @Override
+                public void mouseClicked(MouseEvent e){
+                    //TODO
+                    System.out.println("clicked restart");
+                }
+            });
+
+            centerPanel.add(restartButton);
+            centerPanel.add(backButton);
+            pane.add(centerPanel);
+            FilledBox outline = new FilledBox(new Color(42,113,56));
+            outline.setBounds(90,150,620,700);
+            pane.add(outline);
+
+            FilledBox backGroundDark = new FilledBox(new Color(0,0,0,103));
+            backGroundDark.setBounds(0,0,815,1000);
+            pane.add(backGroundDark);
+            pane.setVisible(true);
+        } catch (Exception e) {System.err.println("LevelMenu -> pauseOverlay() -> " + e.getMessage());}
+        return pane;
+    }
+
+    @Override
+    public String toString() {
+        return "LevelMenu:\n |" + activeAbility1.nameID + "|\n    |" + activeAbility2.nameID + "|\n   |" + attack.nameID + "|\n|"; 
+    }
+
+
+    public static JLayeredPane looseOverlay(){
+        JLayeredPane pane = new JLayeredPane();
+        try {
+            pane.setBounds(0,0,815,1000);
+            JPanel centerPanel = new JPanel();
+            centerPanel.setLayout(null);
+            centerPanel.setBackground(new Color(23,63,31));
+            centerPanel.setBounds(100,160,600,680);
+            
+            ImageIcon back = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenu.png")));
+            ImageIcon backLight = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenuLight.png")));
+            JLabel backButton = new JLabel(back);
+            backButton.setBounds(24,611 - 35,551,81);
+            backButton.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseEntered(MouseEvent e){
+                    backButton.setIcon(backLight);
+                }
+                @Override
+                public void mouseExited(MouseEvent e){
+                    backButton.setIcon(back);
+                }
+                @Override
+                public void mouseClicked(MouseEvent e){
+                    //TODO
+                    System.out.println("clicked back");
+                }
+            });
+
+            ImageIcon restart = new ImageIcon(ImageIO.read(new File("resources/images/level/restart.png")));
+            ImageIcon restartLight = new ImageIcon(ImageIO.read(new File("resources/images/level/restartLight.png")));
+            JLabel restartButton = new JLabel(restart);
+            restartButton.setBounds(24,538- 50 - 20,551,81);
+            restartButton.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseEntered(MouseEvent e){
+                    restartButton.setIcon(restartLight);
+                }
+                @Override
+                public void mouseExited(MouseEvent e){
+                    restartButton.setIcon(restart);
+                }
+                @Override
+                public void mouseClicked(MouseEvent e){
+                    //TODO
+                    System.out.println("clicked restart");
+                }
+            });
+
+            centerPanel.add(restartButton);
+            centerPanel.add(backButton);
+            pane.add(centerPanel);
+            FilledBox outline = new FilledBox(new Color(42,113,56));
+            outline.setBounds(90,150,620,700);
+            pane.add(outline);
+
+            FilledBox backGroundDark = new FilledBox(new Color(0,0,0,103));
+            backGroundDark.setBounds(0,0,815,1000);
+            pane.add(backGroundDark);
+            pane.setVisible(true);
+        } catch (Exception e) {System.err.println("LevelMenu -> pauseOverlay() -> " + e.getMessage());}
+        return pane;
     }
     
 }

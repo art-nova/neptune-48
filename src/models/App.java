@@ -2,6 +2,7 @@ package models;
 import UI.LevelsMenu;
 import UI.MainMenu;
 import data.DataManager;
+import data.LevelIdentifier;
 import data.PlayerData;
 import UI.LevelMenu;
 
@@ -47,8 +48,8 @@ public class App {
         mainMenu.dispose();
     }
 
-    public static void loadLevelFromLevels(){
-        level = new LevelMenu();
+    public static void loadLevelFromLevels(LevelIdentifier levelIdentifier){
+        level = new LevelMenu(levelIdentifier);
         level.setLocation(levels.getLocation());
         levels.dispose();
     }
@@ -61,5 +62,12 @@ public class App {
 
     public static LevelsMenu getLevelsMenu(){
         return levels;
+    }
+
+    /**
+     * @return LevelMenu 
+     */
+    public static LevelMenu getLevelMenu(){
+        return level;
     }
 }

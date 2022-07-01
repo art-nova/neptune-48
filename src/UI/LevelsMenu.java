@@ -561,7 +561,7 @@ public class LevelsMenu extends JFrame{
             for (String obstacle : obstacles.keySet()) {
                 centerPanel.add(UI.InfoPanels.obstacle(obstacle));
             }
-            centerPanel.add(UI.InfoPanels.buttonNext());
+            centerPanel.add(UI.InfoPanels.buttonNext(new LevelIdentifier(playMode, num)));
         } catch (Exception e) {}
         
         

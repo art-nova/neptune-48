@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
+import data.LevelIdentifier;
 import models.App;
 
 import java.awt.Color;
@@ -63,7 +64,7 @@ public class InfoPanels{
         return panel;
     }
 
-    public static JLayeredPane buttonNext(){
+    public static JLayeredPane buttonNext(LevelIdentifier levelIdentifier){
         JLayeredPane panel = new JLayeredPane();
         panel.setPreferredSize(new Dimension(600,131));
         try {
@@ -102,7 +103,7 @@ public class InfoPanels{
                 }
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    App.loadLevelFromLevels();                   
+                    App.loadLevelFromLevels(levelIdentifier);                   
                 }
             });
             panel.add(image);
