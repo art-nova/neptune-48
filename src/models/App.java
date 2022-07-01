@@ -31,6 +31,15 @@ public class App {
             playerData.unlockAbility("dispose");
             playerData.unlockAbility("crit");
             playerData.unlockAbility("safeAttack");
+            playerData.unlockLevel(new LevelIdentifier("normal", 1));
+            playerData.unlockLevel(new LevelIdentifier("normal", 2));
+            playerData.unlockLevel(new LevelIdentifier("normal", 3));
+            playerData.unlockLevel(new LevelIdentifier("normal", 4));
+            playerData.unlockLevel(new LevelIdentifier("hard", 0));
+            playerData.unlockLevel(new LevelIdentifier("hard", 1));
+            playerData.setLevelBestResult(new LevelIdentifier("normal", 0), 250, 3);
+            playerData.setLevelBestResult(new LevelIdentifier("normal", 1), 100, 2);
+            playerData.setLevelBestResult(new LevelIdentifier("normal", 2), 10, 1);
             DataManager.savePlayerData(playerData);
         } catch (Exception e) {
             System.out.println("Error while loading player data:" + e);
