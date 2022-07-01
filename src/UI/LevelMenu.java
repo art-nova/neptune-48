@@ -43,9 +43,11 @@ public class LevelMenu extends JFrame{
     static JLabel passiveAbility;
     static LevelIdentifier levelIdentifier;
 
+    
+
 //TODO
     void init(LevelIdentifier levelIdentifier){
-        this.levelIdentifier = levelIdentifier;
+        LevelMenu.levelIdentifier = levelIdentifier;
         try {
             PlayerData playerData = DataManager.loadPlayerData();
             LevelData levelData = DataManager.loadLevelData(levelIdentifier);
@@ -69,13 +71,32 @@ public class LevelMenu extends JFrame{
         } catch (Exception e) {
             System.err.println("Error loading level data: " + e.getMessage());
         }
-        //TODO overlays
-        
-        cover = looseOverlay();
+        //TODO remove
+        setPauseOverlay();
+    }   
+
+    public void setWinOverlay(){
+        cover = winOverlay();
         add(cover,0);
+        cover.setVisible(true);
         revalidate();
         repaint();
-        
+    }
+
+    public void setLoseOverlay(){
+        cover = loseOverlay();
+        add(cover,0);
+        cover.setVisible(true);
+        revalidate();
+        repaint();
+    }
+
+    public void setPauseOverlay(){
+        cover = pauseOverlay();
+        add(cover,0);
+        cover.setVisible(true);
+        revalidate();
+        repaint();
     }
 
     /**
@@ -277,8 +298,11 @@ public class LevelMenu extends JFrame{
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     if(!isEmpty){
-                        if(coverNum < 1)
-                        highlight.setVisible(true);
+                        if((LevelMenu.cover == null) || (!LevelMenu.cover.isVisible())){
+                            if(coverNum < 1){
+                                highlight.setVisible(true);
+                            }   
+                        }
                     }
                 }
             });
@@ -480,7 +504,7 @@ public class LevelMenu extends JFrame{
     }
 
 
-    public static JLayeredPane looseOverlay(){
+    public static JLayeredPane loseOverlay(){
         JLayeredPane pane = new JLayeredPane();
         try {
             pane.setBounds(0,0,815,1000);
