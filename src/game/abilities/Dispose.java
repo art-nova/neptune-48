@@ -15,7 +15,7 @@ import java.util.List;
  * @author Artem Novak
  */
 public class Dispose extends ActiveAbility{
-    public static final int DEFAULT_COOLDOWN = 20;
+    public static final int DEFAULT_COOLDOWN = 15;
 
     public Dispose(GamePanel gp, AbilityManager abilityManager) {
         super(gp, abilityManager, DEFAULT_COOLDOWN);

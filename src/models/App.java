@@ -20,7 +20,7 @@ public class App {
         try {
             DataManager.newPlayerData();
             PlayerData playerData = DataManager.loadPlayerData();
-            playerData.unlockAbility("bonusTime");
+            playerData.unlockAbility("bonusTurns");
             playerData.unlockAbility("resistance");
             playerData.unlockAbility("betterBaseLevel");
             playerData.unlockAbility("cooldownReduction");
