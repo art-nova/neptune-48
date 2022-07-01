@@ -1,5 +1,6 @@
 package game.abilities;
 
+import UI.LevelMenu;
 import game.GamePanel;
 import game.events.AbilityListener;
 import game.events.CellSelectionListener;
@@ -18,8 +19,8 @@ import java.util.function.Predicate;
 public class Merge extends ActiveAbility {
     public static final int DEFAULT_COOLDOWN = 15;
 
-    public Merge(GamePanel gp, AbilityManager abilityManager) {
-        super(gp, abilityManager, DEFAULT_COOLDOWN);
+    public Merge(GamePanel gp, AbilityManager abilityManager, LevelMenu.Ability updatedElement) {
+        super(gp, abilityManager, DEFAULT_COOLDOWN, updatedElement);
         determineApplicability();
     }
 

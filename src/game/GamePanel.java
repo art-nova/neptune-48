@@ -1,5 +1,6 @@
 package game;
 
+import UI.LevelMenu;
 import data.DataManager;
 import data.LevelData;
 import data.LevelIdentifier;
@@ -36,18 +37,24 @@ public class GamePanel extends JPanel implements Runnable {
 
     private final LevelData levelData;
     private final PlayerData playerData;
+    private final LevelMenu base;
     private final GamePanelGraphics graphics;
+
     private final ActionHandler actionHandler = new ActionHandler();
+    private final KeyHandler keyHandler;
+    private final MouseHandler mouseHandler;
     private final Thread gameThread = new Thread(this);
+
     private final Countdown countdown;
     private final Board board;
     private final Entity entity;
     private final ObstacleManager obstacleManager;
     private final AbilityManager abilityManager;
     private final ParticleManager particleManager;
+
     private final List<GameOverListener> gameOverListeners = new ArrayList<>();
     private final List<StateListener> stateListeners = new ArrayList<>();
-    private final List<UIDataListener> uiDataListeners = new ArrayList<>();
+
     private final int baseTileDamage;
     private final int gameMode;
 
@@ -58,9 +65,11 @@ public class GamePanel extends JPanel implements Runnable {
      *
      * @param levelData {@link LevelData} object storing information about this panel's level
      * @param playerData {@link PlayerData} object storing information about current player profile
-     * @param baseFrame base {@link JFrame} of this panel
+     * @param base base {@link LevelMenu} of this panel
      */
-    public GamePanel(LevelData levelData, PlayerData playerData, JFrame baseFrame) throws IOException {
+    public GamePanel(LevelData levelData, PlayerData playerData, LevelMenu base) throws IOException {
+        this.base = base;
+        setBackground(base.getBackground());
         this.levelData = levelData;
         this.playerData = playerData;
         this.baseTileDamage = levelData.getBaseTileDamage();
@@ -72,8 +81,10 @@ public class GamePanel extends JPanel implements Runnable {
         this.countdown = new Countdown(levelData.getTurns(), this);
         this.obstacleManager = new ObstacleManager(levelData.getObstacleWeights(), levelData.getMinObstacleInterval(), levelData.getMaxObstacleInterval(), this);
         this.abilityManager = new AbilityManager(playerData.getActiveAbility1(), playerData.getActiveAbility2(), playerData.getPassiveAbility(), this);
-        baseFrame.addKeyListener(new KeyHandler(this));
-        this.addMouseListener(new MouseHandler(this));
+        this.keyHandler = new KeyHandler(this);
+        base.addKeyListener(keyHandler);
+        this.mouseHandler = new MouseHandler(this);
+        this.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
         this.setPreferredSize(new Dimension(GamePanelGraphics.ENTITY_WIDTH, board.getPreferredHeight() + GamePanelGraphics.ENTITY_BOARD_DISTANCE + GamePanelGraphics.ENTITY_HEIGHT));
@@ -125,38 +136,47 @@ public class GamePanel extends JPanel implements Runnable {
             lastTime = currentTime;
 
             if (delta >= 1) {
+                for (int i = 0; i < (int)delta; i++) {
+                    update();
+                }
                 if (state == PLAYING || state == ENDING) {
-                    for (int i = 0; i < (int)delta; i++) {
-                        update();
-                    }
                     repaint();
-                    delta -= (int)delta;
-
                     if (state == ENDING && board.getState() == Board.IDLE && entity.getState() == Entity.IDLE && particleManager.getState() == ParticleManager.IDLE) setState(ENDED);
                 }
 
                 if ((state == PLAYING) && actionHandler.isPriorityAction("pause")) {
                     setState(PAUSED);
                     actionHandler.clearAction("pause");
+                    base.setPauseOverlay();
+                    base.getAttack().setHighlightVisible(false);
+                    base.getActiveAbility1().setHighlightVisible(false);
+                    base.getActiveAbility2().setHighlightVisible(false);
                 }
                 else if (state == PAUSED && actionHandler.isPriorityAction("unpause")) {
                     setState(PLAYING);
                     actionHandler.clearAction("unpause");
+                    base.clearOverlay();
                 }
+                delta -= (int)delta;
             }
         }
+        AudioManager.clearBG();
+        base.removeKeyListener(keyHandler);
+        this.removeMouseListener(mouseHandler);
     }
 
     /**
      * Updates all components of the panel.
      */
     public void update() {
-        if (state != ENDING) {
-            abilityManager.update();
+        if (state != PAUSED) {
+            if (state != ENDING) {
+                abilityManager.update();
+            }
+            entity.update();
+            board.update();
+            particleManager.update();
         }
-        entity.update();
-        board.update();
-        particleManager.update();
     }
 
     @Override
@@ -181,6 +201,7 @@ public class GamePanel extends JPanel implements Runnable {
             for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onLose();
             AudioManager.clearBG();
             AudioManager.playSFX("lose");
+            base.setLoseOverlay();
         });
     }
 
@@ -209,7 +230,6 @@ public class GamePanel extends JPanel implements Runnable {
             }
             catch (IOException e) {
                 e.printStackTrace();
-                System.exit(1);
             }
         }
 
@@ -217,11 +237,16 @@ public class GamePanel extends JPanel implements Runnable {
             for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onWin(unlockedAbility);
             AudioManager.clearBG();
             AudioManager.playSFX("win");
+            base.setWinOverlay();
         });
     }
 
     public GamePanelGraphics getGameGraphics() {
         return graphics;
+    }
+
+    public LevelMenu getBase() {
+        return base;
     }
 
     public ActionHandler getActionHandler() {
@@ -294,12 +319,10 @@ public class GamePanel extends JPanel implements Runnable {
         stateListeners.remove(listener);
     }
 
-    public void addUIDataListener(UIDataListener listener) {
-        uiDataListeners.add(listener);
+    /**
+     * Sets the game state to {@link GamePanel#ENDED} and, therefore, finishes related processes.
+     */
+    public void close() {
+        setState(ENDED);
     }
-
-    public void removeUIDataListener(UIDataListener listener) {
-        uiDataListeners.remove(listener);
-    }
-
 }

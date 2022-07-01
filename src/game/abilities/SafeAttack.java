@@ -1,5 +1,6 @@
 package game.abilities;
 
+import UI.LevelMenu;
 import game.GamePanel;
 import game.events.AbilityListener;
 import game.events.AttackEvent;
@@ -21,8 +22,8 @@ public class SafeAttack extends ActiveAbility {
 
     private final Attack attack;
 
-    public SafeAttack(GamePanel gp, AbilityManager abilityManager) {
-        super(gp, abilityManager, DEFAULT_COOLDOWN);
+    public SafeAttack(GamePanel gp, AbilityManager abilityManager, LevelMenu.Ability updatedElement) {
+        super(gp, abilityManager, DEFAULT_COOLDOWN, updatedElement);
         attack = abilityManager.getAttack();
     }
 

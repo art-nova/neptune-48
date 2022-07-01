@@ -1,5 +1,6 @@
 package game.abilities;
 
+import UI.LevelMenu;
 import game.GamePanel;
 import game.events.AbilityListener;
 import game.events.StateListener;
@@ -20,8 +21,8 @@ public class Scramble extends ActiveAbility {
 
     private final Random random = new Random();
 
-    public Scramble(GamePanel gp, AbilityManager abilityManager) {
-        super(gp, abilityManager, DEFAULT_COOLDOWN);
+    public Scramble(GamePanel gp, AbilityManager abilityManager, LevelMenu.Ability updatedElement) {
+        super(gp, abilityManager, DEFAULT_COOLDOWN, updatedElement);
     }
 
     @Override

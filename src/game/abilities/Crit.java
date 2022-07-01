@@ -1,5 +1,6 @@
 package game.abilities;
 
+import UI.LevelMenu;
 import game.GamePanel;
 import game.events.AbilityListener;
 import game.events.AttackEvent;
@@ -18,8 +19,8 @@ public class Crit extends ActiveAbility {
 
     private final Attack attack;
 
-    public Crit(GamePanel gp, AbilityManager abilityManager) {
-        super(gp, abilityManager, DEFAULT_COOLDOWN);
+    public Crit(GamePanel gp, AbilityManager abilityManager, LevelMenu.Ability updatedElement) {
+        super(gp, abilityManager, DEFAULT_COOLDOWN, updatedElement);
         this.attack = abilityManager.getAttack();
     }
 

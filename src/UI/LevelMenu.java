@@ -10,8 +10,11 @@ import data.DataManager;
 import data.LevelData;
 import data.LevelIdentifier;
 import data.PlayerData;
+import game.GamePanel;
 import models.App;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -30,7 +33,6 @@ public class LevelMenu extends JFrame{
     JLayeredPane pane;
     JLabel turnsLeftCounter;
     static Healthbar healthBar;
-    static JLabel enemy;
     /**
      * Cover over JFrame
      * @see #isVisible
@@ -43,27 +45,51 @@ public class LevelMenu extends JFrame{
     static JLabel passiveAbility;
     static LevelIdentifier levelIdentifier;
 
+    static PlayerData playerData;
+    static LevelData levelData;
+    static GamePanel gamePanel;
+
     
 
 //TODO
     void init(LevelIdentifier levelIdentifier){
         LevelMenu.levelIdentifier = levelIdentifier;
         try {
-            PlayerData playerData = DataManager.loadPlayerData();
-            LevelData levelData = DataManager.loadLevelData(levelIdentifier);
+            playerData = DataManager.loadPlayerData();
+            levelData = DataManager.loadLevelData(levelIdentifier);
             setHealthbarMaxValue((int)levelData.getEntityHealth());
             setHealthbarValue((int)levelData.getEntityHealth());
             setTurnsLeft(levelData.getTurns());
 
-            //TODO enemy's icon
-            setEnemyIcon("level/attack.png");
+            gamePanel = new GamePanel(levelData, playerData, this);
+            gamePanel.setBounds(160, 125, gamePanel.getPreferredSize().width, gamePanel.getPreferredSize().height);
+            pane.add(gamePanel, 0);
+
+            attack.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (!attack.cover.isVisible()) gamePanel.getAbilityManager().attemptAttack();
+                }
+            });
 
             passiveAbility.setIcon(getIcon("level/coverPassive.png", 110,110));
             if(playerData.getActiveAbility1() != null){
                 activeAbility1.setAbility("level/" + playerData.getActiveAbility1() + ".png", playerData.getActiveAbility1());
+                activeAbility1.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (!activeAbility1.cover.isVisible()) gamePanel.getAbilityManager().attemptActive1();
+                    }
+                });
             }
             if(playerData.getActiveAbility2() != null){
                 activeAbility2.setAbility("level/" + playerData.getActiveAbility2() + ".png", playerData.getActiveAbility2());
+                activeAbility2.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (!activeAbility2.cover.isVisible()) gamePanel.getAbilityManager().attemptActive2();
+                    }
+                });
             }
             if(playerData.getPassiveAbility() != null){
                 passiveAbility.setIcon(getIcon("level/" + playerData.getPassiveAbility() + ".png", 110,110));
@@ -71,8 +97,6 @@ public class LevelMenu extends JFrame{
         } catch (Exception e) {
             System.err.println("Error loading level data: " + e.getMessage());
         }
-        //TODO remove
-        setPauseOverlay();
     }   
 
     public void setWinOverlay(){
@@ -93,18 +117,33 @@ public class LevelMenu extends JFrame{
 
     public void setPauseOverlay(){
         cover = pauseOverlay();
-        add(cover,0);
+        add(cover, 0);
         cover.setVisible(true);
         revalidate();
         repaint();
     }
 
-    /**
-     * Sets enemy's icon (480x200)
-     * @param location in "folder/image.png" format
-     */
-    public void setEnemyIcon(String location){
-        enemy.setIcon(getIcon(location, 480,200));
+    public void clearOverlay() {
+        remove(cover);
+        cover = null;
+        revalidate();
+        repaint();
+    }
+
+    public Ability getActiveAbility1() {
+        return activeAbility1;
+    }
+
+    public Ability getActiveAbility2() {
+        return activeAbility2;
+    }
+
+    public Ability getAttack() {
+        return attack;
+    }
+
+    public JLabel getPassiveAbility() {
+        return passiveAbility;
     }
 
     /**
@@ -118,7 +157,7 @@ public class LevelMenu extends JFrame{
      * Sets the value of the healthbar
      * @param value
      */
-    public static void setHealthbarValue(int value){
+    public void setHealthbarValue(int value){
         healthBar.setValue(value);
     }
 
@@ -136,12 +175,14 @@ public class LevelMenu extends JFrame{
         this.width = 815;
         this.height = 1000;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setFocusable(true);
         setSize(width + 15, height + 15);
 
         pane = new JLayeredPane();
         pane.setPreferredSize(new Dimension(width, height));
         pane.setBounds(0,0,width,height);
 
+        setBackground(lightGreen);
         FilledBox background = new FilledBox(lightGreen);
         background.setBounds(0,79,width,height - 79);
         pane.add(background, 0);
@@ -172,19 +213,9 @@ public class LevelMenu extends JFrame{
         healthBar = new Healthbar(350);
         pane.add(healthBar, Integer.valueOf(100));
 
-        enemy = new JLabel();
-        enemy.setBounds(160,125,480,200);
-        pane.add(enemy, 0);
-
         FilledBox boardBack = new FilledBox(darkGreen);
         boardBack.setBounds(25,458,755,300);
         pane.add(boardBack, 0);
-
-        //TODO board
-        FilledBox board = new FilledBox(new Color(102,0,153));
-        board.setBounds(160,365,480,480);
-        pane.add(board, 0);
-
 
         activeAbility1 = new Ability("level/cover.png", "empty");
         activeAbility1.setBounds(40,480,110,110);
@@ -202,11 +233,11 @@ public class LevelMenu extends JFrame{
         passiveAbility.setBounds(655,625,110,110);
         pane.add(passiveAbility, 0);
 
+        init(levelIdentifier);
         add(pane);
         revalidate();
         repaint();
         setVisible(true);
-        init(levelIdentifier);
     }
 
     static class Healthbar extends JPanel{
@@ -260,7 +291,7 @@ public class LevelMenu extends JFrame{
     /**
      * Active ability or attack button with cover and number over it
      */
-    class Ability extends JLayeredPane{
+    public class Ability extends JLayeredPane{
         String nameID;
         JLabel icon;
         JLabel highlight;
@@ -268,6 +299,7 @@ public class LevelMenu extends JFrame{
         JLabel coverNumber;
         int coverNum;
         boolean isEmpty;
+        boolean hovered;
 
         public Ability(String path, String nameIDentifier){
             super();
@@ -290,32 +322,27 @@ public class LevelMenu extends JFrame{
             add(highlight, 0);
             add(coverNumber, 0);
             icon.setVisible(true);
-            cover.setVisible(false);
             highlight.setVisible(false);
+            cover.setVisible(false);
             coverNumber.setVisible(false);
 
-            icon.addMouseListener(new MouseAdapter(){
+            addMouseListener(new MouseAdapter(){
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     if(!isEmpty){
-                        if((LevelMenu.cover == null) || (!LevelMenu.cover.isVisible())){
-                            if(coverNum < 1){
+                        if((LevelMenu.cover == null) || (!LevelMenu.cover.isVisible())) {
+                            if(!cover.isVisible()){
                                 highlight.setVisible(true);
-                            }   
+                            }
                         }
+                        hovered = true;
                     }
                 }
-            });
 
-            highlight.addMouseListener(new MouseAdapter(){
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    //TODO  
-                    System.out.println("clicked " + nameID);
-                }
                 @Override
                 public void mouseExited(MouseEvent e) {
                     highlight.setVisible(false);
+                    hovered = false;
                 }
             });
         }
@@ -333,22 +360,36 @@ public class LevelMenu extends JFrame{
         }
 
         /**
-         * Sets the cover of the ability
-         * @param num number on the cover
+         * Used to change highlight visibility programmatically (for non-empty slots only).
+         */
+        public void setHighlightVisible(boolean visible) {
+            if (!isEmpty) highlight.setVisible(visible);
+        }
+
+        public boolean isHovered() {
+            return hovered;
+        }
+
+        /**
+         * Makes the cover of the ability visible and sets it to given number.
+         * Numbers less than 1 do not display.
          */
         public void setCover(int num){
             cover.setVisible(true);
-            coverNumber.setVisible(true);
             coverNum = num;
             coverNumber.setText("" + coverNum);
+            coverNumber.setVisible(num > 0);
+            highlight.setVisible(false);
         }
+
         /**
-         * Removes the cover on the ability
+         * Removes the cover on the ability and makes the cover number 0.
          */
         public void removeCover(){
             cover.setVisible(false);
             coverNumber.setVisible(false);
             coverNum = 0;
+            highlight.setVisible(hovered);
         }
 
     }
@@ -389,6 +430,8 @@ public class LevelMenu extends JFrame{
                 }
                 @Override
                 public void mouseClicked(MouseEvent e){
+                    gamePanel.close();
+                    cover = null;
                     App.loadLevelsFromLevel();
                 }
             });
@@ -408,6 +451,8 @@ public class LevelMenu extends JFrame{
                 }
                 @Override
                 public void mouseClicked(MouseEvent e){
+                    gamePanel.close();
+                    cover = null;
                     App.loadLevelFromLevel(levelIdentifier);
                 }
             });
@@ -425,10 +470,7 @@ public class LevelMenu extends JFrame{
             backGroundDark.addMouseListener(new MouseAdapter(){
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    pane.getParent().remove(cover);
-                    cover = null;
-                    App.getLevelMenu().revalidate();
-                    App.getLevelMenu().repaint();
+                    gamePanel.getActionHandler().scheduleAction("unpause");
                 }
             });
             pane.setVisible(true);

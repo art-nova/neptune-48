@@ -1,21 +1,17 @@
 package game;
 
-import game.events.UIDataListener;
-
-import java.util.ArrayList;
-import java.util.List;
+import UI.LevelMenu;
 
 /**
  * Implements turn-based countdown allowing for modifications.
- * As a {@link UIDataHolder} notifies its listeners on any turn change.
  *
  * @author Artem Novak
  */
-public class Countdown implements UIDataHolder {
+public class Countdown {
     public static final int IDLE = 0, TICKING = 1;
 
     private final GamePanel gp;
-    private final List<UIDataListener> uiDataListeners = new ArrayList<>();
+    private final LevelMenu ui;
 
     private int dedicatedTurns;
     private int turns;
@@ -31,6 +27,7 @@ public class Countdown implements UIDataHolder {
         this.dedicatedTurns = turns;
         this.turns = turns;
         this.gp = gp;
+        this.ui = gp.getBase();
     }
 
     /**
@@ -52,7 +49,7 @@ public class Countdown implements UIDataHolder {
         turns = Math.max(turns + delta, 0);
         if (turns <= 0) state = IDLE;
         if (oldTurns != turns) {
-            for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
+            ui.setTurnsLeft(turns);
         }
     }
 
@@ -73,13 +70,5 @@ public class Countdown implements UIDataHolder {
             if (state == TICKING) offsetTurns(-1);
             if (turns <= 0 && gp.getState() != GamePanel.ENDING) gp.loseLevel();
         });
-    }
-
-    public void addUIDataListener(UIDataListener listener) {
-        uiDataListeners.add(listener);
-    }
-
-    public void removeUIDataListener(UIDataListener listener) {
-        uiDataListeners.remove(listener);
     }
 }

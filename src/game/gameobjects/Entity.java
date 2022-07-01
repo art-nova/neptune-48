@@ -1,10 +1,9 @@
 package game.gameobjects;
 
+import UI.LevelMenu;
 import game.GameLogicException;
 import game.GamePanel;
-import game.UIDataHolder;
 import game.events.StateListener;
-import game.events.UIDataListener;
 import game.gameobjects.particles.ParticleManager;
 import game.utils.GamePanelGraphics;
 import misc.AudioManager;
@@ -16,19 +15,18 @@ import java.util.List;
 
 /**
  * Class that stores information about an abstract entity above the board.
- * As a {@link UIDataHolder} triggers corresponding methods whenever entity's health changes.
  *
  * @author Artem Novak
  */
-public class Entity extends GameObject implements UIDataHolder {
+public class Entity extends GameObject {
     public static final int IDLE = 0, ANIMATING = 1;
 
     private final long maxHealth;
     private final long tolerance;
-    private final List<UIDataListener> uiDataListeners = new ArrayList<>();
     private final List<StateListener> stateListeners = new ArrayList<>();
     private final int gameMode;
     private final ParticleManager particleManager;
+    private final LevelMenu ui;
     private final long maxTileImpact;
 
     private long health;
@@ -48,6 +46,7 @@ public class Entity extends GameObject implements UIDataHolder {
     public Entity(int x, int y, long maxHealth, long tolerance, GamePanel gp) {
         super(x, y, gp);
         this.gameMode = gp.getGameMode();
+        this.ui = gp.getBase();
         this.particleManager = gp.getParticleManager();
         this.maxHealth = maxHealth;
         this.health = gameMode == GamePanel.GAME_MODE_REPAIR ? maxHealth / 10 : maxHealth;
@@ -100,7 +99,7 @@ public class Entity extends GameObject implements UIDataHolder {
             animationImage = graphics.getTexture("entityDamaged");
             String text;
             if (damage > tolerance) {
-                for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
+                ui.setHealthbarValue((int)health);
                 if (damage > maxTileImpact) text = "-\u221E";
                 else text = "-" + damage;
                 AudioManager.playSFX("damage");
@@ -128,7 +127,7 @@ public class Entity extends GameObject implements UIDataHolder {
             animationImage = graphics.getTexture("entityHealed");
             String text;
             if (healing > tolerance) {
-                for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
+                ui.setHealthbarValue((int)health);
                 if (healing > maxTileImpact) text = "+\u221E";
                 else text = "+" + healing;
                 AudioManager.playSFX("heal");
@@ -170,14 +169,6 @@ public class Entity extends GameObject implements UIDataHolder {
 
     public int getState() {
         return state;
-    }
-
-    public void addUIDataListener(UIDataListener listener) {
-        uiDataListeners.add(listener);
-    }
-
-    public void removeUIDataListener(UIDataListener listener) {
-        uiDataListeners.remove(listener);
     }
 
     public void addStateListener(StateListener listener) {

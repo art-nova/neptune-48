@@ -1,5 +1,6 @@
 package game.abilities;
 
+import UI.LevelMenu;
 import game.GameLogicException;
 import game.GameModifier;
 import game.GamePanel;
@@ -20,6 +21,7 @@ public class AbilityManager {
     private final ActiveAbility active2;
     private final PassiveAbility passive;
     private final GamePanel gp;
+    private final LevelMenu ui;
     private final ActionHandler actionHandler;
     private final Board board;
 
@@ -34,25 +36,22 @@ public class AbilityManager {
     public AbilityManager(String active1, String active2, String passive, GamePanel gp) {
         if (active1 == null && active2 != null) throw new GameLogicException("Trying to pass an active ability into the second slot while the first is empty");
         this.gp = gp;
+        this.ui = gp.getBase();
         this.board = gp.getBoard();
         this.actionHandler = gp.getActionHandler();
-        this.attack = new Attack(gp, this);
-        this.active1 = registerActiveAbility(active1);
-        this.active2 = registerActiveAbility(active2);
+        this.attack = new Attack(gp, this, ui.getAttack());
+        this.active1 = registerActiveAbility(active1, ui.getActiveAbility1());
+        this.active2 = registerActiveAbility(active2, ui.getActiveAbility2());
         this.passive = registerPassiveAbility(passive);
         attack.addAbilityListener(() -> {
             attack.updateApplicability();
-            if (this.active1 != null) {
-                this.active1.updateApplicability();
-                if (this.active2 != null) this.active2.updateApplicability();
-            }
+            if (this.active1 != null) this.active1.updateApplicability();
+            if (this.active2 != null) this.active2.updateApplicability();
         });
         AbilityListener abilityListener = () -> {
             attack.updateApplicability();
-            if (this.active1 != null) {
-                this.active1.updateApplicability();
-                if (this.active2 != null) this.active2.updateApplicability();
-            }
+            if (this.active1 != null) this.active1.updateApplicability();
+            if (active2 != null) this.active2.updateApplicability();
             AudioManager.playSFX("ability");
         };
         if (this.active1 != null) this.active1.addAbilityListener(abilityListener);
@@ -119,6 +118,10 @@ public class AbilityManager {
         return passive;
     }
 
+    public void accountOverlayChange() {
+
+    }
+
     private PassiveAbility registerPassiveAbility(String nameID) {
         if (nameID == null) return null;
         return switch (nameID) {
@@ -131,16 +134,16 @@ public class AbilityManager {
         };
     }
 
-    private ActiveAbility registerActiveAbility(String nameID) {
+    private ActiveAbility registerActiveAbility(String nameID, LevelMenu.Ability updatedElement) {
         if (nameID == null) return null;
         return switch (nameID) {
-            case "crit" -> new Crit(gp, this);
-            case "dispose" -> new Dispose(gp, this);
-            case "merge" -> new Merge(gp, this);
-            case "safeAttack" -> new SafeAttack(gp, this);
-            case "scramble" -> new Scramble(gp, this);
-            case "swap" -> new Swap(gp, this);
-            case "upgrade" -> new Upgrade(gp, this);
+            case "crit" -> new Crit(gp, this, updatedElement);
+            case "dispose" -> new Dispose(gp, this, updatedElement);
+            case "merge" -> new Merge(gp, this, updatedElement);
+            case "safeAttack" -> new SafeAttack(gp, this, updatedElement);
+            case "scramble" -> new Scramble(gp, this, updatedElement);
+            case "swap" -> new Swap(gp, this, updatedElement);
+            case "upgrade" -> new Upgrade(gp, this, updatedElement);
             default -> throw new IllegalArgumentException("Active ability " + nameID + " does not exist");
         };
     }

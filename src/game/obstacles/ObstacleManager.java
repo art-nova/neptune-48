@@ -1,10 +1,8 @@
 package game.obstacles;
 
 import game.GamePanel;
-import game.UIDataHolder;
 import game.events.ObstacleEvent;
 import game.events.ObstacleListener;
-import game.events.UIDataListener;
 import game.utils.WeightedRandom;
 import misc.AudioManager;
 
@@ -15,21 +13,16 @@ import java.util.Map;
 
 /**
  * Class that handles application of in-game obstacles.
- * <br>
- * As a {@link UIDataHolder}, triggers corresponding event when a new obstacle is applied.
- * The obstacle can be queried via {@link ObstacleManager#getLatestObstacle()}.
- * Note: the obstacle may be null, which would mean that it was due programmatically, but got negated by something else.
  *
  * @author Artem Novak
  */
-public class ObstacleManager implements UIDataHolder {
+public class ObstacleManager {
     private final int minInterval;
     private final int maxInterval;
     private final Map<Obstacle, Integer> obstacleWeights = new HashMap<>();
     private final Map<Boolean, Integer> triggerLikelihood = new HashMap<>();
     private final WeightedRandom random = new WeightedRandom();
     private final List<ObstacleListener> obstacleListeners = new ArrayList<>();
-    private final List<UIDataListener> uiDataListeners = new ArrayList<>();
     private final GamePanel gp;
 
     private int turnsElapsed = 0;
@@ -95,7 +88,6 @@ public class ObstacleManager implements UIDataHolder {
                 }
                 else AudioManager.playSFX("obstacleBlocked");
                 turnsElapsed = 0;
-                for (UIDataListener listener : uiDataListeners) listener.onUIDataChanged();
             }
         }
     }
@@ -105,14 +97,6 @@ public class ObstacleManager implements UIDataHolder {
 
     public void removeObstacleListener(ObstacleListener listener) {
         obstacleListeners.remove(listener);
-    }
-
-    public void addUIDataListener(UIDataListener listener) {
-        uiDataListeners.add(listener);
-    }
-
-    public void removeUIDataListener(UIDataListener listener) {
-        uiDataListeners.remove(listener);
     }
 
     /**

@@ -1,5 +1,6 @@
 package game.abilities;
 
+import UI.LevelMenu;
 import game.GamePanel;
 import game.events.AbilityListener;
 import game.events.CellSelectionListener;
@@ -17,8 +18,8 @@ import java.util.List;
 public class Upgrade extends ActiveAbility {
     public static final int DEFAULT_COOLDOWN = 35;
 
-    public Upgrade(GamePanel gp, AbilityManager abilityManager) {
-        super(gp, abilityManager, DEFAULT_COOLDOWN);
+    public Upgrade(GamePanel gp, AbilityManager abilityManager, LevelMenu.Ability updatedElement) {
+        super(gp, abilityManager, DEFAULT_COOLDOWN, updatedElement);
         determineApplicability();
     }
 

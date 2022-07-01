@@ -2,8 +2,6 @@ package game;
 
 /**
  * Class that represents an abstract game modifier - an entity that is not displayed, but influences the game process in some way.
- * <br>
- * As a {@link UIDataHolder}, triggers corresponding event when modifier state is changed.
  *
  * @author Artem Novak
  */

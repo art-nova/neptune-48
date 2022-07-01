@@ -2,9 +2,7 @@ package game.abilities;
 
 import game.GameModifier;
 import game.GamePanel;
-import game.UIDataHolder;
 import game.events.AbilityListener;
-import game.events.UIDataListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +13,7 @@ import java.util.List;
  *
  * @author Artem Novak
  */
-public abstract class Ability extends GameModifier implements UIDataHolder {
-    protected final List<UIDataListener> uiDataListeners = new ArrayList<>();
+public abstract class Ability extends GameModifier {
     protected final List<AbilityListener> abilityListeners = new ArrayList<>();
     protected final AbilityManager abilityManager;
 
@@ -26,20 +23,9 @@ public abstract class Ability extends GameModifier implements UIDataHolder {
     }
 
     @Override
-    public void addUIDataListener(UIDataListener listener) {
-        uiDataListeners.add(listener);
-    }
-
-    @Override
-    public void removeUIDataListener(UIDataListener listener) {
-        uiDataListeners.remove(listener);
-    }
-
-    @Override
     public void setState(int state) {
         if (this.state != state) {
             super.setState(state);
-            for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
         }
     }
 

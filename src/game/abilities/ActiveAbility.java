@@ -1,11 +1,9 @@
 package game.abilities;
 
+import UI.LevelMenu;
 import game.GameLogicException;
 import game.GamePanel;
-import game.events.UIDataListener;
 import game.gameobjects.Board;
-
-import java.util.ArrayList;
 
 /**
  * Class that implements common elements of active abilities (actively triggered by player), namely cooldown.
@@ -13,17 +11,19 @@ import java.util.ArrayList;
  * @author Artem Novak
  */
 public abstract class ActiveAbility extends Ability {
+    protected final LevelMenu.Ability updatedElement;
     protected final Board board;
     protected final AbilityManager manager;
 
     protected int cooldown;
     protected int currentCooldown;
 
-    public ActiveAbility(GamePanel gp, AbilityManager abilityManager, int defaultCooldown) {
+    public ActiveAbility(GamePanel gp, AbilityManager abilityManager, int defaultCooldown, LevelMenu.Ability updatedElement) {
         super(gp, abilityManager);
         this.board = gp.getBoard();
         this.manager = gp.getAbilityManager();
         this.cooldown = defaultCooldown;
+        this.updatedElement = updatedElement;
         // Determines whether the ability is applicable after a turn.
         board.addTurnListener(() -> {
             if (currentCooldown > 0) setCurrentCooldown(currentCooldown - 1); // Determines applicability because of currentCooldown change.
@@ -76,10 +76,16 @@ public abstract class ActiveAbility extends Ability {
         if (currentCooldown < 0) throw new GameLogicException("Trying to set current ability cooldown less than 0: " + currentCooldown);
         if (this.currentCooldown != currentCooldown) {
             this.currentCooldown = currentCooldown;
-            if (determineApplicability()) state = APPLICABLE;
-            else state = UNAPPLICABLE;
-            for (UIDataListener listener : new ArrayList<>(uiDataListeners)) listener.onUIDataChanged();
+            if (determineApplicability()) setState(APPLICABLE);
+            else setState(UNAPPLICABLE);
         }
+    }
+
+    @Override
+    public void setState(int state) {
+        super.setState(state);
+        if (state == APPLICABLE) updatedElement.removeCover();
+        else updatedElement.setCover(currentCooldown);
     }
 
     @Override

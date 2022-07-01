@@ -1,5 +1,6 @@
 package game.abilities;
 
+import UI.LevelMenu;
 import game.GameLogicException;
 import game.GamePanel;
 import game.events.*;
@@ -29,8 +30,8 @@ public class Attack extends ActiveAbility {
     private final Point targetPoint;
     private final ArrayList<AttackListener> attackListeners = new ArrayList<>();
 
-    public Attack(GamePanel gp, AbilityManager abilityManager) {
-        super(gp, abilityManager, DEFAULT_COOLDOWN);
+    public Attack(GamePanel gp, AbilityManager abilityManager, LevelMenu.Ability updatedElement) {
+        super(gp, abilityManager, DEFAULT_COOLDOWN, updatedElement);
         this.board = gp.getBoard();
         this.entity = gp.getEntity();
         GamePanelGraphics graphics = gp.getGameGraphics();
