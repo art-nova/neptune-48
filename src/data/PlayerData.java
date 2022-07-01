@@ -167,6 +167,9 @@ public class PlayerData implements Serializable {
     public String getActiveAbility2() {
         return activeAbility2;
     }
+    public void removeActiveAbility1() {
+        activeAbility1 = null;
+    }
 
     /**
      * Puts the NameID of the given ability into the second active ability slot.
@@ -178,6 +181,10 @@ public class PlayerData implements Serializable {
     public void setActiveAbility2(String activeAbility2) {
         if (!unlockedAbilities.contains(activeAbility2)) throw new GameLogicException("Trying to select an ability that is not unlocked: " + activeAbility1);
         this.activeAbility2 = activeAbility2;
+    }
+
+    public void removeActiveAbility2(){
+        activeAbility2 = null;
     }
 
     public String getPassiveAbility() {
@@ -194,5 +201,9 @@ public class PlayerData implements Serializable {
     public void setPassiveAbility(String passiveAbility) {
         if (!unlockedAbilities.contains(passiveAbility)) throw new GameLogicException("Trying to select an ability that is not unlocked: " + activeAbility1);
         this.passiveAbility = passiveAbility;
+    }
+
+    public void removePassiveAbility() {
+        passiveAbility = null;
     }
 }

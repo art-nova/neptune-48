@@ -32,13 +32,6 @@ public class App {
         } catch (Exception e) {
             System.out.println("Error while loading player data:" + e);
         }
-        
-        try {
-            PlayerData playerData = DataManager.loadPlayerData();
-            for (String string : playerData.getUnlockedAbilities()) {
-                System.out.println("unlocked1: " + string);
-            }
-        } catch (Exception e) {System.out.println(e);}
         mainMenu  = new MainMenu();
     }
 
