@@ -5,6 +5,7 @@ import data.DataManager;
 import data.LevelIdentifier;
 import data.PlayerData;
 import UI.LevelMenu;
+import misc.AudioManager;
 
 /**
  * Main class of the game.
@@ -17,6 +18,7 @@ public class App {
     private static LevelMenu level;
 
     public static void main(String[] args) {
+        AudioManager.init();
         try {
             DataManager.newPlayerData();
             PlayerData playerData = DataManager.loadPlayerData();

@@ -45,7 +45,6 @@ public class GamePanel extends JPanel implements Runnable {
     private final ObstacleManager obstacleManager;
     private final AbilityManager abilityManager;
     private final ParticleManager particleManager;
-    private final AudioManager audioManager;
     private final List<GameOverListener> gameOverListeners = new ArrayList<>();
     private final List<StateListener> stateListeners = new ArrayList<>();
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
@@ -60,12 +59,10 @@ public class GamePanel extends JPanel implements Runnable {
      * @param levelData {@link LevelData} object storing information about this panel's level
      * @param playerData {@link PlayerData} object storing information about current player profile
      * @param baseFrame base {@link JFrame} of this panel
-     * @param audioManager {@link AudioManager} supplied from outside (is used for playing background music and SFX)
      */
-    public GamePanel(LevelData levelData, PlayerData playerData, JFrame baseFrame, AudioManager audioManager) throws IOException {
+    public GamePanel(LevelData levelData, PlayerData playerData, JFrame baseFrame) throws IOException {
         this.levelData = levelData;
         this.playerData = playerData;
-        this.audioManager = audioManager;
         this.baseTileDamage = levelData.getBaseTileDamage();
         this.graphics = levelData.generateGraphics();
         this.gameMode = levelData.getGameMode();
@@ -109,8 +106,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         board.generateRandomTile();
         board.generateRandomTile();
-        audioManager.setBG("level"+levelData.getLevelIdentifier().index());
-        audioManager.playBG();
+        AudioManager.setBG("level"+levelData.getLevelIdentifier().index());
+        AudioManager.playBG();
         gameThread.start();
     }
 
@@ -182,8 +179,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         addStateListener((oldState, newState) -> {
             for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onLose();
-            audioManager.clearBG();
-            audioManager.playSFX("lose");
+            AudioManager.clearBG();
+            AudioManager.playSFX("lose");
         });
     }
 
@@ -218,8 +215,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         addStateListener((oldState, newState) -> {
             for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onWin(unlockedAbility);
-            audioManager.clearBG();
-            audioManager.playSFX("win");
+            AudioManager.clearBG();
+            AudioManager.playSFX("win");
         });
     }
 
@@ -279,10 +276,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     public int getGameMode() {
         return gameMode;
-    }
-
-    public AudioManager getAudioManager() {
-        return audioManager;
     }
 
     public void addGameOverListener(GameOverListener listener) {

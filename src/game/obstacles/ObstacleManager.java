@@ -31,7 +31,6 @@ public class ObstacleManager implements UIDataHolder {
     private final List<ObstacleListener> obstacleListeners = new ArrayList<>();
     private final List<UIDataListener> uiDataListeners = new ArrayList<>();
     private final GamePanel gp;
-    private final AudioManager audioManager;
 
     private int turnsElapsed = 0;
     private Obstacle latestObstacle;
@@ -46,7 +45,6 @@ public class ObstacleManager implements UIDataHolder {
      */
     public ObstacleManager(Map<String, Integer> obstacleWeights, int minInterval, int maxInterval, GamePanel gp) {
         this.gp = gp;
-        this.audioManager = gp.getAudioManager();
         for (String nameID : obstacleWeights.keySet()) {
             Integer weight = obstacleWeights.get(nameID);
             this.obstacleWeights.put(registerObstacle(nameID), weight);
@@ -93,9 +91,9 @@ public class ObstacleManager implements UIDataHolder {
                 latestObstacle = e.getObstacle();
                 if (latestObstacle != null) {
                     latestObstacle.startApplication();
-                    audioManager.playSFX("obstacle");
+                    AudioManager.playSFX("obstacle");
                 }
-                else audioManager.playSFX("obstacleBlocked");
+                else AudioManager.playSFX("obstacleBlocked");
                 turnsElapsed = 0;
                 for (UIDataListener listener : uiDataListeners) listener.onUIDataChanged();
             }

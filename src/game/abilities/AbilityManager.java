@@ -22,7 +22,6 @@ public class AbilityManager {
     private final GamePanel gp;
     private final ActionHandler actionHandler;
     private final Board board;
-    private final AudioManager audioManager;
 
     /**
      * Constructs a new BonusManager with given abilities selected for the level.
@@ -37,7 +36,6 @@ public class AbilityManager {
         this.gp = gp;
         this.board = gp.getBoard();
         this.actionHandler = gp.getActionHandler();
-        this.audioManager = gp.getAudioManager();
         this.attack = new Attack(gp, this);
         this.active1 = registerActiveAbility(active1);
         this.active2 = registerActiveAbility(active2);
@@ -55,7 +53,7 @@ public class AbilityManager {
                 this.active1.updateApplicability();
                 if (this.active2 != null) this.active2.updateApplicability();
             }
-            audioManager.playSFX("ability");
+            AudioManager.playSFX("ability");
         };
         if (this.active1 != null) this.active1.addAbilityListener(abilityListener);
         if (this.active2 != null) this.active2.addAbilityListener(abilityListener);
