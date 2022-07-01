@@ -19,7 +19,7 @@ public class BonusTurns extends PassiveAbility {
 
     @Override
     public String getNameID() {
-        return "bonusTime";
+        return "bonusTurns";
     }
 
     /**

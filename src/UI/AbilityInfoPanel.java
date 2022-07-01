@@ -42,7 +42,7 @@ public class AbilityInfoPanel {
 
         AbilityInfoPanel abilityInfoPanel = new AbilityInfoPanel();
 
-        passive[0] = abilityInfoPanel.new AbilityBar("bonusTime", true);
+        passive[0] = abilityInfoPanel.new AbilityBar("bonusTurns", true);
         passive[1] = abilityInfoPanel.new AbilityBar("resistance", true);
         passive[2] = abilityInfoPanel.new AbilityBar("betterBaseLevel", true);
         passive[3] = abilityInfoPanel.new AbilityBar("cooldownReduction", true);
