@@ -54,10 +54,26 @@ public class App {
         levels.dispose();
     }
 
+    public static void loadLevelFromLevel(LevelIdentifier levelIdentifier){
+        var position = level.getLocation();
+        LevelMenu level2 = new LevelMenu(levelIdentifier);
+        level2.setLocation(position);
+        level.dispose();
+        level = level2;        
+    }
+
     public static void loadLevelsMenuFromLevels(String hardness){
         var position = levels.getLocation();
-        levels = new LevelsMenu(hardness);
-        levels.setLocation(position);
+        LevelsMenu levels2 = new LevelsMenu(hardness);
+        levels2.setLocation(position);
+        levels.dispose();
+        levels = levels2;  
+    }
+
+    public static void loadLevelsFromLevel(){
+        levels = new LevelsMenu("app");
+        levels.setLocation(level.getLocation());
+        level.dispose();
     }
 
     public static LevelsMenu getLevelsMenu(){

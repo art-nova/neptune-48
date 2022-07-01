@@ -41,9 +41,11 @@ public class LevelMenu extends JFrame{
     static Ability activeAbility2;
     static Ability attack;
     static JLabel passiveAbility;
+    static LevelIdentifier levelIdentifier;
 
 //TODO
     void init(LevelIdentifier levelIdentifier){
+        this.levelIdentifier = levelIdentifier;
         try {
             PlayerData playerData = DataManager.loadPlayerData();
             LevelData levelData = DataManager.loadLevelData(levelIdentifier);
@@ -68,12 +70,12 @@ public class LevelMenu extends JFrame{
             System.err.println("Error loading level data: " + e.getMessage());
         }
         //TODO overlays
-        /*
+        
         cover = looseOverlay();
         add(cover,0);
         revalidate();
         repaint();
-        */
+        
     }
 
     /**
@@ -363,8 +365,7 @@ public class LevelMenu extends JFrame{
                 }
                 @Override
                 public void mouseClicked(MouseEvent e){
-                    //TODO
-                    System.out.println("clicked back");
+                    App.loadLevelsFromLevel();
                 }
             });
 
@@ -383,8 +384,7 @@ public class LevelMenu extends JFrame{
                 }
                 @Override
                 public void mouseClicked(MouseEvent e){
-                    //TODO
-                    System.out.println("clicked restart");
+                    App.loadLevelFromLevel(levelIdentifier);
                 }
             });
 
@@ -436,8 +436,7 @@ public class LevelMenu extends JFrame{
                 }
                 @Override
                 public void mouseClicked(MouseEvent e){
-                    //TODO
-                    System.out.println("clicked back");
+                    App.loadLevelsFromLevel();
                 }
             });
 
@@ -456,8 +455,7 @@ public class LevelMenu extends JFrame{
                 }
                 @Override
                 public void mouseClicked(MouseEvent e){
-                    //TODO
-                    System.out.println("clicked restart");
+                    App.loadLevelFromLevel(levelIdentifier);
                 }
             });
 
@@ -506,8 +504,7 @@ public class LevelMenu extends JFrame{
                 }
                 @Override
                 public void mouseClicked(MouseEvent e){
-                    //TODO
-                    System.out.println("clicked back");
+                    App.loadLevelsFromLevel();
                 }
             });
 
@@ -526,8 +523,7 @@ public class LevelMenu extends JFrame{
                 }
                 @Override
                 public void mouseClicked(MouseEvent e){
-                    //TODO
-                    System.out.println("clicked restart");
+                    App.loadLevelFromLevel(levelIdentifier);
                 }
             });
 
