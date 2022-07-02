@@ -19,6 +19,7 @@ public class PlayerData implements Serializable {
     private final Map<String, Map<Integer, DynamicLevelEntry>> unlockedLevels = new HashMap<>();
     private final List<String> unlockedAbilities = new ArrayList<>();
 
+    private String selectedDifficulty;
     private String activeAbility1;
     private String activeAbility2;
     private String passiveAbility;
@@ -30,6 +31,7 @@ public class PlayerData implements Serializable {
         unlockedLevels.put("normal", new HashMap<>());
         unlockedLevels.put("hard", new HashMap<>());
         unlockLevel(new LevelIdentifier("normal", 0));
+        selectedDifficulty = "normal";
     }
 
     /**
@@ -205,5 +207,13 @@ public class PlayerData implements Serializable {
 
     public void removePassiveAbility() {
         passiveAbility = null;
+    }
+
+    public String getSelectedDifficulty() {
+        return selectedDifficulty;
+    }
+
+    public void setSelectedDifficulty(String selectedDifficulty) {
+        this.selectedDifficulty = selectedDifficulty;
     }
 }

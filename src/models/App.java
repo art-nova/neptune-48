@@ -54,6 +54,8 @@ public class App {
             System.out.println("Error while loading player data:" + e);
         }
         mainMenu  = new MainMenu();
+        AudioManager.setBG("menu");
+        AudioManager.playBG();
     }
 
     public static void loadMainMenuFromLevels() {
@@ -94,6 +96,8 @@ public class App {
         levels = new LevelsMenu("app");
         levels.setLocation(level.getLocation());
         level.dispose();
+        AudioManager.setBG("menu");
+        AudioManager.playBG();
     }
 
     public static LevelsMenu getLevelsMenu(){

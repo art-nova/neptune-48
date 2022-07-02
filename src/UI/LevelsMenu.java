@@ -65,13 +65,8 @@ public class LevelsMenu extends JFrame{
         }
         else{
             try {
-                PlayerData playerData = DataManager.loadPlayerData();  
-                if(playerData.isLevelUnlocked(new LevelIdentifier("hard", 0))){
-                    playMode = "hard";
-                }
-                else{
-                    playMode = "normal";
-                }
+                PlayerData playerData = DataManager.loadPlayerData();
+                playMode = playerData.getSelectedDifficulty();
             } catch (Exception e) {
                 playMode = "normal";
             }
@@ -396,7 +391,7 @@ public class LevelsMenu extends JFrame{
                 add(backButton);
 
                 PlayerData playerData = DataManager.loadPlayerData();  
-                boolean hardModeUnlocked = playerData.isLevelUnlocked(new LevelIdentifier("hard", 0));
+                boolean hardModeUnlocked = playerData.isHardModeUnlocked();
 
 
                 ImageIcon normal = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/normal.png")));
@@ -438,6 +433,14 @@ public class LevelsMenu extends JFrame{
                     @Override
                     public void mouseClicked(MouseEvent e){
                         if(playMode.equals("hard")){
+                            try {
+                                PlayerData playerData = DataManager.loadPlayerData();
+                                playerData.setSelectedDifficulty("normal");
+                                DataManager.savePlayerData(playerData);
+                            }
+                            catch (Exception exception) {
+                                System.err.println("Error interacting with player data");
+                            }
                             App.loadLevelsMenuFromLevels("normal");
                         }
                     }
@@ -464,6 +467,14 @@ public class LevelsMenu extends JFrame{
                     public void mouseClicked(MouseEvent e){
                         if(hardModeUnlocked){
                             if(playMode.equals("normal")){
+                                try {
+                                    PlayerData playerData = DataManager.loadPlayerData();
+                                    playerData.setSelectedDifficulty("hard");
+                                    DataManager.savePlayerData(playerData);
+                                }
+                                catch (Exception exception) {
+                                    System.err.println("Error interacting with player data");
+                                }
                                 App.loadLevelsMenuFromLevels("hard");
                             }
                         }
