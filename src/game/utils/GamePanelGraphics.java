@@ -1,6 +1,7 @@
 package game.utils;
 
 import game.GamePanel;
+import models.App;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -31,7 +32,7 @@ public class GamePanelGraphics extends ImageManager {
 
     private final HashMap<String, Color> palette = new HashMap<>();
 
-    private Font font;
+    private final Font font;
 
     /**
      * Initializes (but not loads!) the graphics manager.
@@ -44,21 +45,14 @@ public class GamePanelGraphics extends ImageManager {
      * @param entityIndex index of the entity texture
      */
     public GamePanelGraphics(int tileSize, int tileOffset, int boardRows, int boardCols, int gameMode, int entityIndex) throws IOException {
-        try {
-            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("resources/fonts/Rubik-VariableFont_wght.ttf"));
-        }
-        catch (FontFormatException e) {
-            e.printStackTrace();
-            font = new Font(null);
-        }
-        font = font.deriveFont(Font.PLAIN, 20);
+        font = App.lexenDeca.deriveFont(Font.PLAIN, 25);
 
         // Palette
         palette.put("textColor", Color.white);
         palette.put("highlight", new Color(255, 255, 255, 64));
         palette.put("darken", new Color(0, 0, 0, 128));
-        palette.put("boardBG", new Color(0, 18, 5));
-        palette.put("boardCellBG", new Color(48, 94, 63));
+        palette.put("boardBG", new Color(23,62,31));
+        palette.put("boardCellBG", new Color(42,113,56));
         palette.put("damageOverlay", new Color(156, 31, 26, 128));
         palette.put("healOverlay", new Color(112, 212, 40, 128));
 

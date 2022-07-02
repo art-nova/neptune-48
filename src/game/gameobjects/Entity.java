@@ -95,20 +95,15 @@ public class Entity extends GameObject {
     }
 
     public void animateDamage(long damage) {
-        if (damage > 0) {
+        if (damage <= tolerance) damage = 0;
+        if (damage >= 0) {
             animationImage = graphics.getTexture("entityDamaged");
-            String text;
-            if (damage > tolerance) {
+            if (damage > 0) {
                 ui.setHealthbarValue((int)health);
-                if (damage > maxTileImpact) text = "-\u221E";
-                else text = "-" + damage;
                 AudioManager.playSFX("damage");
             }
-            else {
-                text = "NEGATED";
-                AudioManager.playSFX("negate");
-            }
-            particleManager.addHealthChangeParticle(text, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
+            else AudioManager.playSFX("negate");
+            particleManager.addHealthChangeParticle("-" + damage, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
             startAnimationCycle();
             addStateListener(new StateListener() {
                 @Override
@@ -123,20 +118,15 @@ public class Entity extends GameObject {
     }
 
     public void animateHealing(long healing) {
-        if (healing > 0) {
+        if (healing <= tolerance) healing = 0;
+        if (healing >= 0) {
             animationImage = graphics.getTexture("entityHealed");
-            String text;
-            if (healing > tolerance) {
+            if (healing > 0) {
                 ui.setHealthbarValue((int)health);
-                if (healing > maxTileImpact) text = "+\u221E";
-                else text = "+" + healing;
                 AudioManager.playSFX("heal");
             }
-            else {
-                text = "NEGATED";
-                AudioManager.playSFX("negate");
-            }
-            particleManager.addHealthChangeParticle(text, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
+            else AudioManager.playSFX("negate");
+            particleManager.addHealthChangeParticle("+" + healing, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
             startAnimationCycle();
             addStateListener(new StateListener() {
                 @Override
