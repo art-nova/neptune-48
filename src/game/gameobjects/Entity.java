@@ -69,8 +69,7 @@ public class Entity extends GameObject {
     @Override
     public void render(Graphics2D g2d) {
         if (state == ANIMATING) g2d.drawImage(animationImage, (int)x, (int)y, null);
-        else if (health > 0) g2d.drawImage(graphics.getTexture("entity"), (int)x, (int)y, null);
-        else g2d.drawImage(graphics.getTexture("entityDead"), (int)x, (int) y, null);
+        else g2d.drawImage(graphics.getTexture("entity"), (int)x, (int)y, null);
     }
 
     public void takeDamage(long damage) {
@@ -106,6 +105,7 @@ public class Entity extends GameObject {
                 AudioManager.playSFX("damage");
             }
             else AudioManager.playSFX("negate");
+            if (health <= 0) particleManager.addExplosionParticle((int)x + (GamePanelGraphics.ENTITY_WIDTH - GamePanelGraphics.ENTITY_HEIGHT)/2, (int)y);
             particleManager.addHealthChangeParticle("-" + damage, new Rectangle((int)x + animationImage.getWidth() / 4, (int)y + animationImage.getHeight() / 4, animationImage.getWidth() / 2, animationImage.getHeight() / 2));
             startAnimationCycle();
             addStateListener(new StateListener() {

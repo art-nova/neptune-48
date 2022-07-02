@@ -7,24 +7,21 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
-public class TextParticle extends GameObject {
-    public static final int IDLE = 0, ANIMATING = 1;
+/**
+ * Class that implements particles with generated text
+ */
+public class TextParticle extends Particle {
 
     private String text;
     private Font font;
-    private BufferedImage image;
     private int width, height;
-    private int overallFrames;
-    private int framesLeft;
     private int state;
 
-    public TextParticle(int x, int y, String text, Font font, int lifeTime, GamePanel gp) {
-        super(x, y, gp);
+    public TextParticle(int x, int y, int lifeTime, String text, Font font, GamePanel gp) {
+        super(x, y, lifeTime, lifeTime/4, gp);
         this.text = text;
         this.font = font;
         image = generateTextImage(text, font);
-        this.overallFrames = lifeTime;
-        this.framesLeft = lifeTime;
         state = ANIMATING;
     }
 
@@ -56,20 +53,6 @@ public class TextParticle extends GameObject {
         return result;
     }
 
-    @Override
-    public void update() {
-        framesLeft--;
-        if (framesLeft <= 0) state = IDLE;
-    }
-
-    @Override
-    public void render(Graphics2D g2d) {
-        Composite composite = g2d.getComposite();
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) framesLeft / overallFrames));
-        g2d.drawImage(image, (int) x, (int) y, null);
-        g2d.setComposite(composite);
-    }
-
     public void setText(String text) {
         this.text = text;
         generateTextImage(text, font);
@@ -81,15 +64,5 @@ public class TextParticle extends GameObject {
 
     public Font getFont() {
         return font;
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public void randomizeLocation(Rectangle bounds) {
-        Random random = new Random();
-        x = random.nextInt(bounds.x, bounds.x + bounds.width - width);
-        y = random.nextInt(bounds.y, bounds.y + bounds.height - height);
     }
 }
