@@ -260,23 +260,23 @@ public class LevelMenu extends JFrame{
         pane.add(healthBar, Integer.valueOf(100));
 
         FilledBox boardBack = new FilledBox(darkGreen);
-        boardBack.setBounds(25,458,755,300);
+        boardBack.setBounds(25,458 + 50,755,300);
         pane.add(boardBack, 0);
 
         activeAbility1 = new Ability("level/cover.png", "empty");
-        activeAbility1.setBounds(40,480,110,110);
+        activeAbility1.setBounds(40,480 + 50,110,110);
         pane.add(activeAbility1, 0);
 
         activeAbility2 = new Ability("level/cover.png", "empty");
-        activeAbility2.setBounds(40,625,110,110);
+        activeAbility2.setBounds(40,625 + 50,110,110);
         pane.add(activeAbility2, 0);
 
         attack = new Ability("level/attack.png", "attack");
-        attack.setBounds(655,480,110,110);
+        attack.setBounds(655,480 + 50,110,110);
         pane.add(attack, 0);
 
         passiveAbility = new  JLabel(getIcon("level/attack.png", 110, 110));
-        passiveAbility.setBounds(655,625,110,110);
+        passiveAbility.setBounds(655,625 + 50,110,110);
         pane.add(passiveAbility, 0);
 
         init(levelIdentifier);
