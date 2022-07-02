@@ -246,7 +246,8 @@ public class LevelMenu extends JFrame{
         turnsLeftCounter = new JLabel("999");
         turnsLeftCounter.setHorizontalAlignment(SwingConstants.CENTER);
         turnsLeftCounter.setForeground(new Color(23,62,31));
-        turnsLeftCounter.setFont(new java.awt.Font("Lexend Deca", 0, 60));
+
+        turnsLeftCounter.setFont(App.lexenDeca.deriveFont(App.lexenDeca.getStyle(), 50));
         turnsLeftCounter.setBounds(668,14,106,47);
         pane.add(turnsLeftCounter, 0);
 
@@ -303,7 +304,7 @@ public class LevelMenu extends JFrame{
             healthLeft = new JLabel("" + maxValue);
             healthLeft.setBounds(15,-5,232,48);
             healthLeft.setForeground(new Color(240,248,217));
-            healthLeft.setFont(new java.awt.Font("Lexend Deca", 0, 40));
+            healthLeft.setFont(App.lexenDeca.deriveFont(App.lexenDeca.getStyle(), 40));
             add(healthLeft);
             add(healthBack);
            
@@ -359,7 +360,7 @@ public class LevelMenu extends JFrame{
             coverNumber = new JLabel("" + coverNum, SwingConstants.CENTER);
             coverNumber.setBounds(0,0,110,110);
             coverNumber.setForeground(new Color(221,233,188));
-            coverNumber.setFont(new java.awt.Font("Lexend Deca", 0, 52));
+            coverNumber.setFont(App.lexenDeca.deriveFont(App.lexenDeca.getStyle(), 52));
 
             add(icon, 0);
             add(cover, 0);
@@ -532,10 +533,9 @@ public class LevelMenu extends JFrame{
             centerPanel.setBounds(100,160,600,680);
 
 
-
-            JLabel win = new JLabel("Перемога", SwingConstants.CENTER);
+            JLabel win = new JLabel("Перемога", SwingConstants.CENTER); 
             win.setForeground(new Color(56,151,74));
-            win.setFont(new java.awt.Font("Exo 2", 1, 100));
+            win.setFont(App.exo2.deriveFont(App.exo2.getStyle(), 100));
             win.setBounds(35,10,530,115);
             centerPanel.add(win);
 
@@ -547,7 +547,7 @@ public class LevelMenu extends JFrame{
             centerPanel.add(panel);
             JLabel yours = new JLabel("Ваш результат: " + turnsLeftCounter.getText());
             yours.setForeground(new Color(56,151,74));
-            yours.setFont(new java.awt.Font("Exo 2", 1, 40));
+            yours.setFont(App.exo2.deriveFont(App.exo2.getStyle(), 40));
             yours.setBounds(36,301 + 103,435,47);
             centerPanel.add(yours);
             
@@ -623,7 +623,7 @@ public class LevelMenu extends JFrame{
 
             JLabel lose = new JLabel("Програш", SwingConstants.CENTER);
             lose.setForeground(new Color(56,151,74));
-            lose.setFont(new java.awt.Font("Exo 2", 1, 100));
+            lose.setFont(App.exo2.deriveFont(App.exo2.getStyle(), 100));
             lose.setBounds(35,10,530,115);
             centerPanel.add(lose);
 

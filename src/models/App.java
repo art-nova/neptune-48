@@ -6,7 +6,8 @@ import data.LevelIdentifier;
 import data.PlayerData;
 import UI.LevelMenu;
 import misc.AudioManager;
-
+import java.awt.Font;
+import java.io.File;
 /**
  * Main class of the game.
  * @author Artemii Kolomiichuk
@@ -16,9 +17,18 @@ public class App {
     private static LevelsMenu levels;
     private static MainMenu mainMenu;
     private static LevelMenu level;
+    public static Font lexenDeca;
+    public static Font rubik;
+    public static Font exo2;
 
     public static void main(String[] args) {
         AudioManager.init();
+        try {
+            lexenDeca = Font.createFont(0, new File("resources/fonts/LexendDeca-Regular.ttf"));
+            rubik = Font.createFont(0, new File("resources/fonts/Rubik-VariableFont_wght.ttf"));
+            exo2 = Font.createFont(0, new File("resources/fonts/Exo2-Bold.ttf"));
+        } catch (Exception e) {System.out.println("Fonts: " + e.getMessage());}
+        
         try {
             DataManager.newPlayerData();
             PlayerData playerData = DataManager.loadPlayerData();
