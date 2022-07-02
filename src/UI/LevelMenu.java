@@ -101,8 +101,8 @@ public class LevelMenu extends JFrame{
         }
     }   
 
-    public void setWinOverlay(){
-        cover = winOverlay();
+    public void setWinOverlay(int stars){
+        cover = winOverlay(stars);
         add(cover,0);
         cover.setVisible(true);
         revalidate();
@@ -522,7 +522,7 @@ public class LevelMenu extends JFrame{
         return pane;
     }
 
-    public static JLayeredPane winOverlay(){
+    public static JLayeredPane winOverlay(int stars){
         JLayeredPane pane = new JLayeredPane();
         try {
             pane.setBounds(0,0,815,1000);
@@ -542,7 +542,7 @@ public class LevelMenu extends JFrame{
             
 
             
-            var panel = InfoPanels.starsPanel(levelIdentifier);
+            var panel = InfoPanels.starsPanel(levelIdentifier, stars);
             panel.setBounds(0,20 + 103,600,300);
             centerPanel.add(panel);
             JLabel yours = new JLabel("Ваш результат: " + turnsLeftCounter.getText());
@@ -630,7 +630,7 @@ public class LevelMenu extends JFrame{
             
 
             
-            var panel = InfoPanels.starsPanel(levelIdentifier);
+            var panel = InfoPanels.starsPanel(levelIdentifier, 0);
             panel.setBounds(0,20 + 112,600,300);
             centerPanel.add(panel);
             

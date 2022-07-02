@@ -233,11 +233,12 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
 
+        final int result = stars; // Final variable that can be used inside the listener
         addStateListener((oldState, newState) -> {
             for (GameOverListener listener : new ArrayList<>(gameOverListeners)) listener.onWin(unlockedAbility);
             AudioManager.clearBG();
             AudioManager.playSFX("win");
-            base.setWinOverlay();
+            base.setWinOverlay(result);
         });
     }
 

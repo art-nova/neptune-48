@@ -82,7 +82,29 @@ public class InfoPanels{
         return panel;
     }
 
-    public static JLayeredPane starsPanel(LevelIdentifier levelIdentifier){
+    /**
+     * Creates a star panel with the best acquired number of stars.
+     *
+     * @param levelIdentifier level identifier
+     * @return JLayeredPane with stars
+     */
+    public static JLayeredPane starsPanel(LevelIdentifier levelIdentifier) {
+        JLayeredPane panel = null;
+        try {
+            PlayerData playerData = DataManager.loadPlayerData();
+            panel = starsPanel(levelIdentifier, playerData.getLevelStars(levelIdentifier));
+        } catch (Exception e) {System.out.println("InfoPanels Stars: " + e.getMessage());}
+
+        return panel;
+    }
+
+    /**
+     * Creates a star panel with the specified number of stars.
+     *
+     * @param levelIdentifier level identifier
+     * @return JLayeredPane with stars
+     */
+    public static JLayeredPane starsPanel(LevelIdentifier levelIdentifier, int stars){
         JLayeredPane panel = new JLayeredPane();
 
         panel.setPreferredSize(new Dimension(600,300));
@@ -122,7 +144,7 @@ public class InfoPanels{
             best.setFont(new java.awt.Font("Exo 2", 1, 40));
             best.setBounds(36,235,555,47);
 
-            switch(playerData.getLevelStars(levelIdentifier)){
+            switch(stars){
                 case 0:
                     star1.setIcon(starHollow);
                     star2.setIcon(starHollow);
