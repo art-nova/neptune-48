@@ -116,6 +116,7 @@ public class GamePanelGraphics extends ImageManager {
         textures.put("entity", entity);
         textures.put("entityDamaged", addColorOverlay(entity, palette.get("damageOverlay")));
         textures.put("entityHealed", addColorOverlay(entity, palette.get("healOverlay")));
+        textures.put("entityDead", getScaledImage(getImage("resources/images/entities/entityDead.png"), ENTITY_WIDTH, ENTITY_HEIGHT));
     }
 
     public int getTileSize() {

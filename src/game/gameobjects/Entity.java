@@ -68,7 +68,8 @@ public class Entity extends GameObject {
     @Override
     public void render(Graphics2D g2d) {
         if (state == ANIMATING) g2d.drawImage(animationImage, (int)x, (int)y, null);
-        else g2d.drawImage(graphics.getTexture("entity"), (int)x, (int)y, null);
+        else if (health > 0) g2d.drawImage(graphics.getTexture("entity"), (int)x, (int)y, null);
+        else g2d.drawImage(graphics.getTexture("entityDead"), (int)x, (int) y, null);
     }
 
     public void takeDamage(long damage) {
@@ -77,6 +78,7 @@ public class Entity extends GameObject {
             health -= damage;
             health = Math.max(health, 0);
             if (health == 0) {
+                AudioManager.playSFX("breakdown");
                 switch (gameMode) {
                     case GamePanel.GAME_MODE_ATTACK -> gp.winLevel();
                     case GamePanel.GAME_MODE_REPAIR -> gp.loseLevel();
