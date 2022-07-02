@@ -3,6 +3,7 @@ import java.awt.Dimension;
 
 import java.awt.Color;
 import javax.swing.JFrame;
+import javax.xml.crypto.Data;
 import javax.swing.*;
 
 import UI.miscellaneous.FilledBox;
@@ -271,7 +272,17 @@ public class LevelMenu extends JFrame{
         activeAbility2.setBounds(40,625 + 50,110,110);
         pane.add(activeAbility2, 0);
 
-        attack = new Ability("level/attack.png", "attack");
+        try {
+            if(DataManager.loadLevelData(levelIdentifier).getGameMode() == GamePanel.GAME_MODE_REPAIR){
+                attack = new Ability("level/repair.png", "attack");
+            }
+            else{
+                attack = new Ability("level/attack.png", "attack");
+            }
+        } catch (Exception e) {}
+        
+
+        
         attack.setBounds(655,480 + 50,110,110);
         pane.add(attack, 0);
 
