@@ -52,6 +52,7 @@ public class Entity extends GameObject {
         this.health = gameMode == GamePanel.GAME_MODE_REPAIR ? maxHealth / 10 : maxHealth;
         this.tolerance = tolerance;
         this.maxTileImpact = (long)Math.pow(gp.getBaseTileDamage(), 11);
+        ui.setHealthbarValue((int)health);
     }
 
     @Override
