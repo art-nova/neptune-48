@@ -45,6 +45,7 @@ public class App {
             playerData.unlockLevel(new LevelIdentifier("normal", 2));
             playerData.unlockLevel(new LevelIdentifier("normal", 3));
             playerData.unlockLevel(new LevelIdentifier("normal", 4));
+            playerData.unlockLevel(new LevelIdentifier("normal", 5));
             playerData.unlockLevel(new LevelIdentifier("hard", 0));
             playerData.unlockLevel(new LevelIdentifier("hard", 1));
             playerData.unlockLevel(new LevelIdentifier("hard", 3));

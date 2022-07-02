@@ -247,7 +247,7 @@ public class LevelMenu extends JFrame{
         turnsLeftCounter.setHorizontalAlignment(SwingConstants.CENTER);
         turnsLeftCounter.setForeground(new Color(23,62,31));
 
-        turnsLeftCounter.setFont(App.lexenDeca.deriveFont(App.lexenDeca.getStyle(), 50));
+        turnsLeftCounter.setFont(App.lexenDeca.deriveFont(App.lexenDeca.getStyle(), 45));
         turnsLeftCounter.setBounds(668,14,106,47);
         pane.add(turnsLeftCounter, 0);
 

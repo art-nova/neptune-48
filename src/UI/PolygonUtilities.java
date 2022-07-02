@@ -7,7 +7,7 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 public class PolygonUtilities {
-    static Polygon[] polygons = new Polygon[5];
+    static Polygon[] polygons = new Polygon[6];
 
     public static class Polygon extends JLayeredPane implements ActionListener{
         int x,y;
@@ -29,6 +29,14 @@ public class PolygonUtilities {
             int yOffset = 45;
             for (int i = 0; i < ys.length; i++) {
                 ys[i] += yOffset;
+            }
+            if(overlayColor.equals("null")){
+                for (int i = 0; i < ys.length; i++) {
+                    ys[i] -= 50;
+                }
+                for(int i = 0; i < xs.length; i++){
+                    xs[i] -= 15;
+                }
             }
             yOffset = 92;
             this.colorBase = colorBase;

@@ -268,12 +268,42 @@ public class LevelsMenu extends JFrame{
                             colorOverlay
         );
 
+        if(playerData.isLevelCompleted(new LevelIdentifier(playMode, 5))){
+            polygonColor = lightGreen;
+            polygonColorLighter = lightlightGreen;
+            colorOverlay = "Green";
+            stroke = greenStroke;
+        }
+        else if(playerData.isLevelUnlocked(new LevelIdentifier(playMode, 5))){
+            polygonColor = lightRed;
+            polygonColorLighter = lightlightRed;
+            colorOverlay = "Red";
+            stroke = redStroke;
+        }
+        else{
+            polygonColor = darkRed;
+            polygonColorLighter = darkRed;
+            colorOverlay = "Red";
+            stroke = redStroke;
+        }
+
+        Polygon polygon5 = new Polygon(0,0, polygonColor, polygonColorLighter,
+                            new int[]{486,537,744,759,750,660,660,621,613,600,595,555,542},
+                            new int[]{801,849,849,820,807,807,781,769,735,735,769,780,814},
+                            true,
+                            stroke,
+                            stroke,
+                            4,
+                            "null"
+        );
+
 
         UI.PolygonUtilities.polygons[0] = polygon0;
         UI.PolygonUtilities.polygons[1] = polygon1;
         UI.PolygonUtilities.polygons[2] = polygon2;
         UI.PolygonUtilities.polygons[3] = polygon3;
         UI.PolygonUtilities.polygons[4] = polygon4;
+        UI.PolygonUtilities.polygons[5] = polygon5;
 
 
         pane.add(polygon0, Integer.valueOf(0));
@@ -281,6 +311,7 @@ public class LevelsMenu extends JFrame{
         pane.add(polygon2, Integer.valueOf(2));
         pane.add(polygon3, Integer.valueOf(3));
         pane.add(polygon4 , Integer.valueOf(4));
+        
         
 
         pane.addMouseMotionListener(adapter);
@@ -321,13 +352,14 @@ public class LevelsMenu extends JFrame{
             JLabel border = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/mapBorder.png"))));
             border.setBounds(0,138,800,824);
             add(border);
-
+            add(polygon5);
             JLabel sea = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/water.png"))));
             sea.setBounds(410,330+80,401,569);
             add(sea);
             topPanel = new TopPanel();
             add(topPanel);
         } catch (Exception e) {}
+        
         init();
         add(pane);
         setVisible(true);
