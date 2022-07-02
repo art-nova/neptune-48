@@ -45,6 +45,7 @@ public class SafeAttack extends ActiveAbility {
                 Tile tile = e.getTile();
                 board.unlingerTile(tile);
                 board.putTileInCell(tile, cell);
+                board.offsetTileCount(1);
                 board.addStateListener(new StateListener() {
                     @Override
                     public void onStateChanged(int oldState, int newState) {

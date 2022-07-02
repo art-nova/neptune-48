@@ -290,6 +290,15 @@ public class Board extends GameObject {
         }
     }
 
+    /**
+     * Potentially dangerous method for modifying inner tile counter. Use with care!
+     *
+     * @param delta number that is added to the count
+     */
+    public void offsetTileCount(int delta) {
+        tileCount += delta;
+    }
+
     public int getBaseTileLevel() {
         return baseTileLevel;
     }
