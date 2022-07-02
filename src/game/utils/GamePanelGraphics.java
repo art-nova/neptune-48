@@ -22,7 +22,7 @@ public class GamePanelGraphics extends ImageManager {
 
     // Entity (one being attacked / repaired)
     public static final int ENTITY_WIDTH = 480;
-    public static final int ENTITY_HEIGHT = 200;
+    public static final int ENTITY_HEIGHT = 250;
     public static final int ENTITY_BOARD_DISTANCE = 40;
     
     // Board
