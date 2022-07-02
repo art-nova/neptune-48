@@ -86,7 +86,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.keyHandler = new KeyHandler(this);
         base.addKeyListener(keyHandler);
         this.mouseHandler = new MouseHandler(this);
-        this.addMouseListener(mouseHandler);
+        base.addMouseListener(mouseHandler);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
         this.setPreferredSize(new Dimension(GamePanelGraphics.ENTITY_WIDTH, board.getPreferredHeight() + GamePanelGraphics.ENTITY_BOARD_DISTANCE + GamePanelGraphics.ENTITY_HEIGHT));
@@ -162,7 +162,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
         AudioManager.clearBG();
         base.removeKeyListener(keyHandler);
-        this.removeMouseListener(mouseHandler);
+        base.removeMouseListener(mouseHandler);
     }
 
     /**

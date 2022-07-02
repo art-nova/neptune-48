@@ -11,6 +11,7 @@ import data.LevelData;
 import data.LevelIdentifier;
 import data.PlayerData;
 import game.GamePanel;
+import game.gameobjects.Board;
 import models.App;
 
 import java.awt.event.KeyEvent;
@@ -68,7 +69,8 @@ public class LevelMenu extends JFrame{
             attack.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    if (!attack.cover.isVisible()) gamePanel.getAbilityManager().attemptAttack();
+                    if (e.getButton() == MouseEvent.BUTTON1 && !attack.cover.isVisible()) gamePanel.getAbilityManager().attemptAttack();
+                    else if (e.getButton() == MouseEvent.BUTTON3 && gamePanel.getBoard().getState() == Board.SELECTING) gamePanel.getActionHandler().scheduleAction("abortSelection");
                 }
             });
 
@@ -78,7 +80,8 @@ public class LevelMenu extends JFrame{
                 activeAbility1.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        if (!activeAbility1.cover.isVisible()) gamePanel.getAbilityManager().attemptActive1();
+                        if (e.getButton() == MouseEvent.BUTTON1 && !activeAbility1.cover.isVisible()) gamePanel.getAbilityManager().attemptActive1();
+                        else if (e.getButton() == MouseEvent.BUTTON3 && gamePanel.getBoard().getState() == Board.SELECTING) gamePanel.getActionHandler().scheduleAction("abortSelection");
                     }
                 });
             }
@@ -87,7 +90,8 @@ public class LevelMenu extends JFrame{
                 activeAbility2.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        if (!activeAbility2.cover.isVisible()) gamePanel.getAbilityManager().attemptActive2();
+                        if (e.getButton() == MouseEvent.BUTTON1 && !activeAbility2.cover.isVisible()) gamePanel.getAbilityManager().attemptActive2();
+                        else if (e.getButton() == MouseEvent.BUTTON3 && gamePanel.getBoard().getState() == Board.SELECTING) gamePanel.getActionHandler().scheduleAction("abortSelection");
                     }
                 });
             }
