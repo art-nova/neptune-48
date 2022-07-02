@@ -31,7 +31,7 @@ public class LevelMenu extends JFrame{
     Color lightGreen = new Color(42,113,56);
     int width, height;
     JLayeredPane pane;
-    JLabel turnsLeftCounter;
+    static JLabel turnsLeftCounter;
     static Healthbar healthBar;
     /**
      * Cover over JFrame
@@ -486,7 +486,29 @@ public class LevelMenu extends JFrame{
             centerPanel.setLayout(null);
             centerPanel.setBackground(new Color(23,63,31));
             centerPanel.setBounds(100,160,600,680);
+
+
+
+            JLabel win = new JLabel("Перемога", SwingConstants.CENTER);
+            win.setForeground(new Color(56,151,74));
+            win.setFont(new java.awt.Font("Exo 2", 1, 100));
+            win.setBounds(35,10,530,115);
+            centerPanel.add(win);
+
             
+
+            
+            var panel = InfoPanels.starsPanel(levelIdentifier);
+            panel.setBounds(0,20 + 103,600,300);
+            centerPanel.add(panel);
+            JLabel yours = new JLabel("Ваш результат: " + turnsLeftCounter.getText());
+            yours.setForeground(new Color(56,151,74));
+            yours.setFont(new java.awt.Font("Exo 2", 1, 40));
+            yours.setBounds(36,301 + 103,435,47);
+            centerPanel.add(yours);
+            
+
+
             ImageIcon back = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenu.png")));
             ImageIcon backLight = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenuLight.png")));
             JLabel backButton = new JLabel(back);
@@ -554,6 +576,19 @@ public class LevelMenu extends JFrame{
             centerPanel.setLayout(null);
             centerPanel.setBackground(new Color(23,63,31));
             centerPanel.setBounds(100,160,600,680);
+
+            JLabel lose = new JLabel("Програш", SwingConstants.CENTER);
+            lose.setForeground(new Color(56,151,74));
+            lose.setFont(new java.awt.Font("Exo 2", 1, 100));
+            lose.setBounds(35,10,530,115);
+            centerPanel.add(lose);
+
+            
+
+            
+            var panel = InfoPanels.starsPanel(levelIdentifier);
+            panel.setBounds(0,20 + 112,600,300);
+            centerPanel.add(panel);
             
             ImageIcon back = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenu.png")));
             ImageIcon backLight = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenuLight.png")));
