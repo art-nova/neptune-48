@@ -96,10 +96,7 @@ public class AudioManager {
                 clip.start();
                 clip.addLineListener(event -> {
                     if (event.getType() == LineEvent.Type.STOP) {
-                        if (!clip.isRunning()) {
-                            clip.flush();
-                            clip.setFramePosition(0);
-                        }
+                        clip.setFramePosition(0);
                     }
                 });
                 sfx.put(nameID, clip);
