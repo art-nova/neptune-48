@@ -123,16 +123,16 @@ public class InfoPanels{
 
             JLabel star2Text = new JLabel("null", SwingConstants.CENTER);   
             star2Text.setForeground(new Color(23,63,31));
-            star2Text.setFont(new java.awt.Font("Lexend Deca", 0, 50));
+            star2Text.setFont(App.lexenDeca.deriveFont(App.lexenDeca.getStyle(), 50));
             star2Text.setBounds(254,57+16,93,53);
             JLabel star3Text = new JLabel("null", SwingConstants.CENTER);
             star3Text.setForeground(new Color(23,63,31));
-            star3Text.setFont(new java.awt.Font("Lexend Deca", 0, 50));
+            star3Text.setFont(App.lexenDeca.deriveFont(App.lexenDeca.getStyle(), 50));
             star3Text.setBounds(433,57+16,93,53);
 
             JLabel overall = new JLabel("Всього ходів: " + levelData.getTurns());
             overall.setForeground(new Color(56,151,74));
-            overall.setFont(new java.awt.Font("Exo 2", 1, 40));
+            overall.setFont(App.exo2.deriveFont(App.exo2.getStyle(), 40));
             overall.setBounds(36,190,435,47);
             JLabel best;
             try {
@@ -141,7 +141,7 @@ public class InfoPanels{
                 best = new JLabel("Найкращий результат: -");
             }
             best.setForeground(new Color(56,151,74));
-            best.setFont(new java.awt.Font("Exo 2", 1, 40));
+            best.setFont(App.exo2.deriveFont(App.exo2.getStyle(), 40));
             best.setBounds(36,235,555,47);
 
             switch(stars){
