@@ -648,6 +648,7 @@ public class Board extends GameObject {
         if (turnReactionScheduled) {
             turnReactionScheduled = false;
             generateRandomTile();
+            AudioManager.playSFX("move");
             for (TurnListener listener : new ArrayList<>(turnListeners)) listener.onTurn();
             if (tileCount == rows * cols && checkForLoseCondition()) gp.loseLevel();
         }

@@ -13,7 +13,7 @@ import java.util.*;
 public class AudioManager {
     private static Clip bg;
     private static Map<String, Clip> sfx = new HashMap<>();
-    private static float bgVolume = 0.55f, sfxVolume = 0.75f;
+    private static float bgVolume = 0.55f, sfxVolume = 0.7f;
 
     /**
      * Initializes the audio manager.
@@ -79,25 +79,30 @@ public class AudioManager {
      */
     public static void playSFX(String nameID) {
         try {
-            if (!sfx.containsKey(nameID)) {
-                File file = new File("resources/audio/sfx/" + nameID + ".wav");
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
-                Clip clip = AudioSystem.getClip();
-                clip.open(audioInputStream);
-                setClipVolume(clip, sfxVolume);
-                audioInputStream.close();
-                sfx.put(nameID, clip);
-                clip.addLineListener(event -> {
-                    if (event.getType() == LineEvent.Type.STOP) {
-                        clip.flush();
-                    }
-                });
+            if (sfx.containsKey(nameID)) {
+                Clip clip = sfx.get(nameID);
+                clip.stop();
+                clip.flush();
+                clip.setFramePosition(0);
                 clip.start();
             }
             else {
-                Clip clip = sfx.get(nameID);
-                clip.setFramePosition(0);
+                Clip clip = AudioSystem.getClip();
+                File file = new File("resources/audio/sfx/" + nameID + ".wav");
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
+                clip.open(audioInputStream);
+                setClipVolume(clip, sfxVolume);
+                audioInputStream.close();
                 clip.start();
+                clip.addLineListener(event -> {
+                    if (event.getType() == LineEvent.Type.STOP) {
+                        if (!clip.isRunning()) {
+                            clip.flush();
+                            clip.setFramePosition(0);
+                        }
+                    }
+                });
+                sfx.put(nameID, clip);
             }
         }
         catch (Exception e) {
