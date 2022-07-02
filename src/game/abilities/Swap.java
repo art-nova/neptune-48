@@ -20,7 +20,7 @@ public class Swap extends ActiveAbility {
 
     public Swap(GamePanel gp, AbilityManager abilityManager, LevelMenu.Ability updatedElement) {
         super(gp, abilityManager, DEFAULT_COOLDOWN, updatedElement);
-        determineApplicability();
+        updateApplicability();
     }
 
     @Override

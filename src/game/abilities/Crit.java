@@ -22,6 +22,7 @@ public class Crit extends ActiveAbility {
     public Crit(GamePanel gp, AbilityManager abilityManager, LevelMenu.Ability updatedElement) {
         super(gp, abilityManager, DEFAULT_COOLDOWN, updatedElement);
         this.attack = abilityManager.getAttack();
+        updateApplicability();
     }
 
     @Override

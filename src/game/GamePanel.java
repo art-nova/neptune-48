@@ -78,6 +78,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.particleManager = new ParticleManager(this);
         this.entity = new Entity(0, 0, levelData.getEntityHealth(), levelData.getEntityTolerance(), this);
         this.board = new Board(0, GamePanelGraphics.ENTITY_HEIGHT + GamePanelGraphics.ENTITY_BOARD_DISTANCE, levelData.getBoardSize(), levelData.getBoardSize(), 1, this);
+        board.generateRandomTile();
+        board.generateRandomTile();
         this.countdown = new Countdown(levelData.getTurns(), this);
         this.obstacleManager = new ObstacleManager(levelData.getObstacleWeights(), levelData.getMinObstacleInterval(), levelData.getMaxObstacleInterval(), this);
         this.abilityManager = new AbilityManager(playerData.getActiveAbility1(), playerData.getActiveAbility2(), playerData.getPassiveAbility(), this);
@@ -115,8 +117,6 @@ public class GamePanel extends JPanel implements Runnable {
             }
         });
 
-        board.generateRandomTile();
-        board.generateRandomTile();
         AudioManager.setBG("level"+levelData.getLevelIdentifier().index());
         AudioManager.playBG();
         gameThread.start();

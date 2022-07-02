@@ -25,6 +25,7 @@ public class SafeAttack extends ActiveAbility {
     public SafeAttack(GamePanel gp, AbilityManager abilityManager, LevelMenu.Ability updatedElement) {
         super(gp, abilityManager, DEFAULT_COOLDOWN, updatedElement);
         attack = abilityManager.getAttack();
+        updateApplicability();
     }
 
     @Override

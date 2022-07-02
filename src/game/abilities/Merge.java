@@ -21,7 +21,7 @@ public class Merge extends ActiveAbility {
 
     public Merge(GamePanel gp, AbilityManager abilityManager, LevelMenu.Ability updatedElement) {
         super(gp, abilityManager, DEFAULT_COOLDOWN, updatedElement);
-        determineApplicability();
+        updateApplicability();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class Merge extends ActiveAbility {
         setState(APPLYING);
         Predicate<BoardCell> basePredicate = x -> {
             Tile tile = board.getTileInCell(x);
-            return tile != null && !tile.isLocked();
+            return tile != null && !tile.isLocked() && cellTileHasPair(x);
         };
         board.initSelection(basePredicate, 2);
         board.addCellSelectionListener(new CellSelectionListener() {
@@ -67,7 +67,10 @@ public class Merge extends ActiveAbility {
     @Override
     protected boolean determineApplicability() {
         if (super.determineApplicability()) {
-            List<BoardCell> cells = board.getCellsByPredicate(x -> board.getTileInCell(x) != null);
+            List<BoardCell> cells = board.getCellsByPredicate(x -> {
+                Tile tile = board.getTileInCell(x);
+                return tile != null && !tile.isLocked();
+            });
             for (BoardCell cell : cells) {
                 if (cellTileHasPair(cell)) return true;
             }

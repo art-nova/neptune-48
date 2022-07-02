@@ -20,7 +20,7 @@ public class Upgrade extends ActiveAbility {
 
     public Upgrade(GamePanel gp, AbilityManager abilityManager, LevelMenu.Ability updatedElement) {
         super(gp, abilityManager, DEFAULT_COOLDOWN, updatedElement);
-        determineApplicability();
+        updateApplicability();
     }
 
     @Override

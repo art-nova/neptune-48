@@ -23,6 +23,7 @@ public class Scramble extends ActiveAbility {
 
     public Scramble(GamePanel gp, AbilityManager abilityManager, LevelMenu.Ability updatedElement) {
         super(gp, abilityManager, DEFAULT_COOLDOWN, updatedElement);
+        updateApplicability();
     }
 
     @Override
