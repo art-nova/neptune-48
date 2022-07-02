@@ -15,8 +15,6 @@ public class MouseHandler extends MouseAdapter {
     private final Board board;
     private final ActionHandler actionHandler;
 
-    private boolean mouseOn;
-
     /**
      * Constructs a MouseHandler.
      *
@@ -30,19 +28,14 @@ public class MouseHandler extends MouseAdapter {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (mouseOn && e.getButton() == MouseEvent.BUTTON1 && gp.getState() == GamePanel.PLAYING && board.getState() == Board.SELECTING) {
-            actionHandler.scheduleAction("selectTile");
+        if (gp.getState() == GamePanel.PLAYING && board.getState() == Board.SELECTING) {
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                actionHandler.scheduleAction("selectTile");
+            }
+            else if (e.getButton() == MouseEvent.BUTTON3) {
+                actionHandler.scheduleAction("abortSelection");
+            }
         }
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        mouseOn = true;
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        mouseOn = false;
     }
 
 }
