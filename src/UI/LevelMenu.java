@@ -14,8 +14,6 @@ import game.GamePanel;
 import game.gameobjects.Board;
 import models.App;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -52,7 +50,7 @@ public class LevelMenu extends JFrame{
 
     
 
-//TODO
+
     void init(LevelIdentifier levelIdentifier){
         LevelMenu.levelIdentifier = levelIdentifier;
         try {
@@ -195,9 +193,51 @@ public class LevelMenu extends JFrame{
         topPanel.setBounds(0,0,width,79);
         pane.add(topPanel, 0);
 
+        FilledBox pauseCover = new FilledBox(new Color(52,148,71));
+        pauseCover.setBounds(15,12,125,55);
+        pauseCover.setVisible(false);
+        pauseCover.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) gamePanel.getActionHandler().scheduleAction("pause");
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                pauseCover.setVisible(true);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                pauseCover.setVisible(false);
+            }
+        });
+
         FilledBox pauseBack = new FilledBox(lightGreen);
         pauseBack.setBounds(15,12,125,55);
+        pauseBack.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) gamePanel.getActionHandler().scheduleAction("pause");
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                pauseCover.setVisible(true);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                pauseCover.setVisible(false);
+            }
+        });
         pane.add(pauseBack, 0);
+        pane.add(pauseCover, 0);
+        FilledBox pause1 = new FilledBox(darkGreen);
+        pause1.setBounds(56,22,13,36);
+        pane.add(pause1, 0);
+        FilledBox pause2 = new FilledBox(darkGreen);
+        pause2.setBounds(84,22,13,36);
+        pane.add(pause2, 0);
+
+        
+
 
         FilledBox countdownBack = new FilledBox(lightGreen);
         countdownBack.setBounds(660,12,125,55);
