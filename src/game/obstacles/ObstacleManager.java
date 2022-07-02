@@ -3,6 +3,7 @@ package game.obstacles;
 import game.GamePanel;
 import game.events.ObstacleEvent;
 import game.events.ObstacleListener;
+import game.gameobjects.Board;
 import game.utils.WeightedRandom;
 import misc.AudioManager;
 
@@ -24,6 +25,7 @@ public class ObstacleManager {
     private final WeightedRandom random = new WeightedRandom();
     private final List<ObstacleListener> obstacleListeners = new ArrayList<>();
     private final GamePanel gp;
+    private final Board board;
 
     private int turnsElapsed = 0;
     private Obstacle latestObstacle;
@@ -38,6 +40,7 @@ public class ObstacleManager {
      */
     public ObstacleManager(Map<String, Integer> obstacleWeights, int minInterval, int maxInterval, GamePanel gp) {
         this.gp = gp;
+        this.board = gp.getBoard();
         for (String nameID : obstacleWeights.keySet()) {
             Integer weight = obstacleWeights.get(nameID);
             this.obstacleWeights.put(registerObstacle(nameID), weight);
@@ -85,6 +88,7 @@ public class ObstacleManager {
                 if (latestObstacle != null) {
                     latestObstacle.startApplication();
                     AudioManager.playSFX("obstacle");
+                    board.addDamageHighlight();
                 }
                 else AudioManager.playSFX("obstacleBlocked");
                 turnsElapsed = 0;

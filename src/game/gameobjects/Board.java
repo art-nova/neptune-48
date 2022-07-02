@@ -53,6 +53,8 @@ public class Board extends GameObject {
     private boolean turnReactionScheduled;
     private boolean locked = false;
 
+    private int highlightFrames = 0;
+
     public Board(int x, int y, int rows, int cols, int baseTileLevel, GamePanel gp) throws IllegalArgumentException {
         super(x, y, gp);
         if (rows < 2) throw new IllegalArgumentException("Cannot have less than 2 rows");
@@ -211,6 +213,11 @@ public class Board extends GameObject {
         }
         for (Tile tile : transientTiles) tile.render(g2d);
         if (state == SELECTING) selectionHandler.render(g2d);
+        if (highlightFrames > 0) {
+            g2d.setColor(graphics.getColor("damageOverlay"));
+            g2d.fillRect((int)x, (int)y, preferredWidth, preferredHeight);
+            highlightFrames--;
+        }
     }
 
     /**
@@ -275,6 +282,10 @@ public class Board extends GameObject {
 
     public int getPreferredHeight() {
         return preferredHeight;
+    }
+
+    public void addDamageHighlight() {
+        highlightFrames = GamePanelGraphics.ANIMATION_CYCLE;
     }
 
     public int getState() {
