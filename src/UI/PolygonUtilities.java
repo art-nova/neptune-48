@@ -114,14 +114,12 @@ public class PolygonUtilities {
 
         public void actionPerformed(ActionEvent e) {
             int percentage = (int)Math.round((colorDistance - UI.miscellaneous.Utilities.colorDistance(colorTo, currentColor)) / colorDistance * 100);
-            //System.out.println(percentage);
             if(percentage > 100){
                 percentage = 100;
             }
             if(percentage <= 100 && percentage >= 0) {
                 currentColor = UI.miscellaneous.Utilities.colorBetween(colorFrom, colorTo, percentage+2);
                 setForeground(currentColor);
-                //System.out.println(UI.miscellaneous.Utilities.colorDistance(currentColor, colorTo));
             }
         }
     }

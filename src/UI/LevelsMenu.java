@@ -494,7 +494,6 @@ public class LevelsMenu extends JFrame{
                     @Override
                     public void mouseClicked(MouseEvent e){
                         if(overlayPane == null){
-                            System.out.println("abilities");
                             overlayPane = AbilityInfoPanel.getAbilitiesPanel();
                             overlayPane.setVisible(true);
                             //add(overlayPane);
@@ -571,7 +570,7 @@ public class LevelsMenu extends JFrame{
         }
     }
 
-    //TODO
+    
     //level info panel with star and obstacles descriptions
     public static JLayeredPane starsPane(int num, LevelIdentifier levelIdentifier){
         JLayeredPane pane = new JLayeredPane();

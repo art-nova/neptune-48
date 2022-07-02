@@ -74,27 +74,27 @@ public class MainMenu extends JFrame{
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(144,151,165,169, new ImageIcon(ImageIO.read(new File(p + "mount3.png"))));
+            layer = new Layer(144,151,165 + 55,169 + 55, new ImageIcon(ImageIO.read(new File(p + "mount3.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(433,450,41+20,48+20, new ImageIcon(ImageIO.read(new File(p + "mount2.png"))));
+            layer = new Layer(433,450,41+20 + 75,48+20 + 75, new ImageIcon(ImageIO.read(new File(p + "mount2.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(-188,-148,86,98, new ImageIcon(ImageIO.read(new File(p + "mount1.png"))));
+            layer = new Layer(-188,-148,86 + 55,98 + 55, new ImageIcon(ImageIO.read(new File(p + "mount1.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(-7,-7,655+20,655+20, new ImageIcon(ImageIO.read(new File(p + "grassTop.png"))));
+            layer = new Layer(-7,-7,655+120,655+120, new ImageIcon(ImageIO.read(new File(p + "grassTop.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(250,310,505+ 110,520+ 110, new ImageIcon(ImageIO.read(new File(p + "bush.png"))));
+            layer = new Layer(260,300,505+ 110+100,520+ 110+100, new ImageIcon(ImageIO.read(new File(p + "bush.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(-102,3,477+ 110,498+ 110, new ImageIcon(ImageIO.read(new File(p + "bushes.png"))));
+            layer = new Layer(-70,3,477+ 110+120,498+ 110+120, new ImageIcon(ImageIO.read(new File(p + "bushes.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
@@ -102,11 +102,11 @@ public class MainMenu extends JFrame{
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(288,420,12,42, new ImageIcon(ImageIO.read(new File(p + "cloud2.png"))));
+            layer = new Layer(293,425,12,42, new ImageIcon(ImageIO.read(new File(p + "cloud2.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(-20,185,25,72, new ImageIcon(ImageIO.read(new File(p + "cloud1.png"))));
+            layer = new Layer(-30,180,25 + 20,72 + 20, new ImageIcon(ImageIO.read(new File(p + "cloud1.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
@@ -258,7 +258,7 @@ public class MainMenu extends JFrame{
             this.minX = minX;
             this.maxX = minX + (int)((maxX - minX)/1.4);
             this.minY = minY;
-            this.maxY = minY + (int)((maxY - minY)/3.2);
+            this.maxY = minY + (int)((maxY - minY)/2.6);
             label = new JLabel();
             label.setIcon(image);
             setBackground(new Color(0,0,0,0));
