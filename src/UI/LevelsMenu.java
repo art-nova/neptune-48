@@ -366,6 +366,7 @@ public class LevelsMenu extends JFrame{
         public JLabel abilityFirst;
         public JLabel abilitySecond;
         public JLabel abilityThird;
+        public JLabel abilitiesCover;
         public TopPanel(){
             super();
             setBounds(0,0,800,145);
@@ -480,9 +481,14 @@ public class LevelsMenu extends JFrame{
                         }
                     }
                 });
-                
+
+
                 JLabel abilitiesPlacement = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilitiesPlacement.png"))));
+                abilitiesCover = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilitiesPlacementCover.png"))));
+                abilitiesCover.setBounds(189,21,370,104);
                 abilitiesPlacement.setBounds(189,21,370,104);
+                abilitiesCover.setVisible(false);
+                add(abilitiesCover);
                 abilityFirst = new JLabel();
                 abilityFirst.setBounds(188,21,106,106);
                 add(abilityFirst);
@@ -501,7 +507,16 @@ public class LevelsMenu extends JFrame{
 
                 FilledBox abilitiesClickTrecker = new FilledBox(new Color(23,63,31));
                 abilitiesClickTrecker.setBounds(170,0,400,145);
+
                 abilitiesClickTrecker.addMouseListener(new MouseAdapter(){
+                    @Override
+                    public void mouseEntered(MouseEvent e){
+                        abilitiesCover.setVisible(true);
+                    }
+                    @Override
+                    public void mouseExited(MouseEvent e){
+                        abilitiesCover.setVisible(false);
+                    }
                     @Override
                     public void mouseClicked(MouseEvent e){
                         if(overlayPane == null){
@@ -521,8 +536,40 @@ public class LevelsMenu extends JFrame{
                         }
                     }
                 });
+
+                abilitiesCover.addMouseListener(new MouseAdapter(){
+                    @Override
+                    public void mouseEntered(MouseEvent e){
+                        abilitiesCover.setVisible(true);
+                    }
+                    @Override
+                    public void mouseExited(MouseEvent e){
+                        abilitiesCover.setVisible(false);
+                    }
+                    @Override
+                    public void mouseClicked(MouseEvent e){
+                        if(overlayPane == null){
+                            overlayPane = AbilityInfoPanel.getAbilitiesPanel();
+                            overlayPane.setVisible(true);
+                            //add(overlayPane);
+                            getParent().add(overlayPane,0);
+                            revalidate();
+                            repaint();  
+                        }
+                        else{
+                            overlayPane.setVisible(false);
+                            getParent().remove(overlayPane);
+                            overlayPane = null;
+                            revalidate();
+                            repaint();
+                        }
+                    }
+                });
+
                 add(abilitiesClickTrecker);
-            } catch (Exception ex) {}
+            } catch (Exception ex) {System.err.println("Error loading level info: " + ex);}
+
+
             setBackground(new Color(23,63,31));
             setOpaque(true);
             setVisible(true);
