@@ -3,6 +3,8 @@ package UI;
 import java.awt.*;
 import java.awt.Dimension;
 import java.awt.Component;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 import javax.imageio.ImageIO;
@@ -74,7 +76,8 @@ public class LevelsMenu extends JFrame{
     }
    
     public LevelsMenu(String hardness) {
-        super("Levels");
+        super("Neptune-48");
+        setResizable(false);
         getCurrentPlayMode(hardness);
         this.width = 815;
         this.height = 1000;
@@ -111,6 +114,25 @@ public class LevelsMenu extends JFrame{
                 }
                 
         };
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    if (overlayPane != null && overlayPane.isVisible()) {
+                        overlayPane.setVisible(false);
+                        remove(overlayPane);
+                        overlayPane = null;
+                        revalidate();
+                        repaint();
+                    }
+                    else {
+                        overlayPane = null;
+                        App.loadMainMenuFromLevels();
+                    }
+                }
+            }
+        });
 
         Color polygonColor ;
         Color polygonColorLighter;

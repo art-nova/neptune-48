@@ -173,7 +173,8 @@ public class LevelMenu extends JFrame{
     }
     
     public LevelMenu(LevelIdentifier levelIdentifier) {
-        super("Level");
+        super("Neptune-48");
+        setResizable(false);
         this.width = 815;
         this.height = 1000;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

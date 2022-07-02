@@ -30,7 +30,8 @@ public class MainMenu extends JFrame{
     MouseAdapter moveAdapter;
     
     public MainMenu() {
-        super("Menu");
+        super("Neptune-48");
+        setResizable(false);
         this.width = 815;
         this.height = 1000;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -186,6 +187,7 @@ public class MainMenu extends JFrame{
         add(pane);
         pane.addMouseMotionListener(moveAdapter);
         setVisible(true);
+        setLocationRelativeTo(null);
     }
 
     private class ContinueButton extends JLabel{
