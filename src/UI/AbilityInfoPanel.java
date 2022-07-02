@@ -10,7 +10,6 @@ import models.App;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.xml.crypto.Data;
 import javax.swing.*;
 
 import java.awt.Dimension;
@@ -291,32 +290,13 @@ public class AbilityInfoPanel {
                         image.setIcon(normal);
                     }
                 }
-                //TODO
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    if(state.equals("selectable")){
-                        AbilityBar[] set = isPassive ? passive : active;
-                        if(isPassive){
-                            for (AbilityBar abilityBar : set) {
-                                if(abilityBar.state.equals("selectable")){
-                                    abilityBar.makeDark();
-                                    abilityBar.state = "unavailable";
-                                }
-                            }
-                            makeChecked();
-                            try {
-                                PlayerData playerData = DataManager.loadPlayerData();
-                                playerData.setPassiveAbility(nameID);
-                                DataManager.savePlayerData(playerData);
-                            } catch (Exception ex) {}
-                            
-                            try {
-                                topPanel.setAbility(3, iconForTopPanel);
-                            } catch (Exception ex) {}
-                        }
-                        else{//is active
-                            //is second
-                            if(topPanel.abilityFirst.isVisible()){
+                    //if left mouse button
+                    if(e.getButton() == MouseEvent.BUTTON1){   
+                        if(state.equals("selectable")){
+                            AbilityBar[] set = isPassive ? passive : active;
+                            if(isPassive){
                                 for (AbilityBar abilityBar : set) {
                                     if(abilityBar.state.equals("selectable")){
                                         abilityBar.makeDark();
@@ -326,82 +306,103 @@ public class AbilityInfoPanel {
                                 makeChecked();
                                 try {
                                     PlayerData playerData = DataManager.loadPlayerData();
-                                    playerData.setActiveAbility2(nameID);
+                                    playerData.setPassiveAbility(nameID);
                                     DataManager.savePlayerData(playerData);
                                 } catch (Exception ex) {}
-                                topPanel.setAbility(2, iconForTopPanel);
-                            }
-                            else{//first chosen
-                                makeChecked();
+                                
                                 try {
-                                    PlayerData playerData = DataManager.loadPlayerData();
-                                    playerData.setActiveAbility1(nameID);
-                                    DataManager.savePlayerData(playerData);
+                                    topPanel.setAbility(3, iconForTopPanel);
                                 } catch (Exception ex) {}
-                                topPanel.setAbility(1, iconForTopPanel);
                             }
-                        }
-                    }else if(state.equals("chosen")){//unchecking
-                        if(isPassive){
-                            state = "selectable";
-                            makeNormal();
-                            try {
-                                PlayerData playerData = DataManager.loadPlayerData();
-                                playerData.removePassiveAbility();
-                                DataManager.savePlayerData(playerData);
-                            } catch (Exception ex) {System.out.println(ex);}
-                            for (AbilityBar abilityBar : passive) {
-                                if(abilityBar.state.equals("unavailable")){
-                                    abilityBar.state = "selectable";
-                                    abilityBar.makeNormal();
+                            else{//is active
+                                //is second
+                                if(topPanel.abilityFirst.isVisible()){
+                                    for (AbilityBar abilityBar : set) {
+                                        if(abilityBar.state.equals("selectable")){
+                                            abilityBar.makeDark();
+                                            abilityBar.state = "unavailable";
+                                        }
+                                    }
+                                    makeChecked();
+                                    try {
+                                        PlayerData playerData = DataManager.loadPlayerData();
+                                        playerData.setActiveAbility2(nameID);
+                                        DataManager.savePlayerData(playerData);
+                                    } catch (Exception ex) {}
+                                    topPanel.setAbility(2, iconForTopPanel);
+                                }
+                                else{//first chosen
+                                    makeChecked();
+                                    try {
+                                        PlayerData playerData = DataManager.loadPlayerData();
+                                        playerData.setActiveAbility1(nameID);
+                                        DataManager.savePlayerData(playerData);
+                                    } catch (Exception ex) {}
+                                    topPanel.setAbility(1, iconForTopPanel);
                                 }
                             }
-                            topPanel.removeAbility(3);
-                        }
-                        else{
-                            //active, two chosen unchecking
-                            if(topPanel.abilitySecond.isVisible()){
-                                try {
-                                    state = "selectable";
-                                    makeNormal();
-                                    PlayerData playerData = DataManager.loadPlayerData();
-                                    boolean isFirst = nameID.equals(playerData.getActiveAbility1());
-
-                                    if(isFirst){                             
-                                        playerData.setActiveAbility1(playerData.getActiveAbility2());
-                                        playerData.removeActiveAbility2();
-                                        DataManager.savePlayerData(playerData);
-                                        for (AbilityBar abilityBar : active) {
-                                            if(abilityBar.state.equals("unavailable")){
-                                                abilityBar.state = "selectable";
-                                                abilityBar.makeNormal();
-                                            }
-                                        }
-                                        topPanel.removeAbility(1);
-                                    }
-                                    else{
-                                        for (AbilityBar abilityBar : active) {
-                                            if(abilityBar.state.equals("unavailable")){
-                                                abilityBar.state = "selectable";
-                                                abilityBar.makeNormal();
-                                            }
-                                        }
-                                        playerData.removeActiveAbility2();
-                                        DataManager.savePlayerData(playerData);
-                                        topPanel.removeAbility(2);
-                                    }
-
-                                } catch (Exception ex) {System.out.println("309: " + ex);}
-                            }
-                            else{//one chosen (this)
+                        }else if(state.equals("chosen")){//unchecking
+                            if(isPassive){
                                 state = "selectable";
                                 makeNormal();
                                 try {
                                     PlayerData playerData = DataManager.loadPlayerData();
-                                    playerData.removeActiveAbility1();
+                                    playerData.removePassiveAbility();
                                     DataManager.savePlayerData(playerData);
                                 } catch (Exception ex) {System.out.println(ex);}
-                                topPanel.removeAbility(1);
+                                for (AbilityBar abilityBar : passive) {
+                                    if(abilityBar.state.equals("unavailable")){
+                                        abilityBar.state = "selectable";
+                                        abilityBar.makeNormal();
+                                    }
+                                }
+                                topPanel.removeAbility(3);
+                            }
+                            else{
+                                //active, two chosen unchecking
+                                if(topPanel.abilitySecond.isVisible()){
+                                    try {
+                                        state = "selectable";
+                                        makeNormal();
+                                        PlayerData playerData = DataManager.loadPlayerData();
+                                        boolean isFirst = nameID.equals(playerData.getActiveAbility1());
+
+                                        if(isFirst){                             
+                                            playerData.setActiveAbility1(playerData.getActiveAbility2());
+                                            playerData.removeActiveAbility2();
+                                            DataManager.savePlayerData(playerData);
+                                            for (AbilityBar abilityBar : active) {
+                                                if(abilityBar.state.equals("unavailable")){
+                                                    abilityBar.state = "selectable";
+                                                    abilityBar.makeNormal();
+                                                }
+                                            }
+                                            topPanel.removeAbility(1);
+                                        }
+                                        else{
+                                            for (AbilityBar abilityBar : active) {
+                                                if(abilityBar.state.equals("unavailable")){
+                                                    abilityBar.state = "selectable";
+                                                    abilityBar.makeNormal();
+                                                }
+                                            }
+                                            playerData.removeActiveAbility2();
+                                            DataManager.savePlayerData(playerData);
+                                            topPanel.removeAbility(2);
+                                        }
+
+                                    } catch (Exception ex) {System.out.println("309: " + ex);}
+                                }
+                                else{//one chosen (this)
+                                    state = "selectable";
+                                    makeNormal();
+                                    try {
+                                        PlayerData playerData = DataManager.loadPlayerData();
+                                        playerData.removeActiveAbility1();
+                                        DataManager.savePlayerData(playerData);
+                                    } catch (Exception ex) {System.out.println(ex);}
+                                    topPanel.removeAbility(1);
+                                }
                             }
                         }
                     }
