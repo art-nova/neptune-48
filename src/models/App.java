@@ -28,31 +28,7 @@ public class App {
             rubik = Font.createFont(0, new File("resources/fonts/Rubik-VariableFont_wght.ttf"));
             exo2 = Font.createFont(0, new File("resources/fonts/Exo2-Bold.ttf"));
         } catch (Exception e) {System.out.println("Fonts: " + e.getMessage());}
-        
-        try {
-            DataManager.newPlayerData();
-            PlayerData playerData = DataManager.loadPlayerData();
-            playerData.unlockAbility("bonusTurns");
-            playerData.unlockAbility("resistance");
-            playerData.unlockAbility("betterBaseLevel");
-            playerData.unlockAbility("cooldownReduction");
-            playerData.unlockAbility("swap");
-            playerData.unlockAbility("merge");
-            playerData.unlockAbility("dispose");
-            playerData.unlockAbility("crit");
-            playerData.unlockAbility("safeAttack");
-            playerData.unlockLevel(new LevelIdentifier("normal", 1));
-            playerData.unlockLevel(new LevelIdentifier("normal", 2));
-            playerData.unlockLevel(new LevelIdentifier("normal", 3));
-            playerData.unlockLevel(new LevelIdentifier("normal", 4));
-            playerData.unlockLevel(new LevelIdentifier("normal", 5));
-            playerData.setLevelBestResult(new LevelIdentifier("normal", 0), 250, 3);
-            playerData.setLevelBestResult(new LevelIdentifier("normal", 1), 100, 2);
-            playerData.setLevelBestResult(new LevelIdentifier("normal", 2), 10, 1);
-            DataManager.savePlayerData(playerData);
-        } catch (Exception e) {
-            System.out.println("Error while loading player data:" + e);
-        }
+
         mainMenu  = new MainMenu();
         AudioManager.setBG("menu");
         AudioManager.playBG();

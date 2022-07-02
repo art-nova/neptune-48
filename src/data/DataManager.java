@@ -83,4 +83,9 @@ public class DataManager {
     public static void newPlayerData() throws IOException {
         savePlayerData(new PlayerData());
     }
+
+    public static boolean isPlayerDataAvailable() {
+        File file = new File("resources/data/playerData.dat");
+        return file.exists();
+    }
 }

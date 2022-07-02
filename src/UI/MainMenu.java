@@ -203,7 +203,7 @@ public class MainMenu extends JFrame{
                 normal = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continue.png")));
                 dark = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continueDark.png")));
                 PlayerData playerData = DataManager.loadPlayerData();  
-                if(playerData.isLevelCompleted(new LevelIdentifier("normal", 0))){
+                if(DataManager.isPlayerDataAvailable()){
                     enabled = true;
                     setIcon(normal);
                 }else{
@@ -211,10 +211,7 @@ public class MainMenu extends JFrame{
                     setIcon(dark);
                 }
             } catch (Exception e) {
-                try {
-                    setIcon(dark);
-                    enabled = false;
-                } catch (Exception ex) {}
+                e.printStackTrace();
             }    
             addMouseListener(new MouseAdapter() {
                 @Override
