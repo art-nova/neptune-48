@@ -3,6 +3,7 @@ package game.utils;
 import game.GamePanel;
 import models.App;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -15,7 +16,7 @@ import java.util.HashMap;
  *
  * @author Artem Novak
  */
-public class GamePanelGraphics extends ImageManager {
+public class GamePanelGraphics {
 
     // How many frames a single animation takes (1 second == 60 frames)
     public static final int ANIMATION_CYCLE = 10;
@@ -33,6 +34,7 @@ public class GamePanelGraphics extends ImageManager {
     private final HashMap<String, Color> palette = new HashMap<>();
 
     private final Font font;
+    private HashMap<String, BufferedImage> textures = new HashMap<>();
 
     /**
      * Initializes (but not loads!) the graphics manager.
@@ -75,6 +77,17 @@ public class GamePanelGraphics extends ImageManager {
     public Color getColor(String nameID) {
         if (!palette.containsKey(nameID)) throw new IllegalArgumentException("Unknown color " + nameID);
         return palette.get(nameID);
+    }
+
+    /**
+     * Returns texture by the given NameID (coincides with texture filename).
+     *
+     * @param nameID texture NameID
+     * @return BufferedImage of the texture
+     */
+    public BufferedImage getTexture(String nameID) {
+        if (!textures.containsKey(nameID)) throw new IllegalArgumentException("Unknown texture " + nameID);
+        return textures.get(nameID);
     }
 
     private void loadBoard(int boardRows, int boardCols, int gameMode) throws IOException{
@@ -136,5 +149,63 @@ public class GamePanelGraphics extends ImageManager {
 
     public Font getFont() {
         return font;
+    }
+
+    /**
+     * Scales BufferedImage, providing higher-quality downscaling.
+     *
+     * @param image image to scale
+     * @param width width of the scaled instance
+     * @param height height of the scaled instance
+     * @return scaled instance of the loaded image
+     */
+    public static BufferedImage getScaledImage(BufferedImage image, int width, int height) {
+        BufferedImage scaledImage = image;
+        int tempWidth = image.getWidth(), tempHeight = image.getHeight();
+        do {
+            tempWidth /= 2;
+            tempHeight /= 2;
+            if (tempWidth < width) tempWidth = width;
+            if (tempHeight < height) tempHeight = height;
+            BufferedImage tmp = new BufferedImage(tempWidth, tempHeight, image.getType());
+            Graphics2D g2d = (Graphics2D) tmp.getGraphics();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.drawImage(scaledImage, 0, 0, tempWidth, tempHeight, null);
+            g2d.dispose();
+
+            scaledImage = tmp;
+        } while (tempWidth != width || tempHeight != height);
+        return scaledImage;
+    }
+
+    /**
+     * Reads {@link BufferedImage} from a filepath.
+     *
+     * @param filepath path to the image
+     * @return {@link BufferedImage} that was loaded
+     * @throws IOException if fails to load the image
+     */
+    public static BufferedImage getImage(String filepath) throws IOException {
+        BufferedImage image = ImageIO.read(new File(filepath));
+        if (image == null) throw new IOException("Failed to load image from " + filepath);
+        return image;
+    }
+
+    /**
+     * Adds colored overlay to the image's filled part (transparent parts remain unchanged).
+     *
+     * @param image original image
+     * @param color color (possibly semi-transparent)
+     * @return {@link BufferedImage} with added overlay
+     */
+    public static BufferedImage addColorOverlay(BufferedImage image, Color color) {
+        BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = (Graphics2D) result.getGraphics();
+        g2d.drawImage(image, 0, 0, null);
+        g2d.setColor(color);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP));
+        g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
+        g2d.dispose();
+        return result;
     }
 }
