@@ -441,7 +441,6 @@ public class AbilityInfoPanel {
                         makeChecked();
                         topPanel.setAbility(2, iconForTopPanel);
                         fadeSecond = true;
-                        System.out.println(title + " " + state);
                     }
                     if (ab3.equals(title)){
                         state = "chosen";
