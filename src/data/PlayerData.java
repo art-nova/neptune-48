@@ -88,12 +88,12 @@ public class PlayerData implements Serializable {
      * Sets a new best result for an unlocked level (overriding the previous result).
      *
      * @param level level identifier of the level
-     * @param timeLeft time that was left until losing when player won
+     * @param turnsLeft turns that were left until losing when player won
      * @param stars number of stars the player earned
      */
-    public void setLevelBestResult(LevelIdentifier level, int timeLeft, int stars) {
+    public void setLevelBestResult(LevelIdentifier level, int turnsLeft, int stars) {
         if (!isLevelUnlocked(level)) throw new GameLogicException("Trying to change best result of a non-unlocked (locked or nonexistent) level " + level);
-        unlockedLevels.get(level.difficulty()).put(level.index(), new DynamicLevelEntry(timeLeft, stars));
+        unlockedLevels.get(level.difficulty()).put(level.index(), new DynamicLevelEntry(turnsLeft, stars));
     }
 
     /**
