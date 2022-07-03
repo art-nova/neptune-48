@@ -209,7 +209,6 @@ public class AbilityInfoPanel {
                 }
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    //TODO save data
                     pane.getParent().remove(LevelsMenu.overlayPane);
                     LevelsMenu.overlayPane = null;
                     App.getLevelsMenu().revalidate();
@@ -292,8 +291,14 @@ public class AbilityInfoPanel {
                 }
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    //if left mouse button
-                    if(e.getButton() == MouseEvent.BUTTON1){   
+                    //right mouse button
+                    if (e.getButton() == MouseEvent.BUTTON3) {
+                        pane.getParent().remove(LevelsMenu.overlayPane);
+                        LevelsMenu.overlayPane = null;
+                        App.getLevelsMenu().revalidate();
+                        App.getLevelsMenu().repaint();
+                    }
+                    else if(e.getButton() == MouseEvent.BUTTON1){   
                         if(state.equals("selectable")){
                             AbilityBar[] set = isPassive ? passive : active;
                             if(isPassive){
