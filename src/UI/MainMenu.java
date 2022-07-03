@@ -202,7 +202,6 @@ public class MainMenu extends JFrame{
                 light = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continueLight.png")));
                 normal = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continue.png")));
                 dark = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continueDark.png")));
-                PlayerData playerData = DataManager.loadPlayerData();  
                 if(DataManager.isPlayerDataAvailable()){
                     enabled = true;
                     setIcon(normal);
