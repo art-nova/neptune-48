@@ -98,7 +98,7 @@ public class LevelMenu extends JFrame{
                 passiveAbility.setIcon(getIcon("level/" + playerData.getPassiveAbility() + ".png", 110,110));
             }
         } catch (Exception e) {
-            System.err.println("Error loading level data: " + e.getMessage());
+            e.printStackTrace();
         }
     }   
 
@@ -457,7 +457,7 @@ public class LevelMenu extends JFrame{
      */
     static ImageIcon getIcon(String location, int width, int height){
         try {
-            return new ImageIcon(ImageIO.read(new File("resources/images/" + location)).getScaledInstance(width, height, 16));
+            return new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/" + location)).getScaledInstance(width, height, 16));
         } catch (Exception e) {System.err.println("LevelMenu -> getIcon("+location+") -> " + e.getMessage());}
         return null;
     }
@@ -472,8 +472,8 @@ public class LevelMenu extends JFrame{
             centerPanel.setBackground(new Color(23,63,31));
             centerPanel.setBounds(100,360,600,280);
             
-            ImageIcon back = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenu.png")));
-            ImageIcon backLight = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenuLight.png")));
+            ImageIcon back = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/toMenu.png")));
+            ImageIcon backLight = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/toMenuLight.png")));
             JLabel backButton = new JLabel(back);
             backButton.setBounds(24,161,551,81);
             backButton.addMouseListener(new MouseAdapter(){
@@ -493,8 +493,8 @@ public class LevelMenu extends JFrame{
                 }
             });
 
-            ImageIcon restart = new ImageIcon(ImageIO.read(new File("resources/images/level/restart.png")));
-            ImageIcon restartLight = new ImageIcon(ImageIO.read(new File("resources/images/level/restartLight.png")));
+            ImageIcon restart = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/restart.png")));
+            ImageIcon restartLight = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/restartLight.png")));
             JLabel restartButton = new JLabel(restart);
             restartButton.setBounds(24,38,551,81);
             restartButton.addMouseListener(new MouseAdapter(){
@@ -565,8 +565,8 @@ public class LevelMenu extends JFrame{
             
 
 
-            ImageIcon back = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenu.png")));
-            ImageIcon backLight = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenuLight.png")));
+            ImageIcon back = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/toMenu.png")));
+            ImageIcon backLight = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/toMenuLight.png")));
             JLabel backButton = new JLabel(back);
             backButton.setBounds(24,611 - 35,551,81);
             backButton.addMouseListener(new MouseAdapter(){
@@ -584,8 +584,8 @@ public class LevelMenu extends JFrame{
                 }
             });
 
-            ImageIcon restart = new ImageIcon(ImageIO.read(new File("resources/images/level/restart.png")));
-            ImageIcon restartLight = new ImageIcon(ImageIO.read(new File("resources/images/level/restartLight.png")));
+            ImageIcon restart = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/restart.png")));
+            ImageIcon restartLight = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/restartLight.png")));
             JLabel restartButton = new JLabel(restart);
             restartButton.setBounds(24,538- 50 - 20,551,81);
             restartButton.addMouseListener(new MouseAdapter(){
@@ -646,8 +646,8 @@ public class LevelMenu extends JFrame{
             panel.setBounds(0,20 + 112,600,300);
             centerPanel.add(panel);
             
-            ImageIcon back = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenu.png")));
-            ImageIcon backLight = new ImageIcon(ImageIO.read(new File("resources/images/level/toMenuLight.png")));
+            ImageIcon back = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/toMenu.png")));
+            ImageIcon backLight = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/toMenuLight.png")));
             JLabel backButton = new JLabel(back);
             backButton.setBounds(24,611 - 35,551,81);
             backButton.addMouseListener(new MouseAdapter(){
@@ -665,8 +665,8 @@ public class LevelMenu extends JFrame{
                 }
             });
 
-            ImageIcon restart = new ImageIcon(ImageIO.read(new File("resources/images/level/restart.png")));
-            ImageIcon restartLight = new ImageIcon(ImageIO.read(new File("resources/images/level/restartLight.png")));
+            ImageIcon restart = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/restart.png")));
+            ImageIcon restartLight = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/restartLight.png")));
             JLabel restartButton = new JLabel(restart);
             restartButton.setBounds(24,538- 50 - 20,551,81);
             restartButton.addMouseListener(new MouseAdapter(){

@@ -93,10 +93,10 @@ public class GamePanelGraphics {
     private void loadBoard(int boardRows, int boardCols, int gameMode) throws IOException{
         String tileFolderPath;
         if (gameMode == GamePanel.GAME_MODE_ATTACK) {
-            tileFolderPath = "resources/images/tiles_attack/";
+            tileFolderPath = "/images/tiles_attack/";
         }
         else {
-            tileFolderPath = "resources/images/tiles_repair/";
+            tileFolderPath = "/images/tiles_repair/";
         }
 
         // Loading tiles
@@ -125,13 +125,13 @@ public class GamePanelGraphics {
     }
 
     private void loadEntity(int entityIndex) throws IOException {
-        BufferedImage entity = getScaledImage(getImage("resources/images/entities/entity" + entityIndex + ".png"), ENTITY_WIDTH, ENTITY_HEIGHT);
+        BufferedImage entity = getScaledImage(getImage("/images/entities/entity" + entityIndex + ".png"), ENTITY_WIDTH, ENTITY_HEIGHT);
         textures.put("entity", entity);
         textures.put("entityDamaged", addColorOverlay(entity, palette.get("damageOverlay")));
         textures.put("entityHealed", addColorOverlay(entity, palette.get("healOverlay")));
 
         for (int i = 0; i < 4; i++) {
-            textures.put("explosion"+i, getScaledImage(getImage("resources/images/entities/explosion" + i + ".png"), ENTITY_HEIGHT, ENTITY_HEIGHT));
+            textures.put("explosion"+i, getScaledImage(getImage("/images/entities/explosion" + i + ".png"), ENTITY_HEIGHT, ENTITY_HEIGHT));
         }
     }
 
@@ -186,7 +186,7 @@ public class GamePanelGraphics {
      * @throws IOException if fails to load the image
      */
     public static BufferedImage getImage(String filepath) throws IOException {
-        BufferedImage image = ImageIO.read(new File(filepath));
+        BufferedImage image = ImageIO.read(App.class.getResource(filepath));
         if (image == null) throw new IOException("Failed to load image from " + filepath);
         return image;
     }

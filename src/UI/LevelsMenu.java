@@ -366,11 +366,11 @@ public class LevelsMenu extends JFrame{
         try {
             //add(overlayPane);
             //overlayPane.setVisible(false);
-            JLabel border = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/mapBorder.png"))));
+            JLabel border = new JLabel(new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/mapBorder.png"))));
             border.setBounds(0,138,800,824);
             add(border);
             add(polygon5);
-            JLabel sea = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/water.png"))));
+            JLabel sea = new JLabel(new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/water.png"))));
             sea.setBounds(410,330+80,401,569);
             add(sea);
             topPanel = new TopPanel();
@@ -393,8 +393,8 @@ public class LevelsMenu extends JFrame{
             super();
             setBounds(0,0,800,145);
             try {
-                ImageIcon back = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/back.png")));
-                ImageIcon backLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/backLight.png")));
+                ImageIcon back = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/back.png")));
+                ImageIcon backLight = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/backLight.png")));
                 JLabel backButton = new JLabel(back);
                 backButton.setBounds(33,13,122,112);
                 backButton.addMouseListener(new MouseAdapter(){
@@ -417,12 +417,12 @@ public class LevelsMenu extends JFrame{
                 boolean hardModeUnlocked = playerData.isHardModeUnlocked();
 
 
-                ImageIcon normal = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/normal.png")));
-                ImageIcon normalLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/normalLight.png")));
+                ImageIcon normal = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/normal.png")));
+                ImageIcon normalLight = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/normalLight.png")));
 
-                ImageIcon hard = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/hard.png")));
-                ImageIcon hardLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/hardLight.png")));
-                ImageIcon hardDark = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/hardDark.png")));
+                ImageIcon hard = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/hard.png")));
+                ImageIcon hardLight = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/hardLight.png")));
+                ImageIcon hardDark = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/hardDark.png")));
 
                 JLabel normalButton = new JLabel(normal);
                 JLabel hardButton = new JLabel(hard);
@@ -505,8 +505,8 @@ public class LevelsMenu extends JFrame{
                 });
 
 
-                JLabel abilitiesPlacement = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilitiesPlacement.png"))));
-                abilitiesCover = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilitiesPlacementCover.png"))));
+                JLabel abilitiesPlacement = new JLabel(new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/abilitiesPlacement.png"))));
+                abilitiesCover = new JLabel(new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/abilitiesPlacementCover.png"))));
                 abilitiesCover.setBounds(189,21,370,104);
                 abilitiesPlacement.setBounds(189,21,370,104);
                 abilitiesCover.setVisible(false);
@@ -641,12 +641,12 @@ public class LevelsMenu extends JFrame{
             overlayPane = null;
             try {
                 if(DataManager.loadPlayerData().getActiveAbility2() != null){
-                    topPanel.setAbility(2, new ImageIcon(ImageIO.read(new File("resources/images/level/" + DataManager.loadPlayerData().getActiveAbility2() + ".png"))));
+                    topPanel.setAbility(2, new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/" + DataManager.loadPlayerData().getActiveAbility2() + ".png"))));
                 }
 
             } catch (Exception e) {}
         } catch (Exception e) {
-            System.out.println("error:" + e);
+            e.printStackTrace();
         }
     }
 
@@ -664,7 +664,7 @@ public class LevelsMenu extends JFrame{
         try {
             centerPanel.add(InfoPanels.starsPanel(levelIdentifier));
             //////
-            centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/obstacles.png")))));
+            centerPanel.add(new JLabel(new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/obstacles.png")))));
 
             var obstacles = DataManager.loadLevelData(new LevelIdentifier(playMode, num)).getObstacleWeights();
             for (String obstacle : obstacles.keySet()) {
@@ -686,7 +686,7 @@ public class LevelsMenu extends JFrame{
 
         pane.add(scroll);
         try {
-            JLabel image = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/panel.png"))));
+            JLabel image = new JLabel(new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/panel.png"))));
             image.setBounds(90,70,622,822);
             pane.add(image);
         } catch (Exception e) {System.out.println(e);}

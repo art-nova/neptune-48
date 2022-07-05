@@ -1,4 +1,6 @@
 package UI;
+import models.App;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -46,7 +48,7 @@ public class PolygonUtilities {
             }
             try {
                 if(overlayColor.equalsIgnoreCase("green") || overlayColor.equalsIgnoreCase("red")){
-                    overlay = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/"+ num + "overlay" + overlayColor + ".png"))));
+                    overlay = new JLabel(new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/"+ num + "overlay" + overlayColor + ".png"))));
                     switch(num){
                         case 0:
                             overlay.setBounds(572,2 + yOffset,240,370);

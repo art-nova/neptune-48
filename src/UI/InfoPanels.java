@@ -25,7 +25,7 @@ public class InfoPanels{
         JLayeredPane panel = new JLayeredPane();
         panel.setPreferredSize(new Dimension(600,131));
         try {
-            JLabel image = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/obstacles/"+ title + ".png"))));
+            JLabel image = new JLabel(new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/obstacles/"+ title + ".png"))));
             image.setVisible(true);
             image.setBounds(0,0,600,131);
             panel.add(image);
@@ -37,8 +37,8 @@ public class InfoPanels{
         JLayeredPane panel = new JLayeredPane();
         panel.setPreferredSize(new Dimension(600,131));
         try {
-            JLabel image = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/next.png"))));
-            JLabel imageLight = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/nextLight.png"))));
+            JLabel image = new JLabel(new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/next.png"))));
+            JLabel imageLight = new JLabel(new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/nextLight.png"))));
             imageLight.setVisible(false);
             image.setVisible(true);
             image.setBounds(0,0,600,131);
@@ -112,8 +112,8 @@ public class InfoPanels{
             LevelData levelData = DataManager.loadLevelData(levelIdentifier);
             PlayerData playerData = DataManager.loadPlayerData();
 
-            ImageIcon starHollow = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/starHollow.png")));
-            ImageIcon starFull = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/starFull.png")));
+            ImageIcon starHollow = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/starHollow.png")));
+            ImageIcon starFull = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/starFull.png")));
             JLabel star1 = new JLabel(starHollow);
             star1.setBounds(37,16,170,162);
             JLabel star2 = new JLabel(starHollow);

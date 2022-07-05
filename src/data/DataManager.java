@@ -1,5 +1,7 @@
 package data;
 
+import models.App;
+
 import java.io.*;
 
 /**
@@ -17,15 +19,14 @@ public class DataManager {
      * @throws IOException when a loading error occurs or when data is saved incorrectly
      */
     public static LevelData loadLevelData(LevelIdentifier level) throws IOException {
-        String path = "resources/data/levels/"+level.difficulty()+"/level"+level.index()+".dat";
-        ObjectInputStream loader = new ObjectInputStream(new FileInputStream(path));
+        ObjectInputStream loader = new ObjectInputStream(App.class.getResourceAsStream("/data/levels/"+level.difficulty()+"/level"+level.index()+".dat"));
         LevelData data;
         try {
             data = (LevelData) loader.readObject();
             loader.close();
         }
         catch (ClassCastException | ClassNotFoundException exception) {
-            throw new IOException("Level file at \"" + path + "\" contains incorrectly saved data");
+            throw new IOException("Level file for " + level + " contains incorrectly saved data");
         }
         return data;
     }
@@ -38,8 +39,8 @@ public class DataManager {
      * @param data object to be saved.
      * @throws IOException when a saving error occurs
      */
-    public static void saveLevelData(LevelData data) throws IOException {
-        ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream("resources/data/levels/"+data.getLevelIdentifier().difficulty()+"/level"+data.getLevelIdentifier().index()+".dat"));
+    public static void saveLevelData(LevelData data, File filepath) throws IOException {
+        ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(filepath));
         saver.writeObject(data);
         saver.close();
     }
@@ -51,14 +52,14 @@ public class DataManager {
      * @throws IOException when a loading error occurs
      */
     public static PlayerData loadPlayerData() throws IOException {
-        ObjectInputStream loader = new ObjectInputStream(new FileInputStream("resources/data/playerData.dat"));
+        ObjectInputStream loader = new ObjectInputStream(new FileInputStream("data/playerData.dat"));
         PlayerData data;
         try {
             data = (PlayerData) loader.readObject();
             loader.close();
         }
         catch (ClassCastException | ClassNotFoundException exception) {
-            throw new IOException("playerData.dat contains incorrectly saved data");
+            throw new IOException("data/playerData.dat contains incorrectly saved data");
         }
         return data;
     }
@@ -70,7 +71,9 @@ public class DataManager {
      * @throws IOException when a saving error occurs
      */
     public static void savePlayerData(PlayerData data) throws IOException {
-        ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream("resources/data/playerData.dat"));
+        File folder = new File("data");
+        if (!folder.exists()) folder.mkdir();
+        ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream("data/playerData.dat"));
         saver.writeObject(data);
         saver.close();
     }
@@ -85,7 +88,7 @@ public class DataManager {
     }
 
     public static boolean isPlayerDataAvailable() {
-        File file = new File("resources/data/playerData.dat");
+        File file = new File("data/playerData.dat");
         return file.exists();
     }
 }
