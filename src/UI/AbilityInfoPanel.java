@@ -1,6 +1,5 @@
 package UI;
 
-import java.io.File;
 import java.awt.*;
 import UI.LevelsMenu.TopPanel;
 import UI.miscellaneous.*;
@@ -61,13 +60,13 @@ public class AbilityInfoPanel {
         centerPanel.add(saveButton());
         
         try {
-            JLabel passiveLabel = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/passive.png"))));  
+            JLabel passiveLabel = new JLabel(new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/passive.png"))));  
             passiveLabel.setPreferredSize(new Dimension(707,42));
             centerPanel.add(passiveLabel);
             for (AbilityBar ability : passive) {
                 centerPanel.add(ability);
             }
-            JLabel activeLabel = new JLabel(new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/active.png"))));
+            JLabel activeLabel = new JLabel(new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/active.png"))));
             activeLabel.setPreferredSize(new Dimension(707,70));
             centerPanel.add(activeLabel);
             for (AbilityBar ability : active) {
@@ -194,8 +193,8 @@ public class AbilityInfoPanel {
         panel.setBackground(new Color(23,63,31));
         panel.setPreferredSize(new Dimension(750,125));
         try {
-            ImageIcon save = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/saveAbilities.png")));
-            ImageIcon saveLight = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/saveAbilitiesLight.png")));
+            ImageIcon save = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/saveAbilities.png")));
+            ImageIcon saveLight = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/saveAbilitiesLight.png")));
             JLabel saveButton = new JLabel(save);
             saveButton.setBounds(21,20,707,82);
             saveButton.addMouseListener(new MouseAdapter() {
@@ -247,7 +246,7 @@ public class AbilityInfoPanel {
             this.title = title;
             nameID = title;
             try {     
-                iconForTopPanel = new ImageIcon(ImageIO.read(new File("resources/images/level/" + title + ".png")));
+                iconForTopPanel = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/level/" + title + ".png")));
             } catch (Exception ex) { }
             setPreferredSize(new Dimension(600,131));
             if(isPassive){
@@ -259,12 +258,12 @@ public class AbilityInfoPanel {
             }
 
             try {
-                light = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilities/" + title + "Light.png")));
-                normal = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilities/" + title + ".png")));
-                dark = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilities/" + title + "Dark.png")));
+                light = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/abilities/" + title + "Light.png")));
+                normal = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/abilities/" + title + ".png")));
+                dark = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/abilities/" + title + "Dark.png")));
 
-                lock = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilities/" + folder + "lock.png")).getScaledInstance(104, 104, Image.SCALE_SMOOTH));
-                checked = new ImageIcon(ImageIO.read(new File("resources/images/levelInfo/abilities/" + folder + "checkED.png")).getScaledInstance(104, 104, Image.SCALE_SMOOTH));
+                lock = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/abilities/" + folder + "lock.png")).getScaledInstance(104, 104, Image.SCALE_SMOOTH));
+                checked = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/levelInfo/abilities/" + folder + "checked.png")).getScaledInstance(104, 104, Image.SCALE_SMOOTH));
                 
                 overlay = new JLabel();
                 overlay.setBounds(26,14,104,104);
@@ -273,7 +272,7 @@ public class AbilityInfoPanel {
                 image.setBounds(0,0,600,131);
                 add(image);
                 add(overlay,0);
-            } catch (Exception e) {}
+            } catch (Exception e) {e.printStackTrace();}
 
             image.addMouseListener(new MouseAdapter() {
                 @Override

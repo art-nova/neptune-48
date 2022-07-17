@@ -24,9 +24,9 @@ public class App {
     public static void main(String[] args) {
         AudioManager.init();
         try {
-            lexenDeca = Font.createFont(0, new File("resources/fonts/LexendDeca-Regular.ttf"));
-            rubik = Font.createFont(0, new File("resources/fonts/Rubik-VariableFont_wght.ttf"));
-            exo2 = Font.createFont(0, new File("resources/fonts/Exo2-Bold.ttf"));
+            lexenDeca = Font.createFont(0, App.class.getResourceAsStream("/fonts/LexendDeca-Regular.ttf"));
+            rubik = Font.createFont(0, App.class.getResourceAsStream("/fonts/Rubik-VariableFont_wght.ttf"));
+            exo2 = Font.createFont(0, App.class.getResourceAsStream("/fonts/Exo2-Bold.ttf"));
         } catch (Exception e) {System.out.println("Fonts: " + e.getMessage());}
 
         mainMenu  = new MainMenu();

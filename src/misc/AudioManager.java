@@ -1,8 +1,9 @@
 package misc;
 
+import models.App;
+
 import javax.sound.sampled.*;
 import javax.swing.*;
-import java.io.File;
 import java.util.*;
 
 /**
@@ -36,8 +37,7 @@ public class AudioManager {
      */
     public static void setBG(String nameID) {
         try {
-            File file = new File("resources/audio/bg/" + nameID + ".wav");
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(App.class.getResource("/audio/bg/" + nameID + ".wav"));
             bg.close();
             bg.open(audioInputStream);
             setClipVolume(bg, bgVolume);
@@ -88,8 +88,7 @@ public class AudioManager {
             }
             else {
                 Clip clip = AudioSystem.getClip();
-                File file = new File("resources/audio/sfx/" + nameID + ".wav");
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(App.class.getResource("/audio/sfx/" + nameID + ".wav"));
                 clip.open(audioInputStream);
                 setClipVolume(clip, sfxVolume);
                 audioInputStream.close();

@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
 import data.DataManager;
 import data.LevelIdentifier;
 import data.PlayerData;
+import models.App;
 
 /**
  * Main menu JFrame with parallax effect
@@ -61,63 +62,61 @@ public class MainMenu extends JFrame{
         };
         
         try {
-            String p = "resources/images/mainMenu/";
-            
-            Layer layer = new Layer(0,0,0,0, new ImageIcon(ImageIO.read(new File(p + "background.png"))));
+            Layer layer = new Layer(0,0,0,0, new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/background.png"))));
             layers.add(layer);
             pane.add(layer,100);
 
-            layer = new Layer(159,203,1,14, new ImageIcon(ImageIO.read(new File(p + "cloud4.png"))));
+            layer = new Layer(159,203,1,14, new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/cloud4.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(-24,53,12,36, new ImageIcon(ImageIO.read(new File(p + "cloud3.png"))));
+            layer = new Layer(-24,53,12,36, new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/cloud3.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(144,151,165 + 55,169 + 55, new ImageIcon(ImageIO.read(new File(p + "mount3.png"))));
+            layer = new Layer(144,151,165 + 55,169 + 55, new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/mount3.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(433,450,41+20 + 75,48+20 + 75, new ImageIcon(ImageIO.read(new File(p + "mount2.png"))));
+            layer = new Layer(433,450,41+20 + 75,48+20 + 75, new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/mount2.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(-188,-148,86 + 55,98 + 55, new ImageIcon(ImageIO.read(new File(p + "mount1.png"))));
+            layer = new Layer(-188,-148,86 + 55,98 + 55, new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/mount1.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(-7,-7,655+120,655+120, new ImageIcon(ImageIO.read(new File(p + "grassTop.png"))));
+            layer = new Layer(-7,-7,655+120,655+120, new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/grassTop.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(260,300,505+ 110+100,520+ 110+100, new ImageIcon(ImageIO.read(new File(p + "bush.png"))));
+            layer = new Layer(260,300,505+ 110+100,520+ 110+100, new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/bush.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(-70,3,477+ 110+120,498+ 110+120, new ImageIcon(ImageIO.read(new File(p + "bushes.png"))));
+            layer = new Layer(-70,3,477+ 110+120,498+ 110+120, new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/bushes.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(595,620,7,16, new ImageIcon(ImageIO.read(new File(p + "cloud5.png"))));
+            layer = new Layer(595,620,7,16, new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/cloud5.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(293,425,12,42, new ImageIcon(ImageIO.read(new File(p + "cloud2.png"))));
+            layer = new Layer(293,425,12,42, new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/cloud2.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(-30,180,25 + 20,72 + 20, new ImageIcon(ImageIO.read(new File(p + "cloud1.png"))));
+            layer = new Layer(-30,180,25 + 20,72 + 20, new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/cloud1.png"))));
             layers.add(layer);                
             pane.add(layer, 0);
 
-            layer = new Layer(90,90,55,55, new ImageIcon(ImageIO.read(new File("resources/images/logoGame_invert.png")).getScaledInstance(620,105, 16)));
+            layer = new Layer(90,90,55,55, new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/logoGame_invert.png")).getScaledInstance(620,105, 16)));
             layers.add(layer);
             pane.add(layer, 0);
 
 
-            ImageIcon basicExit = new ImageIcon(ImageIO.read(new File(p + "exit.png")));
-            ImageIcon highlightExit = new ImageIcon(ImageIO.read(new File(p + "exitLight.png")));
+            ImageIcon basicExit = new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/exit.png")));
+            ImageIcon highlightExit = new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/exitLight.png")));
             Layer buttonLayerExit = new Layer(185,185,515,515, basicExit);
 
             layers.add(buttonLayerExit);
@@ -145,8 +144,8 @@ public class MainMenu extends JFrame{
 
 
 
-            ImageIcon basicNew = new ImageIcon(ImageIO.read(new File(p + "newGame.png")));
-            ImageIcon highlightNew = new ImageIcon(ImageIO.read(new File(p + "newGameLight.png")));
+            ImageIcon basicNew = new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/newGame.png")));
+            ImageIcon highlightNew = new ImageIcon(ImageIO.read(App.class.getResource("/images/mainMenu/newGameLight.png")));
             Layer buttonLayerNew = new Layer(185,185,400,400, basicNew);
 
             layers.add(buttonLayerNew);
@@ -199,9 +198,9 @@ public class MainMenu extends JFrame{
         public ContinueButton(){
             super();  
             try {
-                light = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continueLight.png")));
-                normal = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continue.png")));
-                dark = new ImageIcon(ImageIO.read(new File("resources/images/mainMenu/continueDark.png")));
+                light = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/mainMenu/continueLight.png")));
+                normal = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/mainMenu/continue.png")));
+                dark = new ImageIcon(ImageIO.read(App.class.getResourceAsStream("/images/mainMenu/continueDark.png")));
                 if(DataManager.isPlayerDataAvailable()){
                     enabled = true;
                     setIcon(normal);
